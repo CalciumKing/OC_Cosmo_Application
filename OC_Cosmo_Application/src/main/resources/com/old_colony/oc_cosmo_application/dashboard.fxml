@@ -3,18 +3,22 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.DashboardController">
@@ -25,7 +29,7 @@
                <children>
                   <Pane prefHeight="167.0" prefWidth="164.0">
                      <children>
-                        <Button layoutX="120.0" mnemonicParsing="false" onAction="#toggleMenu">
+                        <Button layoutX="121.0" layoutY="30.0" mnemonicParsing="false" onAction="#toggleMenu">
                            <graphic>
                               <FontAwesomeIcon glyphName="BARS" />
                            </graphic>
@@ -89,11 +93,11 @@
                   <String fx:value="startBackground" />
                </styleClass>
             </VBox>
-            <AnchorPane prefHeight="515.0" prefWidth="755.0" styleClass="startPanelBackground">
+            <AnchorPane prefHeight="515.0" prefWidth="754.0" styleClass="startPanelBackground">
                <children>
                   <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
-                        <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="14.0" text="Welcome, USERNAME">
+                        <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
                               <Font name="System Bold" size="35.0" />
                            </font>
@@ -119,7 +123,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
-                        <TableView fx:id="schedule_table" onMouseClicked="#scheduleTableSelected" prefHeight="515.0" prefWidth="754.0">
+                        <TableView fx:id="schedule_table" layoutY="29.0" onMouseClicked="#scheduleTableSelected" prefHeight="486.0" prefWidth="754.0">
                           <columns>
                             <TableColumn prefWidth="89.33334350585938" text="Date/Time" />
                             <TableColumn prefWidth="66.66664123535156" text="Cost" />
@@ -133,19 +137,118 @@
                   </AnchorPane>
                   <AnchorPane fx:id="create_pane" prefHeight="515.0" prefWidth="754.0">
                      <children>
-                        <Label fx:id="welcome_lbl1" layoutX="14.0" layoutY="14.0" text="Create an Appointment">
+                        <Label layoutX="14.0" layoutY="30.0" text="Create an Appointment">
                            <font>
                               <Font name="System Bold" size="35.0" />
                            </font>
                         </Label>
-                        <TextField layoutX="57.0" layoutY="258.0" />
-                        <DatePicker layoutX="34.0" layoutY="146.0" promptText="Date Select" />
-                        <Slider blockIncrement="30.0" layoutX="260.0" layoutY="152.0" max="1400.0" min="800.0" value="900.0" />
+                        <DatePicker fx:id="dateSelect_picker" layoutX="34.0" layoutY="146.0" promptText="Date Select">
+                           <tooltip>
+                              <Tooltip text="Select the appointment date from the calendar." />
+                           </tooltip>
+                        </DatePicker>
+                        <Pane layoutX="266.0" layoutY="146.0" prefHeight="25.0" prefWidth="125.0">
+                           <children>
+                              <Spinner fx:id="hour_spinner" layoutX="6.0" layoutY="1.0" prefHeight="25.0" prefWidth="53.0">
+                                 <tooltip>
+                                    <Tooltip text="Choose the hour of the appointment." />
+                                 </tooltip>
+                              </Spinner>
+                              <Label layoutX="59.0" layoutY="-8.0" text=":">
+                                 <font>
+                                    <Font name="System Bold" size="25.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="minute_spinner" layoutX="66.0" prefHeight="25.0" prefWidth="63.0">
+                                 <tooltip>
+                                    <Tooltip text="Select the minutes in 15-minute increments." />
+                                 </tooltip>
+                              </Spinner>
+                           </children>
+                        </Pane>
+                        <TextField fx:id="customerName_field" layoutX="470.0" layoutY="146.0" prefHeight="25.0" prefWidth="175.0" promptText="Customer Name">
+                           <tooltip>
+                              <Tooltip text="Enter the customer's full name." />
+                           </tooltip>
+                        </TextField>
+                        <ComboBox fx:id="services_combobox" layoutX="144.0" layoutY="205.0" prefHeight="25.0" prefWidth="125.0" promptText="Services">
+                           <tooltip>
+                              <Tooltip text="Select the service the customer wants." />
+                           </tooltip>
+                        </ComboBox>
+                        <ComboBox fx:id="student_combobox" layoutX="407.0" layoutY="205.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select">
+                           <tooltip>
+                              <Tooltip text="Choose the student performing the service." />
+                           </tooltip>
+                        </ComboBox>
+                        <TextArea fx:id="note_area" layoutX="198.0" layoutY="269.0" prefHeight="137.0" prefWidth="261.0" promptText="Custom Note (Optional)">
+                           <tooltip>
+                              <Tooltip text="Add any special instructions or requests for this appointment." />
+                           </tooltip>
+                        </TextArea>
+                        <Button layoutX="507.0" layoutY="459.0" mnemonicParsing="false" onAction="#resetForm" text="Reset">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <graphic>
+                              <FontAwesomeIcon glyphName="REPEAT" />
+                           </graphic>
+                        </Button>
+                        <Button layoutX="621.0" layoutY="459.0" mnemonicParsing="false" onAction="#submitForm" text="Submit">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <graphic>
+                              <FontAwesomeIcon glyphName="CHECK" />
+                           </graphic>
+                        </Button>
+                        <Label fx:id="costDur_lbl" layoutX="153.0" layoutY="463.0" text="Cost: $###.## Duration: #:##">
+                           <font>
+                              <Font name="System Bold" size="25.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
                </children>
             </AnchorPane>
          </children>
       </HBox>
+      <Pane prefHeight="28.0" prefWidth="918.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="918.0" />
+            <Label fx:id="windowTitle_lbl" disable="true" layoutX="7.0" layoutY="1.0" text="Cosmotology Application | USERNAME">
+               <font>
+                  <Font name="Arial Black" size="17.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="SCISSORS" />
+               </graphic>
+            </Label>
+            <Button layoutX="839.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="MINUS" />
+               </graphic>
+            </Button>
+            <Button layoutX="865.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMaximize" styleClass="max">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="SQUARE" />
+               </graphic>
+            </Button>
+            <Button layoutX="892.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="CLOSE" />
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>
