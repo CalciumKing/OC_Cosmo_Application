@@ -22,7 +22,7 @@
             <FontAwesomeIcon glyphName="SCISSORS" layoutX="135.0" layoutY="145.0" size="10em" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" visible="false">
+      <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground">
          <children>
             <Label layoutX="44.0" layoutY="43.0" text="Login To Your Account">
                <font>
@@ -36,6 +36,23 @@
             <TextField fx:id="username_txt1" layoutX="44.0" layoutY="239.0" prefHeight="26.0" prefWidth="159.0" promptText="Enter your security answer..." />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" />
+      <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" visible="false">
+         <children>
+            <TextField fx:id="forgotUsername_txt" layoutX="44.0" layoutY="113.0" promptText="Enter your username..." />
+            <Label layoutX="44.0" layoutY="42.0" text="Forgot Password">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="forgotPassword_txt" layoutX="44.0" layoutY="225.0" promptText="Enter your new password" />
+            <ComboBox layoutX="44.0" layoutY="152.0" prefHeight="26.0" prefWidth="211.0" promptText="Choose your security question..." />
+            <TextField fx:id="username_txt11" layoutX="44.0" layoutY="188.0" prefHeight="26.0" prefWidth="159.0" promptText="Enter your security answer..." />
+            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="350.0" text="&lt; Back" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Hyperlink>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
