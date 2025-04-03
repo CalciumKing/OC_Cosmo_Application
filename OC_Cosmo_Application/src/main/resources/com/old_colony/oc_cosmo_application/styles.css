@@ -4,3 +4,7 @@
 .startBackground{
     -fx-background-color:linear-gradient(to top right,  #cb74c8,  Lavender);
 }
+
+.vbox .button {
+    -fx-background-color: transparent;
+}
