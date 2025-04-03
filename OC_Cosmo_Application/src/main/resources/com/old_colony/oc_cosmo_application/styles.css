@@ -1,0 +1,6 @@
+.startPanelBackground{
+    -fx-background-color:linear-gradient(to bottom right,  Lavender,  #cb74c8);
+}
+.startBackground{
+    -fx-background-color:linear-gradient(to top right,  #cb74c8,  Lavender);
+}
