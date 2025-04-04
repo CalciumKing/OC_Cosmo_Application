@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="711.0" style="-fx-background-color: black;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="711.0" style="-fx-background-color: black;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.StartController">
    <children>
       <AnchorPane layoutX="323.0" prefHeight="400.0" prefWidth="390.0" styleClass="startPanelBackground">
          <children>
@@ -45,7 +45,7 @@
                      </font>
                   </Label>
                   <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="124.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-                  <Hyperlink fx:id="forgotPassword_link" layoutX="34.0" layoutY="151.0" text="Forgot Password" textFill="#a600ac" />
+                  <Hyperlink fx:id="forgotPassword_link" layoutX="34.0" layoutY="151.0" onAction="#swapPane" text="Forgot Password" textFill="#a600ac" />
                   <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="239.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <Label layoutX="34.0" layoutY="107.0" text="Password">
                      <font>
@@ -62,12 +62,12 @@
                         <Font size="18.0" />
                      </font>
                   </Button>
-                  <Label layoutX="38.0" layoutY="175.0" text="Security Question">
+                  <Label fx:id="securityQuestion_lbl" layoutX="37.0" layoutY="195.0" text="Question Label">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="securityQuestion_lbl" layoutX="37.0" layoutY="195.0" text="Question Label">
+                  <Label layoutX="36.0" layoutY="175.0" prefHeight="20.0" prefWidth="120.0" text="Security Question">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -78,7 +78,7 @@
       </AnchorPane>
       <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" visible="false">
          <children>
-            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="364.0" text="&lt; Back" textFill="WHITE">
+            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="364.0" onAction="#swapPane" text="&lt; Back" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
