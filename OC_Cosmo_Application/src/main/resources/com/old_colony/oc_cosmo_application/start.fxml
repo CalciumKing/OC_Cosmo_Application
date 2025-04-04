@@ -29,7 +29,7 @@
             <FontAwesomeIcon glyphName="SCISSORS" layoutX="45.0" layoutY="162.0" size="10em" text="" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" visible="false">
+      <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground">
          <children>
             <AnchorPane layoutX="30.0" layoutY="14.0" prefHeight="350.0" prefWidth="270.0" styleClass="infoBox">
                <children>
@@ -45,15 +45,14 @@
                      </font>
                   </Label>
                   <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="124.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-                  <ComboBox fx:id="securityQuestion_box" layoutX="21.0" layoutY="175.0" prefHeight="27.0" prefWidth="227.0" promptText="Security Question" styleClass="textBoxes" />
                   <Hyperlink fx:id="forgotPassword_link" layoutX="34.0" layoutY="151.0" text="Forgot Password" textFill="#a600ac" />
-                  <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="230.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+                  <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="239.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <Label layoutX="34.0" layoutY="107.0" text="Password">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="210.0" text="Security Answer">
+                  <Label layoutX="34.0" layoutY="219.0" text="Security Answer">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -63,11 +62,21 @@
                         <Font size="18.0" />
                      </font>
                   </Button>
+                  <Label layoutX="38.0" layoutY="175.0" text="Security Question">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="securityQuestion_lbl" layoutX="37.0" layoutY="195.0" text="Question Label">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </AnchorPane>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground">
+      <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground" visible="false">
          <children>
             <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="364.0" text="&lt; Back" textFill="WHITE">
                <font>
@@ -87,7 +96,7 @@
                         <Font name="cmb10" size="24.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="forgotQuestion_box" layoutX="21.0" layoutY="115.0" prefHeight="27.0" prefWidth="227.0" promptText="Security Question" styleClass="textBoxes" />
+                  <ComboBox fx:id="forgotQuestion_box" layoutX="29.0" layoutY="116.0" prefHeight="27.0" prefWidth="211.0" promptText="Security Question" styleClass="textBoxes" />
                   <TextField fx:id="forgotAnswer_txt" layoutX="29.0" layoutY="171.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <Label layoutX="29.0" layoutY="205.0" text="New Password">
                      <font>
