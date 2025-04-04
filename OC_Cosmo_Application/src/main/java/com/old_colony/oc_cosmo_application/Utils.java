@@ -49,7 +49,7 @@ public class Utils {
             stage.setScene(new Scene(root));
             
             if (user != null) { // entering application
-                stage.setTitle("Cosmotology Application | " + user.getUsername());
+                stage.setTitle("Cosmetology Application | " + user.getUsername());
                 DashboardController dashboardController = fxmlLoader.getController();
                 dashboardController.welcome(user);
             } else { // editing application
