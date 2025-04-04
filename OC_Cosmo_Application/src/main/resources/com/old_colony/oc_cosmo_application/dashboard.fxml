@@ -29,7 +29,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.DashboardController">
+<AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.DashboardController">
    <children>
       <HBox prefHeight="515.0" prefWidth="918.0">
          <children>
@@ -355,7 +355,7 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="create_pane1" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
                         <Label layoutX="14.0" layoutY="30.0" text="Account">
                            <font>
