@@ -1,8 +1,8 @@
 .startPanelBackground{
-    -fx-background-color:linear-gradient(to top left, #9494ff, #04ffc6);
+    -fx-background-color:linear-gradient(to top left, #ad55ce, lavender);
 }
 .startBackground{
-    -fx-background-color:linear-gradient(to top right,  #9494ff,  #04ffc6);
+    -fx-background-color:linear-gradient(to top right, #ad55ce, lavender);
 }
 
 .vbox .button {
@@ -12,5 +12,21 @@
 .loginButtons{
     -fx-border-radius: 10px;
     -fx-background-radius: 15px;
-    -fx-background-color:linear-gradient(to right, #a7ffd5,  #04ffc6);
+    -fx-background-color: #ff5e5e;
+    -fx-text-fill: white;
+}
+
+.textBoxes{
+    -fx-border-color: gray;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-background-color: light gray;
+}
+
+.infoBox{
+    -fx-background-color:white;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 2;
+    -fx-border-color: gray;
 }
