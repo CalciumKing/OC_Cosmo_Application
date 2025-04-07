@@ -1,5 +1,6 @@
 package com.old_colony.oc_cosmo_application;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class StartController implements Initializable {
+public class StartController{
     @FXML
     private TextField forgotAnswer_txt, forgotPassword_txt, forgotUsername_txt, securityAnswer_txt, username_txt;
 
@@ -29,15 +30,44 @@ public class StartController implements Initializable {
     private PasswordField password_txt;
 
     @FXML
-    private Label securityQuestion_lbl;
+    private Label securityQuestion_lbl, forgotQuestion_lbl;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
-        securityQuestion_lbl.setText(SQLUtils.getSecurityQuestion("mason"));
+    @FXML
+    private void changeSecurityLbl() {
+        fillQuestionLbl(securityQuestion_lbl, username_txt);
+    }
+    @FXML
+    private void changeForgotSecurityLbl(){
+        fillQuestionLbl(forgotQuestion_lbl, forgotUsername_txt);
+    }
+
+    private void fillQuestionLbl(Label question_lbl, TextField username_txt) {
+        question_lbl.setText(SQLUtils.getSecurityQuestion(username_txt.getText()));
     }
 
     private boolean checkInformation(){
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
+    }
+
+    @FXML
+    private void enableForgotPassword() {
+        if(!forgotAnswer_txt.getText().isEmpty() || !forgotUsername_txt.getText().isEmpty()){
+            forgotPassword_txt.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void setNewPassword(){
+        if(forgotPassword_txt.getText().isEmpty() || forgotUsername_txt.getText().isEmpty() || forgotAnswer_txt.getText().isEmpty()){
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Failure",
+                    "Not all boxes filled out",
+                    "Please Fill Out all the boxes"
+            );
+            return;
+        }
+        SQLUtils.changePassword(forgotUsername_txt.getText(), forgotPassword_txt.getText());
     }
 
     @FXML

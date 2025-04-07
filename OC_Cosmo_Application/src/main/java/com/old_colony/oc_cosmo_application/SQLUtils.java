@@ -46,6 +46,19 @@ public class SQLUtils {
 
         return false;
     }
+    public static void changePassword(String username, String newPassword){
+        Connection connect = connectDB();
+        String sql = "UPDATE users SET password = ? WHERE username = ?";
+
+        try{
+            PreparedStatement prepare = connect.prepareStatement(sql);
+            prepare.setString(1, newPassword);
+            prepare.setString(2, username);
+
+            prepare.executeUpdate();
+        }
+        catch(SQLException e){e.printStackTrace();}
+    }
 
     public static String getSecurityQuestion(String username){
         Connection connect = connectDB();

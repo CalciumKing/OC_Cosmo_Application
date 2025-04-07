@@ -15,6 +15,9 @@
     -fx-background-color: #ff5e5e;
     -fx-text-fill: white;
 }
+.loginButtons:hover{
+    -fx-background-color: #ff8989;
+}
 
 .textBoxes{
     -fx-border-color: gray;
