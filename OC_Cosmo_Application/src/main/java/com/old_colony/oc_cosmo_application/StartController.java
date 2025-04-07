@@ -56,6 +56,13 @@ public class StartController{
         }
     }
 
+    private void clearForgotPassword(){
+        forgotPassword_txt.clear();
+        forgotUsername_txt.clear();
+        forgotAnswer_txt.clear();
+        forgotQuestion_lbl.setText("");
+    }
+
     @FXML
     private void setNewPassword(){
         if(forgotPassword_txt.getText().isEmpty() || forgotUsername_txt.getText().isEmpty() || forgotAnswer_txt.getText().isEmpty()){
@@ -68,6 +75,13 @@ public class StartController{
             return;
         }
         SQLUtils.changePassword(forgotUsername_txt.getText(), forgotPassword_txt.getText());
+        clearForgotPassword();
+    }
+
+    private void setInfoOnSwap(){
+        forgotUsername_txt.setText(username_txt.getText());
+        forgotQuestion_lbl.setText(securityQuestion_lbl.getText());
+        forgotAnswer_txt.setText(securityAnswer_txt.getText());
     }
 
     @FXML
@@ -114,6 +128,7 @@ public class StartController{
         if (login_pane.isVisible()) {
             login_pane.setVisible(false);
             forgotPassword_pane.setVisible(true);
+            setInfoOnSwap();
         }else if(forgotPassword_pane.isVisible()) {
             forgotPassword_pane.setVisible(false);
             login_pane.setVisible(true);
