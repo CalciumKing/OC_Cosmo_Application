@@ -1,5 +1,9 @@
 package com.old_colony.oc_cosmo_application;
 
+import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
+import com.old_colony.oc_cosmo_application.DataClasses.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
 import java.sql.*;
@@ -14,15 +18,8 @@ public class SQLUtils {
         }
         return null;
     }
-
-    public static void showAlert(Alert.AlertType type, String title, String content){
-        Alert alert = new Alert(type);
-        alert.setHeaderText(title);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
+    
+    // region Start
     public static boolean logInCheck(String username, String password, String securityAnswer) {
         Connection connect = connectDB();
 
@@ -42,7 +39,9 @@ public class SQLUtils {
                         && resultSet.getString("securityAnswer").equals(securityAnswer);
             }
         }
-        catch(SQLException e){e.printStackTrace();}
+        catch(SQLException e){
+            e.printStackTrace();
+        }
 
         return false;
     }
@@ -77,5 +76,108 @@ public class SQLUtils {
         catch(SQLException e){e.printStackTrace();}
         return null;
     }
+    // endregion
+    
+    // region Dashboard
+    public static ObservableList<User> getAllUsers() {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+            
+            String sql = "select * from users;";
+            
+            ObservableList<User> data = FXCollections.observableArrayList();
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            ResultSet result = prepared.executeQuery();
+            
+            while (result.next())
+                data.add(new User(
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("securityQuestion"),
+                        result.getString("securityAnswer"),
+                        result.getInt("userID"),
+                        result.getBoolean("isAdmin")
+                ));
+            
+            return data;
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getUser",
+                    "Error Getting User From Database",
+                    "There was an error getting a user from the database, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static ObservableList<Appointment> getAllAppointments() {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+            
+            String sql = "select * from appointments;";
+            
+            ObservableList<Appointment> data = FXCollections.observableArrayList();
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            ResultSet result = prepared.executeQuery();
+            
+            while (result.next())
+                data.add(new Appointment(
+                        result.getString("custName"),
+                        getUser(result.getInt("userID")),
+                        Utils.getColor(result.getString("color")),
+                        result.getString("service"),
+                        result.getDouble("cost"),
+                        result.getDate("date"),
+                        result.getInt("startHour"),
+                        result.getInt("startMinute"),
+                        result.getInt("duration")
+                ));
+            
+            return data;
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getUser",
+                    "Error Getting User From Database",
+                    "There was an error getting a user from the database, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static User getUser(int id) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+            
+            String sql = "select * from users where userID = ? limit 1;";
+            
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setInt(1, id);
+            ResultSet result = prepared.executeQuery();
+            
+            if (result.next())
+                return new User(
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("securityQuestion"),
+                        result.getString("securityAnswer"),
+                        result.getInt("userID"),
+                        result.getBoolean("isAdmin")
+                );
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getUser",
+                    "Error Getting User From Database",
+                    "There was an error getting a user from the database, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
+    }
+    // endregion
 
 }

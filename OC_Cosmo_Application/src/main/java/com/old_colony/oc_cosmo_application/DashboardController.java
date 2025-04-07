@@ -2,19 +2,16 @@ package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class DashboardController {
     // region Variables
@@ -32,6 +29,9 @@ public class DashboardController {
     
     @FXML
     private AnchorPane main_pane, home_pane, schedule_pane, create_pane, account_pane, admin_pane;
+    
+    @FXML
+    private GridPane monday_gridPane;
     
     @FXML
     private TextField customerName_field;
@@ -55,15 +55,44 @@ public class DashboardController {
     private User currentUser;
     // endregion
     
+    private void init() {
+        currentUser = null;
+        initSchedules();
+        initForm();
+    }
+    
+    private void initForm() {
+        hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 12, 1));
+        minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 15));
+        services_combobox.setItems(FXCollections.observableArrayList(
+                "Haircut", "Extension", "Coloring",
+                "Straighten/Perm", "Braiding/Styling",
+                "Manicure", "Pedicure", "Other Nail Service",
+                "Facial", "Waxing", "Consultation"
+        ));
+        student_combobox.setItems(SQLUtils.getAllUsers());
+        costDur_lbl.setText("Cost: $0.00 Duration: 0.00");
+    }
+    
+    private void initSchedules() {
+        ObservableList<Appointment> appointments = SQLUtils.getAllAppointments();
+        if (appointments == null) return;
+        
+        for (Appointment appointment : appointments) {
+            Pane pane = new Pane();
+            pane.setStyle("-fx-background-color: " + appointment.getColor() +";");
+            GridPane.setRowIndex(pane, startRow);
+            GridPane.setRowSpan(pane, appointment.getDuration() / 15);
+            GridPane.setColumnIndex(pane, personColumn);
+            monday_gridPane.getChildren().add(pane);
+        }
+    }
+    
     public void welcome(User user) {
+        init();
         welcome_lbl.setText("Welcome, " + user.getUsername());
         windowTitle_lbl.setText("Cosmetology Application | " + user.getUsername());
         currentUser = user;
-    }
-    
-    @FXML
-    void resetForm(ActionEvent event) {
-    
     }
     
     @FXML
@@ -73,7 +102,7 @@ public class DashboardController {
     
     @FXML
     void showPage(ActionEvent event) {
-        AnchorPane[] panes = new AnchorPane[]{home_pane, schedule_pane, create_pane, account_pane, admin_pane};
+        AnchorPane[] panes = new AnchorPane[]{home_pane, schedule_pane, create_pane, account_pane};
         for(AnchorPane pane : panes)
             pane.setVisible(false);
         
@@ -93,6 +122,18 @@ public class DashboardController {
     }
     
     @FXML
+    void resetForm(ActionEvent event) {
+        dateSelect_picker.setValue(null);
+        hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 12, 1, 1));
+        minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));customerName_field.clear();
+        services_combobox.setValue(null);
+        student_combobox.setValue(null);
+        color_picker.setValue(Color.RED);
+        note_area.clear();
+        costDur_lbl.setText("Cost: $0.00 Duration: 0.00");
+    }
+    
+    @FXML
     void submitForm(ActionEvent event) {
     
     }
@@ -103,7 +144,7 @@ public class DashboardController {
     }
     
     @FXML
-    void logOut(ActionEvent event) {
+    void logOut() {
         Utils.changeScene("start.fxml", null);
         main_pane.getScene().getWindow().hide();
     }

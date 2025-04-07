@@ -7,9 +7,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class Utils {
@@ -39,6 +41,15 @@ public class Utils {
         return alert;
     }
     // endregion Alert Methods
+    
+    public static Color getColor(String name) {
+        try {
+            Field field = Class.forName("javafx.scene.paint.Color").getField(name);
+            return (Color)field.get(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
     public static void changeScene(String sceneName, User user) {
         try {

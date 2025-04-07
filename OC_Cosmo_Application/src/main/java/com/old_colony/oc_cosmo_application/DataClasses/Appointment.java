@@ -1,18 +1,23 @@
 package com.old_colony.oc_cosmo_application.DataClasses;
 
+import javafx.scene.paint.Color;
+
 import java.util.Date;
 
 public class Appointment {
-    private String customer, student, service;
+    private String customer, service;
     private double cost;
     private Date date;
+    private User student;
+    private Color color;
     private int hour, minute, duration;
     
-    public Appointment(String customer, String student,
+    public Appointment(String customer, User student, Color color,
                        String service, double cost, Date date,
                        int hour, int minute, int duration) {
         this.customer = customer;
         this.student = student;
+        this.color = color;
         this.service = service;
         this.cost = cost;
         this.date = date;
@@ -28,10 +33,10 @@ public class Appointment {
     public void setCustomer(String customer) {
         this.customer = customer;
     }
-    public String getStudent() {
+    public User getStudent() {
         return student;
     }
-    public void setStudent(String student) {
+    public void setStudent(User student) {
         this.student = student;
     }
     public String getService() {
@@ -69,6 +74,12 @@ public class Appointment {
     }
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+    public Color getColor() {
+        return color;
+    }
+    public void setColor(Color color) {
+        this.color = color;
     }
     // endregion
 }

@@ -103,7 +103,7 @@
             </VBox>
             <AnchorPane prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;">
                <children>
-                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0">
+                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
                         <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
@@ -133,7 +133,7 @@
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0">
                      <children>
                         <TabPane layoutY="29.0" prefHeight="486.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -233,7 +233,7 @@
                                                                   </Label>
                                                                </children>
                                                             </VBox>
-                                                            <GridPane layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
+                                                            <GridPane fx:id="monday_gridPane" layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
                                                               <columnConstraints>
                                                                   <ColumnConstraints />
                                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
