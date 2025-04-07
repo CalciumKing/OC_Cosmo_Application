@@ -2,14 +2,17 @@ package com.old_colony.oc_cosmo_application;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class StartController {
+public class StartController implements Initializable {
     @FXML
     private TextField forgotAnswer_txt, forgotPassword_txt, forgotUsername_txt, securityAnswer_txt, username_txt;
 
@@ -27,6 +30,11 @@ public class StartController {
 
     @FXML
     private Label securityQuestion_lbl;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle){
+        securityQuestion_lbl.setText(SQLUtils.getSecurityQuestion("mason"));
+    }
 
     private boolean checkInformation(){
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());

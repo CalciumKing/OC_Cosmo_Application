@@ -46,4 +46,23 @@ public class SQLUtils {
 
         return false;
     }
+
+    public static String getSecurityQuestion(String username){
+        Connection connect = connectDB();
+
+        String sql = "SELECT securityQuestion FROM users WHERE username = ?";
+        try{
+            PreparedStatement prepare = connect.prepareStatement(sql);
+
+            prepare.setString(1, username);
+
+            ResultSet resultSet = prepare.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getString("securityQuestion");
+            }
+        }
+        catch(SQLException e){e.printStackTrace();}
+        return null;
+    }
+
 }
