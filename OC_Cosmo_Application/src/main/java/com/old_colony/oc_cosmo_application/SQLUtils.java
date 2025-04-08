@@ -112,14 +112,15 @@ public class SQLUtils {
         return null;
     }
     
-    public static ObservableList<Appointment> getAllAppointments() {
+    public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
             
-            String sql = "select * from appointments;";
+            String sql = "select * from appointments where userID = ?;";
             
             ObservableList<Appointment> data = FXCollections.observableArrayList();
             PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
             
             while (result.next())
