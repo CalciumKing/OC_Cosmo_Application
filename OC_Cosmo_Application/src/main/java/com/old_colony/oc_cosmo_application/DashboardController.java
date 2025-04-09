@@ -96,7 +96,7 @@ public class DashboardController implements Initializable {
     private ComboBox<String> services_combobox, student_combobox;
     
     @FXML
-    private RadioButton admin_radio, student_radio;
+    private RadioButton am_radio, pm_radio, admin_radio, student_radio;
     
     @FXML
     private VBox sideMenu;
@@ -113,7 +113,6 @@ public class DashboardController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         currentUser = null;
         initForm();
-        initSchedules(); // remove later, keep in welcome()
     }
     
     // region FXML Methods
@@ -130,11 +129,11 @@ public class DashboardController implements Initializable {
     }
     
     @FXML
-    private void setAMPM(ActionEvent event) {
+    private void setAMPM() {
         hour_spinner.setValueFactory(
-                ((RadioButton) event.getSource()).getText().equals("AM") ?
+                am_radio.isSelected() ?
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1)
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
         );
     }
     
@@ -145,11 +144,19 @@ public class DashboardController implements Initializable {
     
     @FXML
     private void showPage(ActionEvent event) {
-        AnchorPane[] panes = new AnchorPane[]{home_pane, schedule_pane, create_pane, account_pane};
+        AnchorPane[] panes = new AnchorPane[]{
+                home_pane, schedule_pane,
+                create_pane, account_pane,
+                admin_pane
+        };
         for(AnchorPane pane : panes)
             pane.setVisible(false);
         
-        Button[] buttons = new Button[]{home_btn, schedule_btn, appointment_btn, account_btn, admin_btn, logOut_btn};
+        Button[] buttons = new Button[]{
+                home_btn, schedule_btn,
+                appointment_btn, account_btn,
+                admin_btn, logOut_btn
+        };
         Button button = (Button) event.getSource();
         AnchorPane pageToShow = null;
         
@@ -169,10 +176,11 @@ public class DashboardController implements Initializable {
         dateSelect_picker.setValue(null);
         hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
         minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));customerName_field.clear();
-        services_combobox.setValue(null);
-        student_combobox.setValue(null);
-        color_picker.setValue(Color.PINK);
+        services_combobox.setValue("Services");
+        student_combobox.setValue("Select Student");
+        color_picker.setValue(Color.GREY);
         note_area.clear();
+        setAMPM();
         costDur_lbl.setText("Cost: $0.00 Duration: 0.00");
     }
     
@@ -255,16 +263,14 @@ public class DashboardController implements Initializable {
     }
     
     private void initTables() {
-        date_col.setCellValueFactory(cellData -> {
-            Appointment a = cellData.getValue();
-            return new SimpleObjectProperty<>(a.getDate());
-        }); // new PropertyValueFactory<>("date")
+        date_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate()));
         cost_col.setCellValueFactory(new PropertyValueFactory<>("cost"));
         custName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
         service_col.setCellValueFactory(new PropertyValueFactory<>("service"));
-        student_col.setCellValueFactory(cellData -> {
+        student_col.setCellValueFactory(cellData -> { // get rid of later
             User user = cellData.getValue().getStudent();
-            return new SimpleStringProperty(user.getUsername());
+            String username = (user != null) ? user.getUsername() : "Unknown";
+            return new SimpleStringProperty(username);
         });
         duration_col.setCellValueFactory(new PropertyValueFactory<>("duration"));
         
@@ -274,14 +280,33 @@ public class DashboardController implements Initializable {
 //            Appointment a = cellData.getValue();
 //            return new SimpleStringProperty(a.getHour() + ":" + a.getMinute());
 //        });
-        homeName_col.setCellValueFactory(new PropertyValueFactory<>("custName"));
-        homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
-        
+//        homeName_col.setCellValueFactory(new PropertyValueFactory<>("custName"));
+//        homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
+//
 //        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+        
+        if(currentUser.getStatus().isAdmin()) {
+            // init admin tables
+            usersUsername_col.setCellValueFactory(new PropertyValueFactory<>("username"));
+            usersStatus_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStatus())); // new PropertyValueFactory<>("status")
+            
+            users_table.setItems(SQLUtils.getAllUsers());
+            
+            adminDate_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate()));
+            adminCust_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
+            adminService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
+            adminStudent_col.setCellValueFactory(cellData -> { // get rid of later
+                User user = cellData.getValue().getStudent();
+                String username = (user != null) ? user.getUsername() : "Unknown";
+                return new SimpleStringProperty(username);
+            });
+            
+            adminAppointment_table.setItems(SQLUtils.getAllAppointments(-1));
+        }
     }
     
     private void initSchedules() {
-        ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(1); // currentUser.getUserID()
+        ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(currentUser.getUserID());
         if (appointments == null) return;
         
         for (Appointment appointment : appointments) {
@@ -297,23 +322,20 @@ public class DashboardController implements Initializable {
                 GridPane.setColumnIndex(pane, currentMinute / 15 + 1);
                 GridPane.setColumnSpan(pane, minutesThisHour / 15);
                 
-                GridPane day = switch(appointment.getDate().getDay()) {
+                int dayOfWeek = appointment.getDate().getDay();
+                GridPane day = switch(dayOfWeek) {
                     case 1 -> monday_gridPane;
                     case 2 -> tuesday_gridPane;
                     case 3 -> wednesday_gridPane;
                     case 4 -> thursday_gridPane;
                     case 5 -> friday_gridPane;
                     default -> {
-                        System.out.println("Unknown date: " + appointment.getDate().getDay());
+                        System.out.println("Unknown date: " + dayOfWeek);
                         yield null;
                     }
                 };
-                
                 if(day == null) return;
-                
                 day.getChildren().add(pane);
-                
-                
                 
                 remainingMinutes -= minutesThisHour;
                 currentMinute = 0;
@@ -325,7 +347,7 @@ public class DashboardController implements Initializable {
     private void initAccountInfo() {
         id_label.setText(String.valueOf(currentUser.getUserID()));
         username_label.setText(currentUser.getUsername());
-        secQuestion_label.setText(currentUser.getSecurityQuestion());
+        secQuestion_label.setText(currentUser.getSecurityQuestion() + ":");
         secAnswer_label.setText(currentUser.getSecurityAnswer());
         status_label.setText(String.valueOf(currentUser.getStatus()));
     }

@@ -124,7 +124,7 @@
             </VBox>
             <AnchorPane prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;">
                <children>
-                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0">
+                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
                         <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
@@ -677,46 +677,54 @@
                                  </font>
                               </Label>
                               <Line endX="100.0" layoutX="111.0" layoutY="44.0" startX="-100.0" />
-                              <Label layoutX="14.0" layoutY="51.0" text="User ID:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="id_label" layoutX="77.0" layoutY="51.0" text="ID">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="14.0" layoutY="91.0" text="Username:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="username_label" layoutX="93.0" layoutY="91.0" text="myUsername">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="secQuestion_label" layoutX="14.0" layoutY="130.0" text="Security Question:" wrapText="true">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="secAnswer_label" layoutX="147.0" layoutY="130.0" text="Security Answer">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="14.0" layoutY="168.0" text="Access Level:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="status_label" layoutX="112.0" layoutY="168.0" text="ADMIN/STUDENT">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
+                              <VBox layoutX="9.0" layoutY="54.0" prefHeight="137.0" prefWidth="100.0" style="-fx-spacing: 10;">
+                                 <children>
+                                    <Label text="User ID:">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Username:">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="secQuestion_label" text="Security Question:" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Access Level:">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="109.0" layoutY="54.0" prefHeight="137.0" prefWidth="110.0" style="-fx-spacing: 10;">
+                                 <children>
+                                    <Label fx:id="id_label" text="ID">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="username_label" text="myUsername">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="secAnswer_label" text="Security Answer" wrapText="true">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="status_label" text="ADMIN/STUDENT">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
                            </children>
                         </Pane>
                      </children>
@@ -752,12 +760,12 @@
                                           <Tooltip text="Select the minutes in 15-minute increments." />
                                        </tooltip>
                                     </Spinner>
-                                    <RadioButton layoutX="134.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" selected="true" text="AM">
+                                    <RadioButton fx:id="am_radio" layoutX="134.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" selected="true" text="AM">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="AMPM" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton layoutX="182.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" text="PM" toggleGroup="$AMPM" />
+                                    <RadioButton fx:id="pm_radio" layoutX="182.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" text="PM" toggleGroup="$AMPM" />
                                  </children>
                               </Pane>
                               <TextField fx:id="customerName_field" layoutX="452.0" layoutY="26.0" prefHeight="25.0" prefWidth="175.0" promptText="Customer Name" styleClass="textBoxes">
@@ -813,9 +821,9 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="create_pane1" layoutY="28.0" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0">
                      <children>
-                        <TabPane prefHeight="515.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
                             <Tab text="User Add/Delete">
                               <content>
@@ -896,7 +904,7 @@
                             </Tab>
                               <Tab text="Delete Appointment">
                                  <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="754.0">
                                        <children>
                                           <Label layoutX="14.0" layoutY="14.0" text="Delete Appointment">
                                              <font>
@@ -1001,7 +1009,7 @@
       <Pane prefHeight="28.0" prefWidth="918.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="918.0" />
-            <Label fx:id="windowTitle_lbl" disable="true" layoutX="7.0" layoutY="1.0" text="Cosmotology Application | USERNAME">
+            <Label fx:id="windowTitle_lbl" disable="true" layoutX="7.0" layoutY="1.0" text="Cosmetology Application | USERNAME">
                <font>
                   <Font name="Arial Black" size="17.0" />
                </font>
