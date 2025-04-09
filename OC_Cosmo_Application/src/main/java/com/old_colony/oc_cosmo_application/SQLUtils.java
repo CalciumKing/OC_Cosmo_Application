@@ -77,6 +77,31 @@ public class SQLUtils {
         catch(SQLException e){e.printStackTrace();}
         return null;
     }
+
+    public static boolean checkTextBox(String thingToCheck){
+        Connection connect = connectDB();
+
+        String sql = "SELECT * FROM users WHERE username = ? OR password = ? OR securityAnswer = ?";
+
+        try{
+            PreparedStatement prepare = connect.prepareStatement(sql);
+
+            prepare.setString(1, thingToCheck);
+            prepare.setString(2, thingToCheck);
+            prepare.setString(3, thingToCheck);
+
+            ResultSet resultSet = prepare.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getString("password").equals(thingToCheck)
+                        && resultSet.getString("username").equals(thingToCheck)
+                        && resultSet.getString("securityAnswer").equals(thingToCheck);
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
     // endregion
     
     // region Dashboard
@@ -117,12 +142,20 @@ public class SQLUtils {
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
-            String sql = "select * from appointments where userID = ?;";
-            
+            String sql;
+
+            PreparedStatement prepared;
+
+            if(id == -1){
+                sql = "select * from appointments";
+                prepared = connection.prepareStatement(sql);
+            }else{
+                sql = "select * from appointments where userID = ?;";
+                prepared = connection.prepareStatement(sql);
+                prepared.setInt(1, id);
+            }
+
             ObservableList<Appointment> data = FXCollections.observableArrayList();
-            PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
             
             while (result.next())
