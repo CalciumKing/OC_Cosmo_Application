@@ -32,3 +32,9 @@
     -fx-border-width: 2;
     -fx-border-color: gray;
 }
+
+.navButton:hover{
+    -fx-background-color:lightgray;
+    -fx-opacity: .5;
+    -fx-background-radius: 10;
+}

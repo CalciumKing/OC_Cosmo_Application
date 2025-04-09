@@ -77,10 +77,13 @@
       </AnchorPane>
       <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="400.0" prefWidth="330.0" styleClass="startBackground">
          <children>
-            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="364.0" onAction="#swapPane" text="&lt; Back" textFill="WHITE">
+            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="364.0" onAction="#swapPane" text="Back" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
+               <graphic>
+                  <FontAwesomeIcon fill="WHITE" glyphName="ARROW_LEFT" text="" />
+               </graphic>
             </Hyperlink>
             <AnchorPane layoutX="30.0" layoutY="14.0" prefHeight="350.0" prefWidth="270.0" styleClass="infoBox">
                <children>
