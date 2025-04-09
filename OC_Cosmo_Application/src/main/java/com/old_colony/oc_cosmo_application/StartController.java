@@ -140,9 +140,10 @@ public class StartController{
                     "Please Fill Out all the boxes"
             );
         else{
-            if(checkInformation())
+            if(checkInformation()) {
                 Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()), isMaximized);
-            else
+                start.getScene().getWindow().hide();
+            } else
                 Utils.normalAlert(
                         Alert.AlertType.ERROR,
                         "Failure",

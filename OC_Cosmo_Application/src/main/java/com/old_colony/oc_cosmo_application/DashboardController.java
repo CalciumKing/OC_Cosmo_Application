@@ -1,7 +1,9 @@
 package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
+import com.old_colony.oc_cosmo_application.DataClasses.Status;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,40 +31,60 @@ public class DashboardController implements Initializable {
     // region Variables
     // region FXML Variables
     @FXML
-    private Button home_btn, schedule_btn, appointment_btn, account_btn, admin_btn, logOut_btn;
+    private Button home_btn, schedule_btn, appointment_btn,
+            account_btn, admin_btn, logOut_btn;
     
     @FXML
     private ColorPicker color_picker;
     
     @FXML
-    private Label welcome_lbl, costDur_lbl, windowTitle_lbl, id_label, username_label, secQuestion_label, secAnswer_label, status_label;
+    private Label welcome_lbl, costDur_lbl, windowTitle_lbl,
+            id_label, username_label, secQuestion_label,
+            secAnswer_label, status_label, date_label,
+            cost_label, service_label, student_label, duration_label;
     
     @FXML
     private TextArea note_area;
     
     @FXML
-    private AnchorPane main_pane, home_pane, schedule_pane, create_pane, account_pane, admin_pane;
+    private AnchorPane main_pane, home_pane, schedule_pane,
+            create_pane, account_pane, admin_pane;
     
     @FXML
-    private GridPane monday_gridPane, tuesday_gridPane, wednesday_gridPane, thursday_gridPane, friday_gridPane;
+    private GridPane monday_gridPane, tuesday_gridPane,
+            wednesday_gridPane, thursday_gridPane, friday_gridPane;
     
     @FXML
-    private TextField customerName_field;
+    private TextField customerName_field, username_field, password_field,
+            securityQuestion_field, securityAnswer_field;
+    
+    // region Tables
+    @FXML
+    private TableView<Appointment> dailySchedule_table, schedule_table, adminAppointment_table;
     
     @FXML
-    private TableView<Appointment> dailySchedule_table, schedule_table;
+    private TableView<User> users_table;
     
     @FXML
-    private TableColumn<Appointment, Date> date_col;
+    private TableColumn<Appointment, Date> date_col, adminDate_col;
     
     @FXML
     private TableColumn<Appointment, Double> cost_col;
     
     @FXML
-    private TableColumn<Appointment, String> custName_col, service_col, student_col, time_col, homeName_col, homeService_col;
+    private TableColumn<Appointment, String> custName_col, service_col,
+            student_col, time_col, homeName_col, homeService_col,
+            adminCust_col, adminService_col, adminStudent_col;
     
     @FXML
     private TableColumn<Appointment, Integer> duration_col;
+    
+    @FXML
+    private TableColumn<User, String> usersUsername_col;
+    
+    @FXML
+    private TableColumn<User, Status> usersStatus_col;
+    // endregion
     
     @FXML
     private DatePicker dateSelect_picker;
@@ -74,12 +96,14 @@ public class DashboardController implements Initializable {
     private ComboBox<String> services_combobox, student_combobox;
     
     @FXML
+    private RadioButton admin_radio, student_radio;
+    
+    @FXML
     private VBox sideMenu;
     // endregion
     
     // region Private Variables
     private User currentUser;
-    private final GridPane[] weekPanes = new GridPane[] {monday_gridPane};
     private double defaultWidth, defaultHeight;
     private boolean isMaximized, isCollapsed;
     // endregion
@@ -158,6 +182,21 @@ public class DashboardController implements Initializable {
     }
     
     @FXML
+    private void addUser(ActionEvent event) {
+    
+    }
+    
+    @FXML
+    private void deleteUser(ActionEvent event) {
+    
+    }
+    
+    @FXML
+    private void deleteAppointment(ActionEvent event) {
+    
+    }
+    
+    @FXML
     private void toggleMenu() {
         sideMenu.setPrefWidth(isCollapsed ? 200 : 50);
         for(Node node : sideMenu.getChildren()) {
@@ -178,7 +217,6 @@ public class DashboardController implements Initializable {
         Utils.changeScene("start.fxml", null, isMaximized);
         main_pane.getScene().getWindow().hide();
     }
-    
     // endregion
     
     // region Private Helper Methods
@@ -217,9 +255,12 @@ public class DashboardController implements Initializable {
     }
     
     private void initTables() {
-        date_col.setCellValueFactory(new PropertyValueFactory<>("date"));
+        date_col.setCellValueFactory(cellData -> {
+            Appointment a = cellData.getValue();
+            return new SimpleObjectProperty<>(a.getDate());
+        }); // new PropertyValueFactory<>("date")
         cost_col.setCellValueFactory(new PropertyValueFactory<>("cost"));
-        custName_col.setCellValueFactory(new PropertyValueFactory<>("custName"));
+        custName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
         service_col.setCellValueFactory(new PropertyValueFactory<>("service"));
         student_col.setCellValueFactory(cellData -> {
             User user = cellData.getValue().getStudent();
@@ -229,14 +270,14 @@ public class DashboardController implements Initializable {
         
         schedule_table.setItems(SQLUtils.getAllAppointments(-1));
         
-        time_col.setCellValueFactory(cellData -> {
-            Appointment a = cellData.getValue();
-            return new SimpleStringProperty(a.getHour() + ":" + a.getMinute());
-        });
+//        time_col.setCellValueFactory(cellData -> {
+//            Appointment a = cellData.getValue();
+//            return new SimpleStringProperty(a.getHour() + ":" + a.getMinute());
+//        });
         homeName_col.setCellValueFactory(new PropertyValueFactory<>("custName"));
         homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
         
-        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+//        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
     }
     
     private void initSchedules() {
