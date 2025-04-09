@@ -45,6 +45,7 @@ public class SQLUtils {
 
         return false;
     }
+
     public static void changePassword(String username, String newPassword){
         Connection connect = connectDB();
         String sql = "UPDATE users SET password = ? WHERE username = ?";
@@ -111,6 +112,7 @@ public class SQLUtils {
         }
         return null;
     }
+
     
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
@@ -148,17 +150,48 @@ public class SQLUtils {
         }
         return null;
     }
-    
+
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where userID = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
-            
+
+            if (result.next())
+                return new User(
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("securityQuestion"),
+                        result.getString("securityAnswer"),
+                        result.getInt("userID"),
+                        result.getBoolean("isAdmin")
+                );
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getUser",
+                    "Error Getting User From Database",
+                    "There was an error getting a user from the database, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static User getUser(String username) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+
+            String sql = "select * from users where username = ? limit 1;";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setString(1, username);
+            ResultSet result = prepared.executeQuery();
+
             if (result.next())
                 return new User(
                         result.getString("username"),

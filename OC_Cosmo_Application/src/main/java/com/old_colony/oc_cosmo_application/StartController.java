@@ -98,9 +98,9 @@ public class StartController{
                     "Please Fill Out all the boxes"
             );
         else{
-            if(checkInformation()){
-                goToDashboard();
-            }else
+            if(checkInformation())
+                Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
+            else
                 Utils.normalAlert(
                         Alert.AlertType.ERROR,
                         "Failure",
@@ -108,23 +108,6 @@ public class StartController{
                         "Please Try Again"
                 );
         }
-    }
-
-    private void goToDashboard(){
-        try{
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("dashboard.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            //call set user
-            stage.setTitle("Cosmetology Dashboard");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ((Stage) login_pane.getScene().getWindow()).close();
-
     }
 
     @FXML
