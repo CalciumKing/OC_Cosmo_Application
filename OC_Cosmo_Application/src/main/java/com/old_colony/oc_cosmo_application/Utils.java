@@ -1,13 +1,19 @@
 package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.DataClasses.User;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -15,6 +21,8 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class Utils {
+    private static double xOffset, yOffset;
+    
     // region Alert Methods
     public static void normalAlert(Alert.AlertType type, String title,
                                    String headerText, String contentText) {
@@ -42,16 +50,21 @@ public class Utils {
     }
     // endregion Alert Methods
     
-    public static Color getColor(String name) {
+    public static String getColor(String name) {
         try {
-            Field field = Class.forName("javafx.scene.paint.Color").getField(name);
-            return (Color)field.get(null);
+            Color color = Color.web(name.toUpperCase());
+            int r = (int) (color.getRed() * 255),
+                g = (int) (color.getGreen() * 255),
+                b = (int) (color.getBlue() * 255),
+                a = (int) (color.getOpacity() * 255);
+            return String.format("#%02X%02X%02X%02X", r, g, b, a); // hex formatting
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
+            return "#808080"; // grey fallback color
         }
     }
     
-    public static void changeScene(String sceneName, User user) {
+    public static void changeScene(String sceneName, User user, boolean maximized) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
             Parent root = fxmlLoader.load();
@@ -62,7 +75,7 @@ public class Utils {
             if (user != null) { // entering application
                 stage.setTitle("Cosmetology Application | " + user.getUsername());
                 DashboardController dashboardController = fxmlLoader.getController();
-                dashboardController.welcome(user);
+                dashboardController.welcome(user, maximized);
             } else { // editing application
                 stage.setTitle("Cosmetology Application | Login");
             }
@@ -78,4 +91,48 @@ public class Utils {
             e.printStackTrace();
         }
     }
+    
+    // region Window Settings
+    public static void windowMinimize(ActionEvent event) {
+        ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
+    }
+    
+    public static void windowClose() {
+        Platform.exit();
+    }
+    
+    public static void windowClick(MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+    
+    public static void windowDrag(MouseEvent event, AnchorPane pane) {
+        Stage stage = (Stage) pane.getScene().getWindow();
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
+    }
+    
+    public static void windowMaximize(AnchorPane pane, double width,
+                                      double height, boolean alreadyMaximized) {
+        Stage stage = (Stage) pane.getScene().getWindow();
+        Scene scene = stage.getScene();
+        
+        stage.setMaximized(!alreadyMaximized);
+        
+        double ratio = width / height,
+                newWidth = scene.getWidth(), newHeight = scene.getHeight(),
+                scaleFactor = (newWidth / newHeight > ratio) ? newHeight / height : newWidth / width;
+        boolean condition = scaleFactor >= 1;
+        
+        if (condition) {
+            Scale scale = new Scale(scaleFactor, scaleFactor);
+            scale.setPivotX(0);
+            scale.setPivotY(0);
+            scene.getRoot().getTransforms().setAll(scale);
+        }
+        
+        pane.setPrefWidth((condition) ? newWidth / scaleFactor : Math.max(width, newWidth));
+        pane.setPrefHeight((condition) ? newHeight / scaleFactor : Math.max(height, newHeight));
+    }
+    // endregion
 }
