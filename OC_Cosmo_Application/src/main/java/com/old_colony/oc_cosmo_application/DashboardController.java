@@ -392,44 +392,44 @@ public class DashboardController implements Initializable {
         return hour + ":" + min + "-" + endHour + ":" + endMinute;
     }
     // endregion
-    
+
     // region Window Settings
     @FXML
     private void windowMinimize(ActionEvent event) {
         Utils.windowMinimize(event);
     }
-    
+
     @FXML
     private void windowClose() {
         Utils.windowClose();
     }
-    
+
     @FXML
     private void windowClick(MouseEvent event) {
         Utils.windowClick(event);
     }
-    
+
     @FXML
     private void windowDrag(MouseEvent event) {
         if (isMaximized)
             windowMaximize(); // undoing maximization
         Utils.windowDrag(event, main_pane);
     }
-    
+
     @FXML
     private void windowMaximize() {
         if (!isMaximized) {
             Scene scene = main_pane.getScene();
             double initWidth = scene.getWidth(),
                     initHeight = scene.getHeight();
-            
+
             defaultWidth = (defaultWidth == 0) ? scene.getWidth() : defaultWidth;
             defaultHeight = (defaultHeight == 0) ? scene.getHeight() : defaultHeight;
-            
+
             Utils.windowMaximize(main_pane, initWidth, initHeight, false);
         } else
             Utils.windowMaximize(main_pane, defaultWidth, defaultHeight, true);
-        
+
         isMaximized = !isMaximized;
     }
     // endregion
