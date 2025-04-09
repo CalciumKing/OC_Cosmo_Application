@@ -12,7 +12,7 @@ import java.sql.*;
 public class SQLUtils {
     public static Connection connectDB(){
         try{
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/Cosmo", "root", "password");
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306/cosmo", "root", "password");
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -172,7 +172,7 @@ public class SQLUtils {
                         Utils.getColor(result.getString("color")),
                         result.getString("service"),
                         result.getDouble("cost"),
-                        result.getDate("date"),
+                        result.getDate("appDate"),
                         result.getInt("startHour"),
                         result.getInt("startMinute"),
                         result.getInt("duration")
@@ -257,7 +257,7 @@ public class SQLUtils {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
 
-            String sql = "select * from appointments where date(date) = curdate() and userID = ?;";
+            String sql = "select * from appointments where date(appDate) = curdate() and userID = ?;";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
@@ -272,7 +272,7 @@ public class SQLUtils {
                         Utils.getColor(result.getString("color")),
                         result.getString("service"),
                         result.getDouble("cost"),
-                        result.getDate("date"),
+                        result.getDate("appDate"),
                         result.getInt("startHour"),
                         result.getInt("startMinute"),
                         result.getInt("duration")
