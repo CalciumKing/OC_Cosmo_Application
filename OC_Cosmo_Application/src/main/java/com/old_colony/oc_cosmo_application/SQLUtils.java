@@ -22,11 +22,12 @@ public class SQLUtils {
     
     // region Start
     public static boolean logInCheck(String username, String password, String securityAnswer) {
-        Connection connect = connectDB();
 
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ?";
+        try (Connection connect = connectDB()) {
+            if (connect == null) return false;
 
-        try{
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ?";
+
             PreparedStatement prepare = connect.prepareStatement(sql);
 
             prepare.setString(1, username);
@@ -48,10 +49,11 @@ public class SQLUtils {
     }
 
     public static void changePassword(String username, String newPassword){
-        Connection connect = connectDB();
-        String sql = "UPDATE users SET password = ? WHERE username = ?";
+        try (Connection connect = connectDB()) {
+            if (connect == null) return;
 
-        try{
+            String sql = "UPDATE users SET password = ? WHERE username = ?";
+
             PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, newPassword);
             prepare.setString(2, username);
@@ -62,10 +64,11 @@ public class SQLUtils {
     }
 
     public static String getSecurityQuestion(String username){
-        Connection connect = connectDB();
+        try (Connection connect = connectDB()) {
+            if (connect == null) return null;
 
-        String sql = "SELECT securityQuestion FROM users WHERE username = ?";
-        try{
+            String sql = "SELECT securityQuestion FROM users WHERE username = ?";
+
             PreparedStatement prepare = connect.prepareStatement(sql);
 
             prepare.setString(1, username);
@@ -79,23 +82,29 @@ public class SQLUtils {
         return null;
     }
 
-    public static boolean checkTextBox(String thingToCheck){
-        Connection connect = connectDB();
+    public static boolean checkTextBoxes(String thingToCheck, String currentBox){
+        try (Connection connect = connectDB()) {
+            if (connect == null) return false;
 
-        String sql = "SELECT * FROM users WHERE username = ? OR password = ? OR securityAnswer = ?";
+            String sql = "";
 
-        try{
+            if(currentBox.equals("username"))
+                sql = "SELECT * FROM users WHERE username = ?";
+            else if(currentBox.equals("password"))
+                sql = "SELECT * FROM users WHERE password = ?";
+            else if (currentBox.equals("securityAnswer")) {
+                sql = "SELECT * FROM users WHERE securityAnswer = ?";
+            }
+
             PreparedStatement prepare = connect.prepareStatement(sql);
 
             prepare.setString(1, thingToCheck);
-            prepare.setString(2, thingToCheck);
-            prepare.setString(3, thingToCheck);
 
             ResultSet resultSet = prepare.executeQuery();
             if(resultSet.next()){
                 return resultSet.getString("password").equals(thingToCheck)
-                        || resultSet.getString("username").equals(thingToCheck)
-                        || resultSet.getString("securityAnswer").equals(thingToCheck);
+                        || resultSet.getString("securityAnswer").equals(thingToCheck)
+                        || resultSet.getString("username").equals(thingToCheck);
             }
         }
         catch(SQLException e){

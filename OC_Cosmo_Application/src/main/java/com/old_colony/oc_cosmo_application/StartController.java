@@ -3,18 +3,11 @@ package com.old_colony.oc_cosmo_application;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class StartController{
     @FXML
@@ -62,32 +55,33 @@ public class StartController{
 
     @FXML
     private void inputValidation(KeyEvent event) {
-        if(event.getSource().equals(username_txt)){
-            if(SQLUtils.checkTextBox(username_txt.getText())){
+        Object source = event.getSource();
+        if(source.equals(username_txt)){
+            if(SQLUtils.checkTextBoxes(username_txt.getText(), "username")){
                 usernameIcon.setGlyphName("CHECK");
             }else{
                 usernameIcon.setGlyphName("CLOSE");
             }
-        }else if(event.getSource().equals(password_txt)){
-            if(SQLUtils.checkTextBox(password_txt.getText())){
+        }else if(source.equals(password_txt)){
+            if(SQLUtils.checkTextBoxes(password_txt.getText(), "password")){
                 passwordIcon.setGlyphName("CHECK");
             }else{
                 passwordIcon.setGlyphName("CLOSE");
             }
-        } else if (event.getSource().equals(securityAnswer_txt)) {
-            if(SQLUtils.checkTextBox(securityAnswer_txt.getText())){
+        } else if (source.equals(securityAnswer_txt)) {
+            if(SQLUtils.checkTextBoxes(securityAnswer_txt.getText(), "securityAnswer")){
                 answerIcon.setGlyphName("CHECK");
             }else{
                 answerIcon.setGlyphName("CLOSE");
             }
-        } else if (event.getSource().equals(forgotUsername_txt)) {
-            if(SQLUtils.checkTextBox(forgotUsername_txt.getText())){
+        } else if (source.equals(forgotUsername_txt)) {
+            if(SQLUtils.checkTextBoxes(username_txt.getText(), "username")){
                 forgotUsernameIcon.setGlyphName("CHECK");
             }else{
                 forgotUsernameIcon.setGlyphName("CLOSE");
             }
-        } else if (event.getSource().equals(forgotAnswer_txt)) {
-            if(SQLUtils.checkTextBox(forgotAnswer_txt.getText())){
+        } else if (source.equals(forgotAnswer_txt)) {
+            if(SQLUtils.checkTextBoxes(securityAnswer_txt.getText(), "securityAnswer")){
                 forgotAnswerIcon.setGlyphName("CHECK");
             }else{
                 forgotAnswerIcon.setGlyphName("CLOSE");
