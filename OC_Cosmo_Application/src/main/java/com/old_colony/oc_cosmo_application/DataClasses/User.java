@@ -1,13 +1,14 @@
 package com.old_colony.oc_cosmo_application.DataClasses;
 
 public class User {
-    private String username, password, securityQuestion, securityAnswer;
+    private String username, securityAnswer;
+    private transient String password, securityQuestion;
     private final int userID;
-    private boolean status;
+    private Status status;
     
     public User(String username, String password,
                 String securityQuestion, String securityAnswer,
-                int userID, boolean status) {
+                int userID, Status status) {
         this.username = username;
         this.password = password;
         this.securityQuestion = securityQuestion;
@@ -44,10 +45,10 @@ public class User {
     public int getUserID() {
         return userID;
     }
-    public boolean getStatus() {
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(boolean status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
     // endregion

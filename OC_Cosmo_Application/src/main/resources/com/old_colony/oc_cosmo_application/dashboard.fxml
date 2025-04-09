@@ -72,9 +72,9 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="appointment_btn" layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#showPage" styleClass="navButton" text="Create Appointment">
+                  <Button fx:id="account_btn" layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#showPage" styleClass="navButton" text="Account">
                      <graphic>
-                        <FontAwesomeIcon glyphName="PLUS" />
+                        <FontAwesomeIcon glyphName="USER" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -83,9 +83,9 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="account_btn" layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#showPage" styleClass="navButton" text="Account">
+                  <Button fx:id="appointment_btn" layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#showPage" styleClass="navButton" text="Create Appointment">
                      <graphic>
-                        <FontAwesomeIcon glyphName="USER" />
+                        <FontAwesomeIcon glyphName="PLUS" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
@@ -145,16 +145,16 @@
                               </Label>
                               <TableView fx:id="dailySchedule_table" layoutX="13.0" layoutY="53.0" prefHeight="296.0" prefWidth="459.0">
                                 <columns>
-                                  <TableColumn prefWidth="82.0" text="Time" />
-                                  <TableColumn prefWidth="204.66665649414062" text="Name" />
-                                    <TableColumn prefWidth="172.66668701171875" text="Service" />
+                                  <TableColumn fx:id="time_col" prefWidth="82.0" text="Time" />
+                                  <TableColumn fx:id="homeName_col" prefWidth="204.66665649414062" text="Customer Name" />
+                                    <TableColumn fx:id="homeService_col" prefWidth="172.66668701171875" text="Service" />
                                 </columns>
                               </TableView>
                            </children>
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0">
                      <children>
                         <TabPane layoutY="29.0" prefHeight="486.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -164,12 +164,12 @@
                                        <children>
                                           <TableView fx:id="schedule_table" onMouseClicked="#scheduleTableSelected" prefHeight="486.0" prefWidth="754.0">
                                             <columns>
-                                              <TableColumn prefWidth="89.33334350585938" text="Date/Time" />
-                                              <TableColumn prefWidth="66.66664123535156" text="Cost" />
-                                                <TableColumn prefWidth="133.99993896484375" text="Customer Name" />
-                                                <TableColumn prefWidth="140.66665649414062" text="Service" />
-                                                <TableColumn prefWidth="150.0" text="Student" />
-                                                <TableColumn prefWidth="174.66668701171875" text="Duration" />
+                                              <TableColumn fx:id="date_col" prefWidth="89.33334350585938" text="Date/Time" />
+                                              <TableColumn fx:id="cost_col" prefWidth="66.66664123535156" text="Cost" />
+                                                <TableColumn fx:id="custName_col" prefWidth="133.99993896484375" text="Customer Name" />
+                                                <TableColumn fx:id="service_col" prefWidth="140.66665649414062" text="Service" />
+                                                <TableColumn fx:id="student_col" prefWidth="150.0" text="Student" />
+                                                <TableColumn fx:id="duration_col" prefWidth="174.66668701171875" text="Duration" />
                                             </columns>
                                           </TableView>
                                        </children>
@@ -276,10 +276,382 @@
                                                       </AnchorPane>
                                                 </content>
                                               </Tab>
-                                                <Tab text="Tuesday" />
-                                                <Tab text="Wednesday" />
-                                                <Tab text="Thursday" />
-                                                <Tab text="Friday" />
+                                                <Tab text="Tuesday">
+                                                   <content>
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER" layoutX="108.0" prefHeight="62.0" prefWidth="635.0" style="-fx-spacing: 120;">
+                                                               <children>
+                                                                  <Label text=":00">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":15">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":30">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":45">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="611.0" layoutY="26.0" text=":60">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </HBox>
+                                                            <VBox alignment="CENTER" layoutY="64.0" prefHeight="351.0" prefWidth="91.0" style="-fx-spacing: 20;">
+                                                               <children>
+                                                                  <Label text="8:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="10.0" text="9:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="27.0" text="10:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="45.0" text="11:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="62.0" text="12:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="79.0" text="1:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="97.0" text="2:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </VBox>
+                                                            <GridPane fx:id="tuesday_gridPane" layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
+                                                               <columnConstraints>
+                                                                  <ColumnConstraints />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                               </columnConstraints>
+                                                               <rowConstraints>
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                               </rowConstraints>
+                                                            </GridPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab text="Wednesday">
+                                                   <content>
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER" layoutX="108.0" prefHeight="62.0" prefWidth="635.0" style="-fx-spacing: 120;">
+                                                               <children>
+                                                                  <Label text=":00">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":15">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":30">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":45">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="611.0" layoutY="26.0" text=":60">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </HBox>
+                                                            <VBox alignment="CENTER" layoutY="64.0" prefHeight="351.0" prefWidth="91.0" style="-fx-spacing: 20;">
+                                                               <children>
+                                                                  <Label text="8:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="10.0" text="9:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="27.0" text="10:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="45.0" text="11:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="62.0" text="12:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="79.0" text="1:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="97.0" text="2:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </VBox>
+                                                            <GridPane fx:id="wednesday_gridPane" layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
+                                                               <columnConstraints>
+                                                                  <ColumnConstraints />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                               </columnConstraints>
+                                                               <rowConstraints>
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                               </rowConstraints>
+                                                            </GridPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab text="Thursday">
+                                                   <content>
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER" layoutX="108.0" prefHeight="62.0" prefWidth="635.0" style="-fx-spacing: 120;">
+                                                               <children>
+                                                                  <Label text=":00">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":15">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":30">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":45">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="611.0" layoutY="26.0" text=":60">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </HBox>
+                                                            <VBox alignment="CENTER" layoutY="64.0" prefHeight="351.0" prefWidth="91.0" style="-fx-spacing: 20;">
+                                                               <children>
+                                                                  <Label text="8:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="10.0" text="9:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="27.0" text="10:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="45.0" text="11:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="62.0" text="12:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="79.0" text="1:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="97.0" text="2:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </VBox>
+                                                            <GridPane fx:id="thursday_gridPane" layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
+                                                               <columnConstraints>
+                                                                  <ColumnConstraints />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                               </columnConstraints>
+                                                               <rowConstraints>
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                               </rowConstraints>
+                                                            </GridPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab text="Friday">
+                                                   <content>
+                                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER" layoutX="108.0" prefHeight="62.0" prefWidth="635.0" style="-fx-spacing: 120;">
+                                                               <children>
+                                                                  <Label text=":00">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":15">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":30">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label text=":45">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="611.0" layoutY="26.0" text=":60">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </HBox>
+                                                            <VBox alignment="CENTER" layoutY="64.0" prefHeight="351.0" prefWidth="91.0" style="-fx-spacing: 20;">
+                                                               <children>
+                                                                  <Label text="8:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="10.0" text="9:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="27.0" text="10:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="45.0" text="11:00am">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="62.0" text="12:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="79.0" text="1:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                                  <Label layoutX="10.0" layoutY="97.0" text="2:00pm">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="20.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </VBox>
+                                                            <GridPane fx:id="friday_gridPane" layoutX="91.0" layoutY="67.0" prefHeight="346.0" prefWidth="653.0" styleClass="infoBox">
+                                                               <columnConstraints>
+                                                                  <ColumnConstraints />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                               </columnConstraints>
+                                                               <rowConstraints>
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                               </rowConstraints>
+                                                            </GridPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </content>
+                                                </Tab>
                                             </tabs>
                                           </TabPane>
                                        </children>
@@ -290,7 +662,66 @@
                         </TabPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="create_pane" prefHeight="515.0" prefWidth="754.0">
+                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" visible="false">
+                     <children>
+                        <Label layoutX="14.0" layoutY="30.0" text="Account">
+                           <font>
+                              <Font name="System Bold" size="35.0" />
+                           </font>
+                        </Label>
+                        <Pane layoutX="14.0" layoutY="81.0" prefHeight="203.0" prefWidth="715.0" styleClass="infoBox">
+                           <children>
+                              <Label layoutX="14.0" layoutY="14.0" text="Account Information">
+                                 <font>
+                                    <Font name="System Bold Italic" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Line endX="100.0" layoutX="111.0" layoutY="44.0" startX="-100.0" />
+                              <Label layoutX="14.0" layoutY="51.0" text="User ID:">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="id_label" layoutX="77.0" layoutY="51.0" text="ID">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="14.0" layoutY="91.0" text="Username:">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="username_label" layoutX="93.0" layoutY="91.0" text="myUsername">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="secQuestion_label" layoutX="14.0" layoutY="130.0" text="Security Question:" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="secAnswer_label" layoutX="147.0" layoutY="130.0" text="Security Answer">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="14.0" layoutY="168.0" text="Access Level:">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="status_label" layoutX="112.0" layoutY="168.0" text="ADMIN/STUDENT">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="create_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
                      <children>
                         <Label layoutX="14.0" layoutY="30.0" text="Create an Appointment">
                            <font>
@@ -339,7 +770,7 @@
                                     <Tooltip text="Select the service the customer wants." />
                                  </tooltip>
                               </ComboBox>
-                              <ComboBox fx:id="student_combobox" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes">
+                              <ComboBox fx:id="student_combobox" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
                                  <tooltip>
                                     <Tooltip text="Choose the student performing the service." />
                                  </tooltip>
@@ -380,45 +811,6 @@
                               <Font name="System Bold" size="25.0" />
                            </font>
                         </Label>
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" visible="false">
-                     <children>
-                        <Label layoutX="14.0" layoutY="30.0" text="Account">
-                           <font>
-                              <Font name="System Bold" size="35.0" />
-                           </font>
-                        </Label>
-                        <Pane layoutX="14.0" layoutY="81.0" prefHeight="203.0" prefWidth="715.0" styleClass="infoBox">
-                           <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Account Information">
-                                 <font>
-                                    <Font name="System Bold Italic" size="20.0" />
-                                 </font>
-                              </Label>
-                              <Line endX="100.0" layoutX="111.0" layoutY="44.0" startX="-100.0" />
-                              <Label layoutX="14.0" layoutY="51.0" text="User ID:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="14.0" layoutY="91.0" text="Username:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="14.0" layoutY="130.0" text="Security Question:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="14.0" layoutY="168.0" text="Access Level:">
-                                 <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </Pane>
                      </children>
                   </AnchorPane>
                </children>

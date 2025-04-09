@@ -99,7 +99,8 @@ public class StartController{
             );
         else{
             if(checkInformation())
-                Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
+                System.out.println();
+//                Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
             else
                 Utils.normalAlert(
                         Alert.AlertType.ERROR,

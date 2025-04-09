@@ -17,7 +17,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class Utils {
@@ -76,7 +75,7 @@ public class Utils {
                 stage.setTitle("Cosmetology Application | " + user.getUsername());
                 DashboardController dashboardController = fxmlLoader.getController();
                 dashboardController.welcome(user, maximized);
-            } else { // editing application
+            } else { // exiting application
                 stage.setTitle("Cosmetology Application | Login");
             }
             
