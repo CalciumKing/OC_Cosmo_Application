@@ -1,11 +1,13 @@
 package com.old_colony.oc_cosmo_application;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -17,6 +19,9 @@ import java.util.ResourceBundle;
 public class StartController{
     @FXML
     private TextField forgotAnswer_txt, forgotPassword_txt, forgotUsername_txt, securityAnswer_txt, username_txt;
+
+    @FXML
+    private FontAwesomeIcon usernameIcon, passwordIcon, answerIcon, forgotAnswerIcon, forgotUsernameIcon;
 
     @FXML
     private Hyperlink forgotPassword_link, login_link;
@@ -37,12 +42,14 @@ public class StartController{
     private boolean isMaximized;
 
     @FXML
-    private void changeSecurityLbl() {
+    private void changeSecurityLbl(KeyEvent event) {
         fillQuestionLbl(securityQuestion_lbl, username_txt);
+        inputValidation(event);
     }
     @FXML
-    private void changeForgotSecurityLbl(){
+    private void changeForgotSecurityLbl(KeyEvent event){
         fillQuestionLbl(forgotQuestion_lbl, forgotUsername_txt);
+        inputValidation(event);
     }
 
     private void fillQuestionLbl(Label question_lbl, TextField username_txt) {
@@ -51,6 +58,41 @@ public class StartController{
 
     private boolean checkInformation(){
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
+    }
+
+    @FXML
+    private void inputValidation(KeyEvent event) {
+        if(event.getSource().equals(username_txt)){
+            if(SQLUtils.checkTextBox(username_txt.getText())){
+                usernameIcon.setGlyphName("CHECK");
+            }else{
+                usernameIcon.setGlyphName("CLOSE");
+            }
+        }else if(event.getSource().equals(password_txt)){
+            if(SQLUtils.checkTextBox(password_txt.getText())){
+                passwordIcon.setGlyphName("CHECK");
+            }else{
+                passwordIcon.setGlyphName("CLOSE");
+            }
+        } else if (event.getSource().equals(securityAnswer_txt)) {
+            if(SQLUtils.checkTextBox(securityAnswer_txt.getText())){
+                answerIcon.setGlyphName("CHECK");
+            }else{
+                answerIcon.setGlyphName("CLOSE");
+            }
+        } else if (event.getSource().equals(forgotUsername_txt)) {
+            if(SQLUtils.checkTextBox(forgotUsername_txt.getText())){
+                forgotUsernameIcon.setGlyphName("CHECK");
+            }else{
+                forgotUsernameIcon.setGlyphName("CLOSE");
+            }
+        } else if (event.getSource().equals(forgotAnswer_txt)) {
+            if(SQLUtils.checkTextBox(forgotAnswer_txt.getText())){
+                forgotAnswerIcon.setGlyphName("CHECK");
+            }else{
+                forgotAnswerIcon.setGlyphName("CLOSE");
+            }
+        }
     }
 
     @FXML
@@ -99,8 +141,7 @@ public class StartController{
             );
         else{
             if(checkInformation())
-                System.out.println();
-//                Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
+                Utils.changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()), isMaximized);
             else
                 Utils.normalAlert(
                         Alert.AlertType.ERROR,

@@ -1,6 +1,7 @@
 package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
+import com.old_colony.oc_cosmo_application.DataClasses.Status;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -93,8 +94,8 @@ public class SQLUtils {
             ResultSet resultSet = prepare.executeQuery();
             if(resultSet.next()){
                 return resultSet.getString("password").equals(thingToCheck)
-                        && resultSet.getString("username").equals(thingToCheck)
-                        && resultSet.getString("securityAnswer").equals(thingToCheck);
+                        || resultSet.getString("username").equals(thingToCheck)
+                        || resultSet.getString("securityAnswer").equals(thingToCheck);
             }
         }
         catch(SQLException e){
@@ -122,7 +123,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        result.getBoolean("isAdmin")
+                        createStatus(result.getInt("status"))
                 ));
             
             return data;
@@ -135,6 +136,12 @@ public class SQLUtils {
             );
             e.printStackTrace();
         }
+        return null;
+    }
+
+    private static Status createStatus(int status) {
+        if(status == 0) return Status.STUDENT;
+        else if (status == 1) return Status.ADMIN;
         return null;
     }
 
@@ -201,7 +208,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        result.getBoolean("isAdmin")
+                        createStatus(result.getInt("status"))
                 );
         } catch (Exception e) {
             Utils.normalAlert(
@@ -232,8 +239,46 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        result.getBoolean("isAdmin")
+                        createStatus(result.getInt("status"))
                 );
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getUser",
+                    "Error Getting User From Database",
+                    "There was an error getting a user from the database, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ObservableList<Appointment> getTodaysAppointments(int id) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+
+            String sql = "select * from appointments where date(date) = curdate() and userID = ?;";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setInt(1, id);
+
+            ObservableList<Appointment> data = FXCollections.observableArrayList();
+            ResultSet result = prepared.executeQuery();
+
+            while (result.next())
+                data.add(new Appointment(
+                        result.getString("custName"),
+                        getUser(result.getInt("userID")),
+                        Utils.getColor(result.getString("color")),
+                        result.getString("service"),
+                        result.getDouble("cost"),
+                        result.getDate("date"),
+                        result.getInt("startHour"),
+                        result.getInt("startMinute"),
+                        result.getInt("duration")
+                ));
+
+            return data;
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
