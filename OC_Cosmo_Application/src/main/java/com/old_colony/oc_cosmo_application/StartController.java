@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -21,7 +22,7 @@ public class StartController{
     private Hyperlink forgotPassword_link, login_link;
 
     @FXML
-    private AnchorPane forgotPassword_pane, login_pane;
+    private AnchorPane forgotPassword_pane, login_pane, start;
 
     @FXML
     private ComboBox<String> forgotQuestion_box;
@@ -31,6 +32,9 @@ public class StartController{
 
     @FXML
     private Label securityQuestion_lbl, forgotQuestion_lbl;
+    
+    private double defaultWidth, defaultHeight;
+    private boolean isMaximized;
 
     @FXML
     private void changeSecurityLbl() {
@@ -134,4 +138,45 @@ public class StartController{
             login_pane.setVisible(true);
         }
     }
+    
+    // region Window Settings
+    @FXML
+    private void windowMinimize(ActionEvent event) {
+        Utils.windowMinimize(event);
+    }
+    
+    @FXML
+    private void windowClose() {
+        Utils.windowClose();
+    }
+    
+    @FXML
+    private void windowClick(MouseEvent event) {
+        Utils.windowClick(event);
+    }
+    
+    @FXML
+    private void windowDrag(MouseEvent event) {
+        if (isMaximized)
+            windowMaximize(); // undoing maximization
+        Utils.windowDrag(event, start);
+    }
+    
+    @FXML
+    private void windowMaximize() {
+        if (!isMaximized) {
+            Scene scene = start.getScene();
+            double initWidth = scene.getWidth(),
+                    initHeight = scene.getHeight();
+            
+            defaultWidth = (defaultWidth == 0) ? scene.getWidth() : defaultWidth;
+            defaultHeight = (defaultHeight == 0) ? scene.getHeight() : defaultHeight;
+            
+            Utils.windowMaximize(start, initWidth, initHeight, false);
+        } else
+            Utils.windowMaximize(start, defaultWidth, defaultHeight, true);
+        
+        isMaximized = !isMaximized;
+    }
+    // endregion
 }
