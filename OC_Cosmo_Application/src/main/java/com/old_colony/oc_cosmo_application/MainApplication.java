@@ -3,6 +3,7 @@ package com.old_colony.oc_cosmo_application;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -15,6 +16,7 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");
+        stage.getIcons().add(new Image("AppIcon.png"));
         stage.setScene(scene);
         stage.show();
     }

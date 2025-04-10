@@ -124,7 +124,6 @@ public class SQLUtils {
         }
         return null;
     }
-    
     // endregion
     
     // region Dashboard
@@ -404,15 +403,15 @@ public class SQLUtils {
             
             return data;
         } catch (Exception e) {
-            Utils.normalAlert( // fix this error to make sense for this method
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getTodaysAppointments",
                     "Error Getting Today's Appointments From Database",
                     "There was an error getting today's appointments from the database, please try again."
             );
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
     // endregion
 }

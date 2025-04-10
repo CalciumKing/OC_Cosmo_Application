@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
@@ -31,6 +32,7 @@ public abstract class AbstractController {
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image("AppIcon.png"));
             
             if (user != null) { // entering application
                 stage.setTitle("Cosmetology Application | " + user.getUsername());

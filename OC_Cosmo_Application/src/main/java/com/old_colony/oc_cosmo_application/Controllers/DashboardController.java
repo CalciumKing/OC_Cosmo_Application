@@ -403,6 +403,7 @@ public class DashboardController extends AbstractController implements Initializ
             case WEDNESDAY -> 1;
             case THURSDAY -> 2;
             case FRIDAY -> 3;
+//            case SATURDAY, SUNDAY ->
             default -> throw new IllegalArgumentException();
         };
         
