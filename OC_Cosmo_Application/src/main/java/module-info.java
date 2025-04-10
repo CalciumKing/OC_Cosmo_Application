@@ -8,4 +8,6 @@ module com.old_colony.oc_cosmo_application {
     opens com.old_colony.oc_cosmo_application to javafx.fxml;
     exports com.old_colony.oc_cosmo_application;
     exports com.old_colony.oc_cosmo_application.DataClasses;
+    exports com.old_colony.oc_cosmo_application.Controllers;
+    opens com.old_colony.oc_cosmo_application.Controllers to javafx.base, javafx.fxml;
 }

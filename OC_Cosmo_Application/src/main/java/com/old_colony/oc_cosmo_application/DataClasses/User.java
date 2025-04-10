@@ -1,8 +1,8 @@
 package com.old_colony.oc_cosmo_application.DataClasses;
 
 public class User {
-    private String username, securityAnswer;
     private transient String password, securityQuestion;
+    private String username, securityAnswer;
     private final int userID;
     private Status status;
     
@@ -16,14 +16,15 @@ public class User {
         this.userID = userID;
         this.status = status;
     }
-
-    public User(String username, String password, String securityAnswer) {
+    
+    public User(String username, String password,
+                String securityAnswer) {
         this.username = username;
         this.password = password;
         this.securityAnswer = securityAnswer;
         this.userID = 0;
     }
-
+    
     // region Getters/Setters
     public String getUsername() {
         return username;

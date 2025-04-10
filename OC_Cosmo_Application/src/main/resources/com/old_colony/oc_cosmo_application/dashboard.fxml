@@ -32,7 +32,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.DashboardController">
+<AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
    <children>
       <HBox prefHeight="515.0" prefWidth="918.0">
          <children>
@@ -124,7 +124,7 @@
             </VBox>
             <AnchorPane prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;">
                <children>
-                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0">
                      <children>
                         <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
@@ -147,7 +147,7 @@
                                 <columns>
                                   <TableColumn fx:id="time_col" prefWidth="82.0" text="Time" />
                                   <TableColumn fx:id="homeName_col" prefWidth="204.66665649414062" text="Customer Name" />
-                                    <TableColumn fx:id="homeService_col" prefWidth="172.66668701171875" text="Service" />
+                                    <TableColumn fx:id="homeService_col" prefWidth="167.0" text="Service" />
                                 </columns>
                               </TableView>
                            </children>
@@ -180,7 +180,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TabPane prefHeight="459.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
+                                          <TabPane fx:id="weekSchedules_tabPane" prefHeight="459.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                                             <tabs>
                                               <Tab text="Monday">
                                                 <content>
@@ -765,7 +765,7 @@
                                           <ToggleGroup fx:id="AMPM" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="pm_radio" layoutX="182.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" text="PM" toggleGroup="$AMPM" />
+                                    <RadioButton layoutX="182.0" layoutY="5.0" mnemonicParsing="false" onAction="#setAMPM" text="PM" toggleGroup="$AMPM" />
                                  </children>
                               </Pane>
                               <TextField fx:id="customerName_field" layoutX="452.0" layoutY="26.0" prefHeight="25.0" prefWidth="175.0" promptText="Customer Name" styleClass="textBoxes">
@@ -778,7 +778,7 @@
                                     <Tooltip text="Select the service the customer wants." />
                                  </tooltip>
                               </ComboBox>
-                              <ComboBox fx:id="student_combobox" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
+                              <ComboBox fx:id="student_combobox" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes">
                                  <tooltip>
                                     <Tooltip text="Choose the student performing the service." />
                                  </tooltip>
@@ -821,7 +821,7 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0">
+                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0" visible="false">
                      <children>
                         <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -834,10 +834,10 @@
                                                 <Font name="System Bold" size="35.0" />
                                              </font>
                                           </Label>
-                                          <TableView fx:id="users_table" layoutX="56.0" layoutY="84.0" prefHeight="330.0" prefWidth="174.0">
+                                          <TableView fx:id="users_table" layoutX="56.0" layoutY="84.0" onMouseClicked="#userTableSelected" prefHeight="330.0" prefWidth="174.0">
                                             <columns>
-                                              <TableColumn fx:id="usersUsername_col" prefWidth="99.0" text="Username" />
-                                              <TableColumn fx:id="usersStatus_col" prefWidth="74.0" text="Status" />
+                                              <TableColumn fx:id="usersUsername_col" prefWidth="92.0" text="Username" />
+                                              <TableColumn fx:id="usersStatus_col" prefWidth="78.0" text="Status" />
                                             </columns>
                                           </TableView>
                                           <Pane layoutX="272.0" layoutY="96.0" prefHeight="137.0" prefWidth="364.0" styleClass="infoBox">
@@ -847,7 +847,7 @@
                                                       <Tooltip text="Enter the customer's full name." />
                                                    </tooltip>
                                                 </TextField>
-                                                <ComboBox fx:id="student_combobox1" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
+                                                <ComboBox layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
                                                    <tooltip>
                                                       <Tooltip text="Choose the student performing the service." />
                                                    </tooltip>
@@ -911,17 +911,17 @@
                                                 <Font name="System Bold" size="35.0" />
                                              </font>
                                           </Label>
-                                          <TableView fx:id="adminAppointment_table" layoutX="14.0" layoutY="83.0" prefHeight="330.0" prefWidth="413.0">
+                                          <TableView fx:id="adminAppointment_table" layoutX="14.0" layoutY="83.0" onMouseClicked="#appointmentTableSelected" prefHeight="330.0" prefWidth="413.0">
                                              <columns>
                                                 <TableColumn fx:id="adminDate_col" prefWidth="99.0" text="Date/Time" />
-                                                <TableColumn fx:id="adminCust_col" prefWidth="128.0" text="Customer Name" />
-                                                <TableColumn fx:id="adminService_col" prefWidth="99.0" text="Service" />
-                                                <TableColumn fx:id="adminStudent_col" prefWidth="86.0" text="Student" />
+                                                <TableColumn fx:id="adminCust_col" prefWidth="113.0" text="Customer Name" />
+                                                <TableColumn fx:id="adminService_col" prefWidth="103.0" text="Service" />
+                                                <TableColumn fx:id="adminStudent_col" prefWidth="92.0" text="Student" />
                                              </columns>
                                           </TableView>
                                           <Pane layoutX="444.0" layoutY="95.0" prefHeight="137.0" prefWidth="297.0" styleClass="infoBox">
                                              <children>
-                                                <ComboBox fx:id="student_combobox11" layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
+                                                <ComboBox layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
                                                    <tooltip>
                                                       <Tooltip text="Choose the student performing the service." />
                                                    </tooltip>

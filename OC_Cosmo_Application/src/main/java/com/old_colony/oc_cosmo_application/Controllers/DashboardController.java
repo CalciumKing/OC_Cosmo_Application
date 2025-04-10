@@ -1,8 +1,10 @@
-package com.old_colony.oc_cosmo_application;
+package com.old_colony.oc_cosmo_application.Controllers;
 
 import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
 import com.old_colony.oc_cosmo_application.DataClasses.Status;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
+import com.old_colony.oc_cosmo_application.SQLUtils;
+import com.old_colony.oc_cosmo_application.Utils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -12,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -24,10 +25,11 @@ import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class DashboardController implements Initializable {
+public class DashboardController extends AbstractController implements Initializable {
     // region Variables
     // region FXML Variables
     @FXML
@@ -47,7 +49,7 @@ public class DashboardController implements Initializable {
     private TextArea note_area;
     
     @FXML
-    private AnchorPane main_pane, home_pane, schedule_pane,
+    private AnchorPane home_pane, schedule_pane,
             create_pane, account_pane, admin_pane;
     
     @FXML
@@ -66,14 +68,11 @@ public class DashboardController implements Initializable {
     private TableView<User> users_table;
     
     @FXML
-    private TableColumn<Appointment, Date> date_col, adminDate_col;
-    
-    @FXML
     private TableColumn<Appointment, Double> cost_col;
     
     @FXML
-    private TableColumn<Appointment, String> custName_col, service_col,
-            student_col, time_col, homeName_col, homeService_col,
+    private TableColumn<Appointment, String> date_col, custName_col, service_col,
+            student_col, time_col, homeName_col, homeService_col, adminDate_col,
             adminCust_col, adminService_col, adminStudent_col;
     
     @FXML
@@ -96,7 +95,10 @@ public class DashboardController implements Initializable {
     private ComboBox<String> services_combobox, student_combobox;
     
     @FXML
-    private RadioButton am_radio, pm_radio, admin_radio, student_radio;
+    private RadioButton am_radio, admin_radio, student_radio;
+    
+    @FXML
+    private TabPane weekSchedules_tabPane;
     
     @FXML
     private VBox sideMenu;
@@ -106,14 +108,19 @@ public class DashboardController implements Initializable {
     private User currentUser;
     private double defaultWidth, defaultHeight;
     private boolean isMaximized, isCollapsed;
+    private final HashMap<String, ArrayList<Integer>> servicesAndCost = new HashMap<>();
     // endregion
     // endregion
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         currentUser = null;
+        initHashMap();
         initForm();
+        initTabDays();
     }
+    
+
     
     // region FXML Methods
     public void welcome(User user, boolean maximized) {
@@ -121,6 +128,7 @@ public class DashboardController implements Initializable {
         windowTitle_lbl.setText("Cosmetology Application | " + user.getUsername());
         currentUser = user;
         isMaximized = maximized;
+        
         if (maximized) windowMaximize();
         initTables();
         initSchedules();
@@ -132,8 +140,8 @@ public class DashboardController implements Initializable {
     private void setAMPM() {
         hour_spinner.setValueFactory(
                 am_radio.isSelected() ?
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
         );
     }
     
@@ -149,7 +157,7 @@ public class DashboardController implements Initializable {
                 create_pane, account_pane,
                 admin_pane
         };
-        for(AnchorPane pane : panes)
+        for (AnchorPane pane : panes)
             pane.setVisible(false);
         
         Button[] buttons = new Button[]{
@@ -161,13 +169,13 @@ public class DashboardController implements Initializable {
         AnchorPane pageToShow = null;
         
         for (int i = 0; i < buttons.length; i++) {
-            if(button.equals(buttons[i])) {
+            if (button.equals(buttons[i])) {
                 pageToShow = panes[i];
                 break;
             }
         }
         
-        if(pageToShow != null)
+        if (pageToShow != null)
             pageToShow.setVisible(true);
     }
     
@@ -175,7 +183,8 @@ public class DashboardController implements Initializable {
     private void resetForm() {
         dateSelect_picker.setValue(null);
         hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
-        minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));customerName_field.clear();
+        minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
+        customerName_field.clear();
         services_combobox.setValue("Services");
         student_combobox.setValue("Select Student");
         color_picker.setValue(Color.GREY);
@@ -185,31 +194,95 @@ public class DashboardController implements Initializable {
     }
     
     @FXML
-    private void submitForm(ActionEvent event) {
-    
+    private void submitForm() {
+        String customer = customerName_field.getText(),
+                service = services_combobox.getValue();
+        
+        if (service.contains("---")) { // divider, not a valid service
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Divider Selected",
+                    "Cannot Select A Divider For A Service",
+                    "Please select a valid service that is not a divider item."
+            );
+            return;
+        }
+        
+        int hour = hour_spinner.getValue(),
+                minute = minute_spinner.getValue(),
+                studentID = SQLUtils.getUser(student_combobox.getValue()).getUserID(),
+                cost = servicesAndCost.get(service).getFirst(),
+                duration = servicesAndCost.get(service).getLast();
+        
+        LocalDate date = dateSelect_picker.getValue();
+        Color color = color_picker.getValue();
+        
+        SQLUtils.createAppointment(hour, minute, duration, studentID, customer, service, cost, date, color);
+        resetForm();
+        reloadAppointmentTables();
     }
     
     @FXML
-    private void addUser(ActionEvent event) {
-    
+    private void addUser() {
+        String username = username_field.getText(),
+                password = password_field.getText(),
+                secQuestion = securityQuestion_field.getText(),
+                secAnswer = securityAnswer_field.getText();
+        
+        boolean isAdmin = admin_radio.isSelected();
+        
+        SQLUtils.createUser(username, password, secQuestion, secAnswer, isAdmin);
+        reloadUserTable();
     }
     
     @FXML
-    private void deleteUser(ActionEvent event) {
-    
+    private void deleteUser() {
+        SQLUtils.deleteUser(username_field.getText());
+        reloadUserTable();
     }
     
     @FXML
-    private void deleteAppointment(ActionEvent event) {
+    private void userTableSelected() {
+        User user = users_table.getSelectionModel().getSelectedItem();
+        if (user == null) return;
+        
+        username_field.setText(user.getUsername());
+        password_field.setText(user.getPassword());
+        securityQuestion_field.setText(user.getSecurityQuestion());
+        securityAnswer_field.setText(user.getSecurityAnswer());
+        
+        // no need to set other to false because they are in the same group
+        if (user.getStatus().isAdmin())
+            admin_radio.setSelected(true);
+        else
+            student_radio.setSelected(true);
+    }
     
+    @FXML
+    private void deleteAppointment() {
+        SQLUtils.deleteAppointment(student_label.getText(), service_label.getText());
+        reloadAppointmentTables();
+    }
+    
+    @FXML
+    private void appointmentTableSelected() {
+        Appointment a = adminAppointment_table.getSelectionModel().getSelectedItem();
+        if (a == null) return;
+        
+        date_label.setText(a.getDate().toString());
+        cost_label.setText("$" + a.getCost());
+        service_label.setText(a.getService());
+        User student = a.getStudent();
+        student_label.setText((student == null) ? "Error" : student.getUsername());
+        duration_label.setText(a.getDuration() + " minutes");
     }
     
     @FXML
     private void toggleMenu() {
         sideMenu.setPrefWidth(isCollapsed ? 200 : 50);
-        for(Node node : sideMenu.getChildren()) {
-            if(node instanceof Button button) {
-                if(isCollapsed)
+        for (Node node : sideMenu.getChildren()) {
+            if (node instanceof Button button) {
+                if (isCollapsed)
                     button.setText((String) button.getUserData());
                 else {
                     button.setUserData(button.getText());
@@ -222,26 +295,63 @@ public class DashboardController implements Initializable {
     
     @FXML
     private void logOut() {
-        Utils.changeScene("start.fxml", null, isMaximized);
+        changeScene("start.fxml", null);
         main_pane.getScene().getWindow().hide();
     }
     // endregion
     
     // region Private Helper Methods
+    private void initHashMap() {
+        addService("--- Cuts ---", -1, -1);
+        addService("Haircut (No Blow Dry)", 5, 45);
+        addService("Haircut (Blow Dry)", 8, 60);
+        addService("--- Color ---", -1, -1);
+        addService("Hair Color Retouch", 30, 90);
+        addService("Full Color Application", 35, 120);
+        addService("Cap Highlight", 25, 90);
+        addService("'Sunshine' Highlight", 25, 90);
+        addService("Partial Foil", 35, 120);
+        addService("Full Head Foil", 50, 150);
+        addService("Special Effects Highlight/Color", 45, 120);
+        addService("--- Styling ---", -1, -1);
+        addService("Formal Up Styles", 15, 45);
+        addService("Braids or Twists", 10, 30);
+        addService("Wash & Blow Dry", 8, 30);
+        addService("--- Smoothing & Conditioning ---", -1, -1);
+        addService("Conditioning Treatment & Blow Dry", 15, 45);
+        addService("Keratin Complex Express Blow Out", 60, 120);
+        addService("Keratin Complex Treatment", 90, 120);
+        addService("Perms", 35, 90);
+        addService("--- Nails ---", -1, -1);
+        addService("Manicure", 10, 30);
+        addService("Manicure With Paraffin Wax", 15, 45);
+        addService("Hot Oil Manicure", 12, 45);
+        addService("Paraffin Wax Drip", 5, 15);
+        addService("Pedicure", 15, 30);
+        addService("Gel Nail Polish & Manicure", 15, 45);
+        addService("Gel Polish Removal", 8, 30);
+        addService("--- Makeup & Facials ---", -1, -1);
+        addService("Makeup Application", 10, 30);
+        addService("Facial Application & Mask", 10, 45);
+        addService("--- Hair Shaping & Removal ---", -1, -1);
+        addService("Facial Hair Tweezing", 3, 15);
+        addService("Single Area Waxing", 5, 15);
+        addService("Two Area Waxing", 8, 30);
+    }
+    
+    private void addService(String name, int cost, int duration) {
+        ArrayList<Integer> temp = new ArrayList<>();
+        temp.add(cost);
+        temp.add(duration);
+        servicesAndCost.put(name, temp);
+    }
+    
     private void initForm() {
-//        costDur_lbl.setText("Cost: $0.00 Duration: 0.00");
-//        hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
-//        minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
-        services_combobox.setItems(FXCollections.observableArrayList(
-                "Haircut", "Extension", "Coloring",
-                "Straighten/Perm", "Braiding/Styling",
-                "Manicure", "Pedicure", "Other Nail Service",
-                "Facial", "Waxing", "Consultation"
-        ));
+        services_combobox.setItems(FXCollections.observableArrayList(servicesAndCost.keySet()));
         
         // make only certain users available
         ObservableList<User> allUsers = SQLUtils.getAllUsers();
-        if(allUsers == null) return;
+        if (allUsers == null) return;
         
         allUsers.forEach(user -> student_combobox.getItems().add(user.getUsername()));
         
@@ -262,8 +372,36 @@ public class DashboardController implements Initializable {
         resetForm();
     }
     
+    private void initTabDays() {
+        ObservableList<Tab> tabs = weekSchedules_tabPane.getTabs();
+        
+        int i = switch (LocalDate.now().getDayOfWeek()) {
+            // nothing to remove on monday
+            case TUESDAY -> 0;
+            case WEDNESDAY -> 1;
+            case THURSDAY -> 2;
+            case FRIDAY -> 3;
+            default -> throw new IllegalArgumentException();
+        };
+        
+        for (; i >= 0; i--)
+            tabs.remove(i);
+    }
+    
     private void initTables() {
-        date_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate()));
+        time_col.setCellValueFactory(cellData -> {
+            Appointment a = cellData.getValue();
+            return new SimpleStringProperty(a.getHour() + ":" + a.getMinute());
+        });
+        homeName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
+        homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
+        
+        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+        
+        date_col.setCellValueFactory(cellData -> {
+            Appointment a = cellData.getValue();
+            return new SimpleObjectProperty<>(a.getDate() + " @ " + a.getHour() + ":" + a.getMinute());
+        });
         cost_col.setCellValueFactory(new PropertyValueFactory<>("cost"));
         custName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
         service_col.setCellValueFactory(new PropertyValueFactory<>("service"));
@@ -276,23 +414,16 @@ public class DashboardController implements Initializable {
         
         schedule_table.setItems(SQLUtils.getAllAppointments(-1));
         
-//        time_col.setCellValueFactory(cellData -> {
-//            Appointment a = cellData.getValue();
-//            return new SimpleStringProperty(a.getHour() + ":" + a.getMinute());
-//        });
-//        homeName_col.setCellValueFactory(new PropertyValueFactory<>("custName"));
-//        homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
-//
-//        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
-        
-        if(currentUser.getStatus().isAdmin()) {
-            // init admin tables
+        if (currentUser.getStatus().isAdmin()) { // init admin tables
             usersUsername_col.setCellValueFactory(new PropertyValueFactory<>("username"));
             usersStatus_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStatus())); // new PropertyValueFactory<>("status")
             
             users_table.setItems(SQLUtils.getAllUsers());
             
-            adminDate_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDate()));
+            adminDate_col.setCellValueFactory(cellData -> {
+                Appointment a = cellData.getValue();
+                return new SimpleObjectProperty<>(a.getDate() + " @ " + a.getHour() + ":" + a.getMinute());
+            });
             adminCust_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
             adminService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
             adminStudent_col.setCellValueFactory(cellData -> { // get rid of later
@@ -318,30 +449,29 @@ public class DashboardController implements Initializable {
                 int minutesThisHour = Math.min(60 - currentMinute, remainingMinutes);
                 
                 Pane pane = createAppointmentPane(appointment);
-                GridPane.setRowIndex(pane, appointment.getHour() - 8 + rowOffset);
+                GridPane.setRowIndex(pane, (appointment.getHour() > 8) ? appointment.getHour() - 8 : appointment.getHour() + rowOffset);
                 GridPane.setColumnIndex(pane, currentMinute / 15 + 1);
                 GridPane.setColumnSpan(pane, minutesThisHour / 15);
                 
-                int dayOfWeek = appointment.getDate().getDay();
-                GridPane day = switch(dayOfWeek) {
-                    case 1 -> monday_gridPane;
-                    case 2 -> tuesday_gridPane;
-                    case 3 -> wednesday_gridPane;
-                    case 4 -> thursday_gridPane;
-                    case 5 -> friday_gridPane;
-                    default -> {
-                        System.out.println("Unknown date: " + dayOfWeek);
-                        yield null;
-                    }
-                };
-                if(day == null) return;
-                day.getChildren().add(pane);
+                getDay(appointment).getChildren().add(pane);
                 
                 remainingMinutes -= minutesThisHour;
                 currentMinute = 0;
                 rowOffset++;
             }
         }
+    }
+    
+    private GridPane getDay(Appointment appointment) {
+        int dayOfWeek = appointment.getDate().getDay();
+        return switch (dayOfWeek) {
+            case 1 -> monday_gridPane;
+            case 2 -> tuesday_gridPane;
+            case 3 -> wednesday_gridPane;
+            case 4 -> thursday_gridPane;
+            case 5 -> friday_gridPane;
+            default -> throw new IllegalArgumentException("Unknown date: " + dayOfWeek);
+        };
     }
     
     private void initAccountInfo() {
@@ -353,7 +483,7 @@ public class DashboardController implements Initializable {
     }
     
     private void showAdminPages() {
-        if(currentUser.getStatus().isAdmin()) {
+        if (currentUser.getStatus().isAdmin()) {
             admin_btn.setVisible(true);
             appointment_btn.setVisible(true);
         } else {
@@ -391,46 +521,17 @@ public class DashboardController implements Initializable {
         
         return hour + ":" + min + "-" + endHour + ":" + endMinute;
     }
-    // endregion
-
-    // region Window Settings
-    @FXML
-    private void windowMinimize(ActionEvent event) {
-        Utils.windowMinimize(event);
+    
+    private void reloadAppointmentTables() {
+        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+        ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(-1);
+        schedule_table.setItems(appointments);
+        adminAppointment_table.setItems(appointments);
+        initSchedules();
     }
-
-    @FXML
-    private void windowClose() {
-        Utils.windowClose();
-    }
-
-    @FXML
-    private void windowClick(MouseEvent event) {
-        Utils.windowClick(event);
-    }
-
-    @FXML
-    private void windowDrag(MouseEvent event) {
-        if (isMaximized)
-            windowMaximize(); // undoing maximization
-        Utils.windowDrag(event, main_pane);
-    }
-
-    @FXML
-    private void windowMaximize() {
-        if (!isMaximized) {
-            Scene scene = main_pane.getScene();
-            double initWidth = scene.getWidth(),
-                    initHeight = scene.getHeight();
-
-            defaultWidth = (defaultWidth == 0) ? scene.getWidth() : defaultWidth;
-            defaultHeight = (defaultHeight == 0) ? scene.getHeight() : defaultHeight;
-
-            Utils.windowMaximize(main_pane, initWidth, initHeight, false);
-        } else
-            Utils.windowMaximize(main_pane, defaultWidth, defaultHeight, true);
-
-        isMaximized = !isMaximized;
+    
+    private void reloadUserTable() {
+        users_table.setItems(SQLUtils.getAllUsers());
     }
     // endregion
 }

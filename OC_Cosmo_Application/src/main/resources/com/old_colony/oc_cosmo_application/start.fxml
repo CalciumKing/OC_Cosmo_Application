@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="start" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.StartController">
+<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
    <children>
       <AnchorPane layoutX="370.0" prefHeight="430.0" prefWidth="395.0" styleClass="startPanelBackground">
          <children>
@@ -40,7 +40,7 @@
                   </Label>
                   <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="269.0" onAction="#logIn" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-                  <Hyperlink fx:id="forgotPassword_link" layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#a600ac" />
+                  <Hyperlink layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#a600ac" />
                   <Label layoutX="34.0" layoutY="124.0" text="Password">
                      <font>
                         <Font size="14.0" />
@@ -72,7 +72,7 @@
       </AnchorPane>
       <AnchorPane fx:id="forgotPassword_pane" layoutX="-6.0" prefHeight="430.0" prefWidth="377.0" styleClass="startBackground" visible="false">
          <children>
-            <Hyperlink fx:id="login_link" layoutX="14.0" layoutY="35.0" onAction="#swapPane" text="Back" textFill="WHITE">
+            <Hyperlink layoutX="14.0" layoutY="35.0" onAction="#swapPane" text="Back" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -127,7 +127,7 @@
       <Pane prefHeight="28.0" prefWidth="765.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="766.0" />
-            <Label fx:id="windowTitle_lbl" disable="true" layoutX="7.0" layoutY="1.0" text="Cosmetology Application Login">
+            <Label disable="true" layoutX="7.0" layoutY="1.0" text="Cosmetology Application Login">
                <font>
                   <Font name="Arial Black" size="17.0" />
                </font>
