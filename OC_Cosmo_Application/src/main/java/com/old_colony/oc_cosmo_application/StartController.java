@@ -1,6 +1,7 @@
 package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.DataClasses.Controller;
+import com.old_colony.oc_cosmo_application.DataClasses.User;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,16 +11,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.HashMap;
+
 public class StartController implements Controller {
     // region Variables
     // region FXML Variables
     @FXML
     private TextField forgotAnswer_txt, forgotPassword_txt,
             forgotUsername_txt, securityAnswer_txt, username_txt;
-
-    @FXML
-    private FontAwesomeIcon usernameIcon, passwordIcon,
-            answerIcon, forgotAnswerIcon, forgotUsernameIcon;
 
     @FXML
     private Hyperlink forgotPassword_link, login_link;
@@ -45,15 +44,13 @@ public class StartController implements Controller {
 
     // region FXML Methods
     @FXML
-    private void changeSecurityLbl(KeyEvent event) {
+    private void changeSecurityLbl() {
         fillQuestionLbl(securityQuestion_lbl, username_txt);
-        inputValidation(event);
     }
 
     @FXML
-    private void changeForgotSecurityLbl(KeyEvent event) {
+    private void changeForgotSecurityLbl() {
         fillQuestionLbl(forgotQuestion_lbl, forgotUsername_txt);
-        inputValidation(event);
     }
 
     private void fillQuestionLbl(Label question_lbl, TextField username_txt) {
@@ -64,41 +61,6 @@ public class StartController implements Controller {
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
     }
 
-    @FXML
-    private void inputValidation(KeyEvent event) { // try to find a way to clean this up, this hurts to look at
-        Object source = event.getSource();
-        if (source.equals(username_txt)) {
-            if (SQLUtils.checkTextBoxes(username_txt.getText(), "username")) {
-                usernameIcon.setGlyphName("CHECK");
-            } else {
-                usernameIcon.setGlyphName("CLOSE");
-            }
-        } else if (source.equals(password_txt)) {
-            if (SQLUtils.checkTextBoxes(password_txt.getText(), "password")) {
-                passwordIcon.setGlyphName("CHECK");
-            } else {
-                passwordIcon.setGlyphName("CLOSE");
-            }
-        } else if (source.equals(securityAnswer_txt)) {
-            if (SQLUtils.checkTextBoxes(securityAnswer_txt.getText(), "securityAnswer")) {
-                answerIcon.setGlyphName("CHECK");
-            } else {
-                answerIcon.setGlyphName("CLOSE");
-            }
-        } else if (source.equals(forgotUsername_txt)) {
-            if (SQLUtils.checkTextBoxes(username_txt.getText(), "username")) {
-                forgotUsernameIcon.setGlyphName("CHECK");
-            } else {
-                forgotUsernameIcon.setGlyphName("CLOSE");
-            }
-        } else if (source.equals(forgotAnswer_txt)) {
-            if (SQLUtils.checkTextBoxes(securityAnswer_txt.getText(), "securityAnswer")) {
-                forgotAnswerIcon.setGlyphName("CHECK");
-            } else {
-                forgotAnswerIcon.setGlyphName("CLOSE");
-            }
-        }
-    }
 
     @FXML
     private void enableForgotPassword() {

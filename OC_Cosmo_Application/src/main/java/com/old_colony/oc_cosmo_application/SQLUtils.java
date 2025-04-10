@@ -6,8 +6,10 @@ import com.old_colony.oc_cosmo_application.DataClasses.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class SQLUtils {
     public static Connection connectDB() {
@@ -44,7 +46,12 @@ public class SQLUtils {
                         && resultSet.getString("username").equals(username)
                         && resultSet.getString("securityAnswer").equals(securityAnswer);
         } catch (SQLException e) {
-            // put error in login check here
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in logInCheck",
+                    "Error Checking User Logging In",
+                    "There was an error allowing the user to log in, please try again."
+            );
             e.printStackTrace();
         }
 
@@ -63,7 +70,12 @@ public class SQLUtils {
 
             prepare.executeUpdate();
         } catch (SQLException e) {
-            // put error in changepassword here
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in changePassword",
+                    "Error Changing Password Using Database",
+                    "There was an error changing password, please try again."
+            );
             e.printStackTrace();
         }
     }
@@ -81,38 +93,17 @@ public class SQLUtils {
             if (resultSet.next())
                 return resultSet.getString("securityQuestion");
         } catch (SQLException e) {
-            // put error in getsecurityquestion here
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getSecurityQuestion",
+                    "Error Getting Security Question From Database",
+                    "There was an error getting the security question from the database, please try again."
+            );
             e.printStackTrace();
         }
         return null;
     }
 
-    public static boolean checkTextBoxes(String thingToCheck, String currentBox) {
-        try (Connection connect = connectDB()) {
-            if (connect == null) return false;
-
-            String sql = "SELECT * FROM users WHERE " + switch (currentBox) {
-                case "username" -> "username";
-                case "password" -> "password";
-                case "securityAnswer" -> "securityAnswer";
-                default -> throw new IllegalArgumentException();
-            } + " = ?;";
-
-            PreparedStatement prepare = connect.prepareStatement(sql);
-
-            prepare.setString(1, thingToCheck);
-
-            ResultSet resultSet = prepare.executeQuery();
-            if (resultSet.next())
-                return resultSet.getString("password").equals(thingToCheck) ||
-                        resultSet.getString("securityAnswer").equals(thingToCheck) ||
-                        resultSet.getString("username").equals(thingToCheck);
-        } catch (SQLException e) {
-            // put error in checkTextBoxes here
-            e.printStackTrace();
-        }
-        return false;
-    }
     // endregion
 
     // region Dashboard
@@ -157,6 +148,56 @@ public class SQLUtils {
         };
     }
 
+    public static void createAppointment(int hour, int minute, int duration, int studentID, String customer, String service, int cost, LocalDate date, Color color){
+        try (Connection connection = connectDB()) {
+            if (connection == null) return;
+            String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?)";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setInt(1, hour);
+            prepared.setInt(2, minute);
+            prepared.setInt(3, duration);
+            prepared.setInt(4, studentID);
+            prepared.setString(5, customer);
+            prepared.setString(6, service);
+            prepared.setInt(7, cost);
+            prepared.setDate(8, Date.valueOf(date));
+            prepared.setString(9, color.toString());
+
+            prepared.executeUpdate();
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in createAppointment",
+                    "Error Creating Appointment",
+                    "There was an error creating the appointment, please try again."
+            );
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAppointment(String username, String service){
+        try (Connection connection = connectDB()) {
+            if (connection == null) return;
+            String sql = "DELETE FROM appointments WHERE username = ? AND service = ?";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setString(1, username);
+            prepared.setString(2, service);
+
+            prepared.executeUpdate();
+
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in createAppointment",
+                    "Error Deleting Appointment",
+                    "There was an error deleting the appointment, please try again."
+            );
+            e.printStackTrace();
+        }
+    }
+
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
@@ -198,6 +239,52 @@ public class SQLUtils {
             );
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private static void createUser(String username, String password, String secQuestion, String secAnswer, int isAdmin){
+        try (Connection connection = connectDB()) {
+            if (connection == null) return;
+            String sql = "INSERT INTO users (username, password, securityQuestion, securityAnswer, isAdmin) VALUES (?,?,?,?,?)";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setString(1, username);
+            prepared.setString(2, password);
+            prepared.setString(3, secQuestion);
+            prepared.setString(4, secAnswer);
+            prepared.setInt(5, isAdmin);
+
+            prepared.executeUpdate();
+
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in createAppointment",
+                    "Error Creating Appointment",
+                    "There was an error creating the appointment, please try again."
+            );
+            e.printStackTrace();
+        }
+    }
+    public static void deleteUser(String username) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return;
+
+            String sql = "DELETE FROM appointments WHERE username = ?";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setString(1, username);
+
+            prepared.executeUpdate();
+
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in deleteUser",
+                    "Error Deleting User",
+                    "There was an error deleting the user, please try again."
+            );
+            e.printStackTrace();
         }
     }
 
@@ -292,9 +379,9 @@ public class SQLUtils {
         } catch (Exception e) {
             Utils.normalAlert( // fix this error to make sense for this method
                     Alert.AlertType.ERROR,
-                    "Error in getUser",
-                    "Error Getting User From Database",
-                    "There was an error getting a user from the database, please try again."
+                    "Error in getTodaysAppointments",
+                    "Error Getting Today's Appointments From Database",
+                    "There was an error getting today's appointments from the database, please try again."
             );
             e.printStackTrace();
         }

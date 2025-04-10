@@ -16,7 +16,14 @@ public class User {
         this.userID = userID;
         this.status = status;
     }
-    
+
+    public User(String username, String password, String securityAnswer) {
+        this.username = username;
+        this.password = password;
+        this.securityAnswer = securityAnswer;
+        this.userID = 0;
+    }
+
     // region Getters/Setters
     public String getUsername() {
         return username;

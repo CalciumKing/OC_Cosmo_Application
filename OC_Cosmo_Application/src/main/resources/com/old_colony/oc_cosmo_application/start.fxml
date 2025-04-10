@@ -38,8 +38,8 @@
                         <Font name="cmb10" size="24.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="141.0" onKeyTyped="#inputValidation" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-                  <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="269.0" onAction="#logIn" onKeyTyped="#inputValidation" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+                  <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+                  <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="269.0" onAction="#logIn" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <Hyperlink fx:id="forgotPassword_link" layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#a600ac" />
                   <Label layoutX="34.0" layoutY="124.0" text="Password">
                      <font>
@@ -66,9 +66,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <FontAwesomeIcon fx:id="usernameIcon" glyphName="CLOSE" layoutX="11.0" layoutY="102.0" />
-                  <FontAwesomeIcon fx:id="passwordIcon" glyphName="CLOSE" layoutX="11.0" layoutY="158.0" />
-                  <FontAwesomeIcon fx:id="answerIcon" glyphName="CLOSE" layoutX="12.0" layoutY="286.0" />
                </children>
             </AnchorPane>
          </children>
@@ -96,7 +93,7 @@
                         <Font name="cmb10" size="24.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="forgotAnswer_txt" layoutX="29.0" layoutY="208.0" onKeyPressed="#enableForgotPassword" onKeyTyped="#inputValidation" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+                  <TextField fx:id="forgotAnswer_txt" layoutX="29.0" layoutY="208.0" onKeyPressed="#enableForgotPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <Label layoutX="29.0" layoutY="236.0" text="New Password">
                      <font>
                         <Font size="14.0" />
@@ -123,8 +120,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <FontAwesomeIcon fx:id="forgotUsernameIcon" glyphName="CLOSE" layoutX="13.0" layoutY="116.0" />
-                  <FontAwesomeIcon fx:id="forgotAnswerIcon" glyphName="CLOSE" layoutX="13.0" layoutY="225.0" />
                </children>
             </AnchorPane>
          </children>
