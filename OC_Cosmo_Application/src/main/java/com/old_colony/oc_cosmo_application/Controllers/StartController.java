@@ -22,8 +22,6 @@ public class StartController extends AbstractController {
     private Label securityQuestion_lbl, forgotQuestion_lbl;
     // endregion
     
-  
-    
     // region FXML Methods
     @FXML
     private void changeSecurityLbl() {

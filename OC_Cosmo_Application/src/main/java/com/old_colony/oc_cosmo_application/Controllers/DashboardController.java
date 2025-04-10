@@ -5,6 +5,10 @@ import com.old_colony.oc_cosmo_application.DataClasses.Status;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
 import com.old_colony.oc_cosmo_application.SQLUtils;
 import com.old_colony.oc_cosmo_application.Utils;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,18 +26,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardController extends AbstractController implements Initializable {
     // region Variables
     // region FXML Variables
     @FXML
-    private Button home_btn, schedule_btn, appointment_btn,
+    private Button home_btn, schedule_btn,
             account_btn, admin_btn, logOut_btn;
     
     @FXML
@@ -42,7 +48,7 @@ public class DashboardController extends AbstractController implements Initializ
     @FXML
     private Label welcome_lbl, costDur_lbl, windowTitle_lbl,
             id_label, username_label, secQuestion_label,
-            secAnswer_label, status_label, date_label,
+            secAnswer_label, status_label, date_label, customer_label,
             cost_label, service_label, student_label, duration_label;
     
     @FXML
@@ -50,7 +56,7 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private AnchorPane home_pane, schedule_pane,
-            create_pane, account_pane, admin_pane;
+            account_pane, admin_pane;
     
     @FXML
     private GridPane monday_gridPane, tuesday_gridPane,
@@ -106,8 +112,7 @@ public class DashboardController extends AbstractController implements Initializ
     
     // region Private Variables
     private User currentUser;
-    private double defaultWidth, defaultHeight;
-    private boolean isMaximized, isCollapsed;
+    private boolean isCollapsed;
     private final HashMap<String, ArrayList<Integer>> servicesAndCost = new HashMap<>();
     // endregion
     // endregion
@@ -120,8 +125,6 @@ public class DashboardController extends AbstractController implements Initializ
         initTabDays();
     }
     
-
-    
     // region FXML Methods
     public void welcome(User user, boolean maximized) {
         welcome_lbl.setText("Welcome, " + user.getUsername());
@@ -133,7 +136,7 @@ public class DashboardController extends AbstractController implements Initializ
         initTables();
         initSchedules();
         initAccountInfo();
-        showAdminPages();
+        admin_btn.setVisible(currentUser.getStatus().isAdmin());
     }
     
     @FXML
@@ -154,16 +157,14 @@ public class DashboardController extends AbstractController implements Initializ
     private void showPage(ActionEvent event) {
         AnchorPane[] panes = new AnchorPane[]{
                 home_pane, schedule_pane,
-                create_pane, account_pane,
-                admin_pane
+                account_pane, admin_pane
         };
         for (AnchorPane pane : panes)
             pane.setVisible(false);
         
         Button[] buttons = new Button[]{
                 home_btn, schedule_btn,
-                appointment_btn, account_btn,
-                admin_btn, logOut_btn
+                account_btn, admin_btn, logOut_btn
         };
         Button button = (Button) event.getSource();
         AnchorPane pageToShow = null;
@@ -237,8 +238,18 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private void deleteUser() {
-        SQLUtils.deleteUser(username_field.getText());
-        reloadUserTable();
+        Optional<ButtonType> optionSelected = Utils.confirmAlert(
+                Alert.AlertType.CONFIRMATION,
+                "Confirm Delete User",
+                "Are You Sure You Want To Delete This User?",
+                "Delete user: " + username_field.getText(),
+                "Yes, Delete " + username_field.getText(),
+                "Cancel"
+        );
+        if (optionSelected.isPresent() && !optionSelected.get().getText().equals("Cancel")) {
+            SQLUtils.deleteUser(username_field.getText());
+            reloadUserTable();
+        }
     }
     
     @FXML
@@ -260,8 +271,18 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private void deleteAppointment() {
-        SQLUtils.deleteAppointment(student_label.getText(), service_label.getText());
-        reloadAppointmentTables();
+        Optional<ButtonType> optionSelected = Utils.confirmAlert(
+                Alert.AlertType.CONFIRMATION,
+                "Confirm Delete Appointment",
+                "Are You Sure You Want To Delete This Appointment?",
+                "Delete appointment: " + service_label.getText() + " for " + customer_label.getText(),
+                "Yes, Delete " + service_label.getText(),
+                "Cancel"
+        );
+        if (optionSelected.isPresent() && !optionSelected.get().getText().equals("Cancel")) {
+            SQLUtils.deleteAppointment(student_label.getText(), service_label.getText());
+            reloadAppointmentTables();
+        }
     }
     
     @FXML
@@ -270,6 +291,7 @@ public class DashboardController extends AbstractController implements Initializ
         if (a == null) return;
         
         date_label.setText(a.getDate().toString());
+        service_label.setText(a.getCustomer());
         cost_label.setText("$" + a.getCost());
         service_label.setText(a.getService());
         User student = a.getStudent();
@@ -279,7 +301,7 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private void toggleMenu() {
-        sideMenu.setPrefWidth(isCollapsed ? 200 : 50);
+        animateWidth(isCollapsed ? 200 : 50);
         for (Node node : sideMenu.getChildren()) {
             if (node instanceof Button button) {
                 if (isCollapsed)
@@ -482,16 +504,6 @@ public class DashboardController extends AbstractController implements Initializ
         status_label.setText(String.valueOf(currentUser.getStatus()));
     }
     
-    private void showAdminPages() {
-        if (currentUser.getStatus().isAdmin()) {
-            admin_btn.setVisible(true);
-            appointment_btn.setVisible(true);
-        } else {
-            admin_btn.setVisible(false);
-            appointment_btn.setVisible(false);
-        }
-    }
-    
     private Pane createAppointmentPane(Appointment appointment) {
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: " + appointment.getColor() + ";");
@@ -532,6 +544,13 @@ public class DashboardController extends AbstractController implements Initializ
     
     private void reloadUserTable() {
         users_table.setItems(SQLUtils.getAllUsers());
+    }
+    
+    private void animateWidth(double endWidth) {
+        KeyValue widthValue = new KeyValue(sideMenu.prefWidthProperty(), endWidth, Interpolator.LINEAR);
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(350), widthValue);
+        Timeline timeline = new Timeline(keyFrame);
+        timeline.play();
     }
     // endregion
 }
