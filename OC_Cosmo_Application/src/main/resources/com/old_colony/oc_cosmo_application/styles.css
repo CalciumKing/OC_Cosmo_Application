@@ -38,3 +38,11 @@
     -fx-opacity: .5;
     -fx-background-radius: 10;
 }
+
+.lightMode > * {
+
+}
+
+.darkMode > * {
+    -fx-background-color: matteblack;
+}
