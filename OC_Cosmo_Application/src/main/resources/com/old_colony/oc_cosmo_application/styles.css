@@ -25,6 +25,10 @@
     -fx-background-radius: 10;
 }
 
+.darkModeButton{
+    -fx-background-color: #656565;
+}
+
 .infoBox{
     -fx-background-color:white;
     -fx-border-radius: 10;
@@ -32,17 +36,57 @@
     -fx-border-width: 2;
     -fx-border-color: gray;
 }
+.whiteBackground{
+    -fx-background-color: whitesmoke;
+}
 
 .navButton:hover{
     -fx-background-color:lightgray;
     -fx-opacity: .5;
     -fx-background-radius: 10;
 }
-
-.lightMode > * {
+.lightMode > *{
 
 }
 
-.darkMode > * {
-    -fx-background-color: matteblack;
+.lightMode > * .startBackground{
+    -fx-background-color:linear-gradient(to top left, #ad55ce, lavender);
+}
+
+.lightMode > * .startPanelBackground{
+    -fx-background-color:linear-gradient(to top right, #ad55ce, lavender);
+}
+
+.darkMode > *{
+    -fx-background-color: #121212;
+}
+.darkMode > .label{
+    -fx-text-fill: white;
+}
+.darkMode > .vbox{
+    -fx-background-color: #3b3b3b;
+}
+.darkMode > .infoBox > .darkModeText > .label{
+    -fx-text-fill: white;
+}
+.darkMode > .whiteBackground {
+    -fx-background-color: #121212;
+}
+.darkMode > .tab-pane{
+    -fx-background-color: #808080;
+}
+.darkMode > .startBackground > .button{
+    -fx-text-fill: white;
+}
+.darkMode > * .infoBox{
+    -fx-background-color: #3b3b3b;
+}
+.darkMode > * .infoBox > .label{
+    -fx-text-fill: white;
+}
+.darkMode > * .icon{
+    -fx-fill: white;
+}
+.darkMode > * .darkModeButton{
+    -fx-background-color: white;
 }

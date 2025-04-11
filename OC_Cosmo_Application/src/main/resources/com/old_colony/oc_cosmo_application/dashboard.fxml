@@ -34,7 +34,7 @@
 
 <AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
    <children>
-      <HBox prefHeight="515.0" prefWidth="918.0">
+      <HBox prefHeight="515.0" prefWidth="918.0" styleClass="darkMode">
          <children>
             <VBox fx:id="sideMenu" prefHeight="515.0" prefWidth="165.0" style="-fx-alignment: center; -fx-spacing: 40px;">
                <children>
@@ -111,9 +111,9 @@
                   <String fx:value="startBackground" />
                </styleClass>
             </VBox>
-            <AnchorPane fx:id="cssParent" prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;" styleClass="lightMode">
+            <AnchorPane fx:id="cssParent" prefHeight="515.0" prefWidth="754.0">
                <children>
-                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0">
+                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" styleClass="darkMode">
                      <children>
                         <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
@@ -143,7 +143,7 @@
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" styleClass="darkMode" visible="false">
                      <children>
                         <TabPane layoutY="29.0" prefHeight="486.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -651,7 +651,7 @@
                         </TabPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" styleClass="darkMode">
                      <children>
                         <Label layoutX="14.0" layoutY="30.0" text="Account">
                            <font>
@@ -666,7 +666,7 @@
                                  </font>
                               </Label>
                               <Line endX="100.0" layoutX="111.0" layoutY="44.0" startX="-100.0" />
-                              <VBox layoutX="9.0" layoutY="54.0" prefHeight="137.0" prefWidth="100.0" style="-fx-spacing: 10;">
+                              <VBox layoutX="9.0" layoutY="54.0" prefHeight="137.0" prefWidth="100.0" style="-fx-spacing: 10;" styleClass="darkModeText">
                                  <children>
                                     <Label text="User ID:">
                                        <font>
@@ -690,7 +690,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <VBox layoutX="109.0" layoutY="54.0" prefHeight="137.0" prefWidth="110.0" style="-fx-spacing: 10;">
+                              <VBox layoutX="109.0" layoutY="54.0" prefHeight="137.0" prefWidth="110.0" style="-fx-spacing: 10;" styleClass="darkModeText">
                                  <children>
                                     <Label fx:id="id_label" text="ID">
                                        <font>
@@ -718,7 +718,7 @@
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0" visible="false">
+                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0" styleClass="darkMode" visible="false">
                      <children>
                         <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -1006,6 +1006,10 @@
                      </children>
                   </AnchorPane>
                </children>
+               <styleClass>
+                  <String fx:value="whiteBackground" />
+                  <String fx:value="darkMode" />
+               </styleClass>
             </AnchorPane>
          </children>
       </HBox>
@@ -1046,7 +1050,7 @@
             </Button>
          </children>
       </Pane>
-      <AnchorPane layoutX="862.0" layoutY="481.0" prefHeight="42.0" prefWidth="56.0">
+      <AnchorPane layoutX="862.0" layoutY="481.0" prefHeight="42.0" prefWidth="56.0" styleClass="darkModeButton" stylesheets="@styles.css">
          <children>
             <Button layoutX="10.0" layoutY="5.0" mnemonicParsing="false" onAction="#toggleDarkMode" style="-fx-background-color: none;" textAlignment="CENTER">
                <graphic>

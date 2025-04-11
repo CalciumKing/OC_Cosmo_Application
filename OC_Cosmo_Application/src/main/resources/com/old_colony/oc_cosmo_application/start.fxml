@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
+<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" styleClass="darkMode" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
    <children>
       <AnchorPane layoutX="370.0" prefHeight="430.0" prefWidth="395.0" styleClass="startPanelBackground">
          <children>
@@ -20,7 +20,16 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <FontAwesomeIcon glyphName="SCISSORS" layoutX="138.0" layoutY="172.0" size="10em" text="" />
+            <Button layoutX="352.0" layoutY="397.0" mnemonicParsing="false" onAction="#toggleDarkMode" prefHeight="26.0" prefWidth="26.0" styleClass="darkModeButton">
+               <graphic>
+                  <FontAwesomeIcon fx:id="darkModeIcon" glyphName="MOON_ALT" size="2em" />
+               </graphic>
+            </Button>
+            <AnchorPane layoutX="98.0" layoutY="57.0" prefHeight="157.0" prefWidth="198.0" styleClass="infoBox">
+               <children>
+                  <FontAwesomeIcon glyphName="SCISSORS" layoutX="39.0" layoutY="117.0" selectionFill="BLACK" size="10em" text="" />
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="430.0" prefWidth="377.0" styleClass="startBackground">
@@ -40,7 +49,7 @@
                   </Label>
                   <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
                   <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="269.0" onAction="#logIn" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-                  <Hyperlink layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#a600ac" />
+                  <Hyperlink layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#f200ff" />
                   <Label layoutX="34.0" layoutY="124.0" text="Password">
                      <font>
                         <Font size="14.0" />
@@ -56,7 +65,7 @@
                         <Font size="18.0" />
                      </font>
                   </Button>
-                  <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;" text="Question Label">
+                  <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -110,7 +119,7 @@
                         <Font size="18.0" />
                      </font>
                   </Button>
-                  <Label fx:id="forgotQuestion_lbl" layoutX="29.0" layoutY="147.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;" text="Question Label">
+                  <Label fx:id="forgotQuestion_lbl" layoutX="29.0" layoutY="147.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;">
                      <font>
                         <Font size="14.0" />
                      </font>
