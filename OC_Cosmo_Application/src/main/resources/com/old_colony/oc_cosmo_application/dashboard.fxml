@@ -111,7 +111,7 @@
                   <String fx:value="startBackground" />
                </styleClass>
             </VBox>
-            <AnchorPane prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;">
+            <AnchorPane fx:id="cssParent" prefHeight="515.0" prefWidth="754.0" style="-fx-background-color: whitesmoke;" styleClass="lightMode">
                <children>
                   <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0">
                      <children>
@@ -1046,5 +1046,14 @@
             </Button>
          </children>
       </Pane>
+      <AnchorPane layoutX="862.0" layoutY="481.0" prefHeight="42.0" prefWidth="56.0">
+         <children>
+            <Button layoutX="10.0" layoutY="5.0" mnemonicParsing="false" onAction="#toggleDarkMode" style="-fx-background-color: none;" textAlignment="CENTER">
+               <graphic>
+                  <FontAwesomeIcon fx:id="darkModeIcon" glyphName="MOON_ALT" size="2em" styleClass="navButton" />
+               </graphic>
+            </Button>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
