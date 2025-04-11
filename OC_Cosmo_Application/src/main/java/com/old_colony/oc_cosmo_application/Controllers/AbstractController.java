@@ -3,10 +3,12 @@ package com.old_colony.oc_cosmo_application.Controllers;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
 import com.old_colony.oc_cosmo_application.MainApplication;
 import com.old_colony.oc_cosmo_application.Utils;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,7 +23,9 @@ import javafx.stage.StageStyle;
 public abstract class AbstractController {
     @FXML
     protected AnchorPane main_pane;
-    protected boolean isMaximized;
+    @FXML
+    protected FontAwesomeIcon darkModeIcon;
+    protected boolean isMaximized = false, isDarkMode = false;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
     
     
@@ -32,12 +36,12 @@ public abstract class AbstractController {
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image("AppIcon.png"));
+            stage.getIcons().add(new Image(getClass().getResource("/images/AppIcon.png").toExternalForm()));
             
             if (user != null) { // entering application
                 stage.setTitle("Cosmetology Application | " + user.getUsername());
                 DashboardController dashboardController = fxmlLoader.getController();
-                dashboardController.welcome(user, isMaximized);
+                dashboardController.init(user, isDarkMode);
             } else // exiting application
                 stage.setTitle("Cosmetology Application | Login");
             
@@ -51,6 +55,21 @@ public abstract class AbstractController {
             );
             e.printStackTrace();
         }
+    }
+    
+    protected abstract void init(User user, boolean darkMode);
+    
+    @FXML
+    protected void toggleDarkMode() {
+        if(!isDarkMode) { // switching to dark mode
+            main_pane.getStyleClass().set(0, "darkMode");
+            darkModeIcon.setGlyphName("SUN_ALT");
+        } else { // switching to light mode
+            main_pane.getStyleClass().set(0, "lightMode");
+            darkModeIcon.setGlyphName("MOON_ALT");
+        }
+        
+        isDarkMode = !isDarkMode;
     }
     
     // region Window Methods

@@ -1,3 +1,20 @@
+.close, .min, .max {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: black;
+}
+.close:hover {
+    -fx-background-color: red;
+}
+.min:hover {
+    -fx-background-color: #4a4a4a;
+}
+.max:hover {
+    -fx-background-color: blue;
+}
+
+
+
+
 .startPanelBackground{
     -fx-background-color:linear-gradient(to top left, #ad55ce, lavender);
 }
@@ -25,10 +42,6 @@
     -fx-background-radius: 10;
 }
 
-.darkModeButton{
-    -fx-background-color: #656565;
-}
-
 .infoBox{
     -fx-background-color:white;
     -fx-border-radius: 10;
@@ -45,9 +58,9 @@
     -fx-opacity: .5;
     -fx-background-radius: 10;
 }
-.lightMode > *{
 
-}
+
+
 
 .lightMode > * .startBackground{
     -fx-background-color:linear-gradient(to top left, #ad55ce, lavender);
@@ -57,6 +70,12 @@
     -fx-background-color:linear-gradient(to top right, #ad55ce, lavender);
 }
 
+
+
+
+.darkModeButton{
+    -fx-background-color: #656565;
+}
 .darkMode > *{
     -fx-background-color: #121212;
 }

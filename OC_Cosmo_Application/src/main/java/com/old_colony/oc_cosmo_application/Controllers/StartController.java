@@ -1,7 +1,9 @@
 package com.old_colony.oc_cosmo_application.Controllers;
 
+import com.old_colony.oc_cosmo_application.DataClasses.User;
 import com.old_colony.oc_cosmo_application.SQLUtils;
 import com.old_colony.oc_cosmo_application.Utils;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +23,12 @@ public class StartController extends AbstractController {
     @FXML
     private Label securityQuestion_lbl, forgotQuestion_lbl;
     // endregion
+    
+    @Override
+    protected void init(User user, boolean darkMode) {
+        isDarkMode = darkMode;
+        if(darkMode) toggleDarkMode();
+    }
     
     // region FXML Methods
     @FXML

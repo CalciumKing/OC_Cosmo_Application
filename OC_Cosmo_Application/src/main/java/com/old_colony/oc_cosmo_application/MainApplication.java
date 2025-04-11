@@ -12,11 +12,11 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("start.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("dashboard.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");
-        stage.getIcons().add(new Image("AppIcon.png"));
+        stage.getIcons().add(new Image(getClass().getResource("/images/AppIcon.png").toExternalForm()));
         stage.setScene(scene);
         stage.show();
     }

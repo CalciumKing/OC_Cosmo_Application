@@ -9,6 +9,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -36,7 +37,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardController extends AbstractController implements Initializable {
-    // region Variables
     // region FXML Variables
     @FXML
     private Button home_btn, schedule_btn,
@@ -115,7 +115,6 @@ public class DashboardController extends AbstractController implements Initializ
     private boolean isCollapsed;
     private final HashMap<String, ArrayList<Integer>> servicesAndCost = new HashMap<>();
     // endregion
-    // endregion
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -125,20 +124,22 @@ public class DashboardController extends AbstractController implements Initializ
         initTabDays();
     }
     
-    // region FXML Methods
-    public void welcome(User user, boolean maximized) {
+    @Override
+    protected void init(User user, boolean darkMode) {
         welcome_lbl.setText("Welcome, " + user.getUsername());
         windowTitle_lbl.setText("Cosmetology Application | " + user.getUsername());
         currentUser = user;
-        isMaximized = maximized;
         
-        if (maximized) windowMaximize();
+        isDarkMode = darkMode;
+        if(darkMode) toggleDarkMode();
+        
         initTables();
         initSchedules();
         initAccountInfo();
         admin_btn.setVisible(currentUser.getStatus().isAdmin());
     }
     
+    // region FXML Methods
     @FXML
     private void setAMPM() {
         hour_spinner.setValueFactory(
@@ -398,13 +399,11 @@ public class DashboardController extends AbstractController implements Initializ
         ObservableList<Tab> tabs = weekSchedules_tabPane.getTabs();
         
         int i = switch (LocalDate.now().getDayOfWeek()) {
-            // nothing to remove on monday
+            case SATURDAY, SUNDAY, MONDAY -> -1; // remove nothing from Saturday-Monday
             case TUESDAY -> 0;
             case WEDNESDAY -> 1;
             case THURSDAY -> 2;
             case FRIDAY -> 3;
-//            case SATURDAY, SUNDAY ->
-            default -> throw new IllegalArgumentException();
         };
         
         for (; i >= 0; i--)
