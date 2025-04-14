@@ -1,0 +1,18 @@
+- make darkmode/lightmode each a unique script and change the script on darkmode activate/deactivate
+- fix all darkmode toggle errors in console
+- assign correct darkmode css classes to everything on dashboard.fxml
+- change darkmode and lightmode css classes to themeMode or something
+- update dashboard.fxml ratio to ratio of start.fxml
+- fix neatview schedule placements
+- neatview labels write :0 instead of :00
+- neatview labels write :60 instead of next hour :00
+- add clear user form button
+- on enter/delete user, clear form
+- figure out "off months"
+- update user select dropdown on create/delete user
+- add customer note to neatview appointments
+- make forgot password submit login to dashboard.fxml
+- make new password onaction do the same as submit
+- change login button text from submit to login
+- make new password field a passwordfield instead of textfield
+- multi line security question moves everything down, not on status level

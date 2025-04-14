@@ -9,7 +9,6 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -474,8 +473,11 @@ public class DashboardController extends AbstractController implements Initializ
                 GridPane.setRowIndex(pane, (appointment.getHour() > 8) ? appointment.getHour() - 8 : appointment.getHour() + rowOffset);
                 GridPane.setColumnIndex(pane, currentMinute / 15 + 1);
                 GridPane.setColumnSpan(pane, minutesThisHour / 15);
-                
-                getDay(appointment).getChildren().add(pane);
+
+                GridPane day = getDay(appointment);
+                if(day != null)
+                    day.getChildren().add(pane);
+                else return;
                 
                 remainingMinutes -= minutesThisHour;
                 currentMinute = 0;
@@ -487,6 +489,7 @@ public class DashboardController extends AbstractController implements Initializ
     private GridPane getDay(Appointment appointment) {
         int dayOfWeek = appointment.getDate().getDay();
         return switch (dayOfWeek) {
+            case 0, 6 -> null; // no pane to add weekend appointments to
             case 1 -> monday_gridPane;
             case 2 -> tuesday_gridPane;
             case 3 -> wednesday_gridPane;

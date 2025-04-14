@@ -3,9 +3,11 @@ package com.old_colony.oc_cosmo_application.Controllers;
 import com.old_colony.oc_cosmo_application.DataClasses.User;
 import com.old_colony.oc_cosmo_application.SQLUtils;
 import com.old_colony.oc_cosmo_application.Utils;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
 public class StartController extends AbstractController {
