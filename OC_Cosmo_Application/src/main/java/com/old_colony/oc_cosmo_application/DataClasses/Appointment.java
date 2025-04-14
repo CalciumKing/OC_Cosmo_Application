@@ -5,13 +5,13 @@ import java.util.Date;
 public class Appointment {
     private User student;
     private Date date;
-    private String customer, service, color;
+    private String customer, service, color, note;
     private double cost;
     private int hour, minute, duration;
     
     public Appointment(String customer, User student, String color,
                        String service, double cost, Date date,
-                       int hour, int minute, int duration) {
+                       int hour, int minute, int duration, String note) {
         this.customer = customer;
         this.student = student;
         this.color = color;
@@ -21,6 +21,7 @@ public class Appointment {
         this.hour = hour;
         this.minute = minute;
         this.duration = duration;
+        this.note = note;
     }
     
     // region Getters/Setters
@@ -77,6 +78,12 @@ public class Appointment {
     }
     public void setColor(String color) {
         this.color = color;
+    }
+    public String getNote() {
+        return note;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
     // endregion
 }

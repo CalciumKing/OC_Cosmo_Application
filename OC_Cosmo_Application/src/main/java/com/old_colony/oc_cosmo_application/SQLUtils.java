@@ -171,10 +171,11 @@ public class SQLUtils {
     public static void createAppointment(int hour, int minute,
                                          int duration, int studentID,
                                          String customer, String service,
-                                         int cost, LocalDate date, Color color) {
+                                         int cost, LocalDate date,
+                                         Color color, String note) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?,?)";
             
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, hour);
@@ -186,6 +187,7 @@ public class SQLUtils {
             prepared.setInt(7, cost);
             prepared.setDate(8, Date.valueOf(date));
             prepared.setString(9, color.toString());
+            prepared.setString(10, note);
             
             prepared.executeUpdate();
         } catch (Exception e) {
@@ -249,7 +251,8 @@ public class SQLUtils {
                         result.getDate("appDate"),
                         result.getInt("startHour"),
                         result.getInt("startMinute"),
-                        result.getInt("duration")
+                        result.getInt("duration"),
+                        result.getString("note")
                 ));
             
             return data;
@@ -398,7 +401,8 @@ public class SQLUtils {
                         result.getDate("appDate"),
                         result.getInt("startHour"),
                         result.getInt("startMinute"),
-                        result.getInt("duration")
+                        result.getInt("duration"),
+                        result.getString("note")
                 ));
             
             return data;

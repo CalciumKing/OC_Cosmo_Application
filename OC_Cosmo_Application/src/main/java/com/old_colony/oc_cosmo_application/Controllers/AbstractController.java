@@ -24,7 +24,7 @@ public abstract class AbstractController {
     protected AnchorPane main_pane;
     @FXML
     protected FontAwesomeIcon darkModeIcon;
-    protected boolean isMaximized = false, isDarkMode = false;
+    protected boolean isMaximized, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
     
     
@@ -62,10 +62,10 @@ public abstract class AbstractController {
     protected void toggleDarkMode() {
         if(!isDarkMode) { // switching to dark mode
             main_pane.getStyleClass().set(0, "darkMode");
-            darkModeIcon.setGlyphName("SUN_ALT");
+            darkModeIcon.setGlyphName("SUN_ALT"); // light mode icon
         } else { // switching to light mode
             main_pane.getStyleClass().set(0, "lightMode");
-            darkModeIcon.setGlyphName("MOON_ALT");
+            darkModeIcon.setGlyphName("MOON_ALT"); // dark mode icon
         }
         
         isDarkMode = !isDarkMode;
@@ -91,7 +91,7 @@ public abstract class AbstractController {
     @FXML
     protected void windowDrag(MouseEvent event) {
         if (isMaximized)
-            windowMaximize(); // undoing maximization
+            toggleMaximize(); // undoing maximization
         
         Stage stage = (Stage) main_pane.getScene().getWindow();
         stage.setX(event.getScreenX() - xOffset);
@@ -99,7 +99,7 @@ public abstract class AbstractController {
     }
     
     @FXML
-    protected void windowMaximize() {
+    protected void toggleMaximize() {
         if (!isMaximized) {
             Scene scene = main_pane.getScene();
             double initWidth = scene.getWidth(),
@@ -115,7 +115,7 @@ public abstract class AbstractController {
         isMaximized = !isMaximized;
     }
     
-    protected void maxHelper(double width, double height,
+    private void maxHelper(double width, double height,
                            boolean alreadyMaximized) {
         Stage stage = (Stage) main_pane.getScene().getWindow();
         Scene scene = stage.getScene();

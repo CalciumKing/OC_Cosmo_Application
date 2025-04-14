@@ -1,10 +1,10 @@
 package com.old_colony.oc_cosmo_application.DataClasses;
 
 public enum Status {
-    ADMIN,
+    ERROR,
     STUDENT,
-    ERROR;
-    
+    ADMIN;
+
     public boolean isAdmin() {
         return this == ADMIN;
     }

@@ -16,15 +16,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -129,8 +127,10 @@ public class DashboardController extends AbstractController implements Initializ
         windowTitle_lbl.setText("Cosmetology Application | " + user.getUsername());
         currentUser = user;
         
-        isDarkMode = darkMode;
-        if(darkMode) toggleDarkMode();
+//        this.isMaximized = isMaximized;
+//        if(isMaximized) toggleMaximize();
+//        isDarkMode = darkMode;
+//        if(darkMode) toggleDarkMode();
         
         initTables();
         initSchedules();
@@ -214,11 +214,12 @@ public class DashboardController extends AbstractController implements Initializ
                 studentID = SQLUtils.getUser(student_combobox.getValue()).getUserID(),
                 cost = servicesAndCost.get(service).getFirst(),
                 duration = servicesAndCost.get(service).getLast();
-        
+
+        String note = note_area.getText();
         LocalDate date = dateSelect_picker.getValue();
         Color color = color_picker.getValue();
         
-        SQLUtils.createAppointment(hour, minute, duration, studentID, customer, service, cost, date, color);
+        SQLUtils.createAppointment(hour, minute, duration, studentID, customer, service, cost, date, color, note);
         resetForm();
         reloadAppointmentTables();
     }
@@ -464,20 +465,21 @@ public class DashboardController extends AbstractController implements Initializ
         for (Appointment appointment : appointments) {
             int remainingMinutes = appointment.getDuration(),
                     currentMinute = appointment.getMinute(),
-                    rowOffset = 0;
+                    rowOffset = 0,
+                    rowIndex = appointment.getHour() % 8;
             
             while (remainingMinutes > 0) {
                 int minutesThisHour = Math.min(60 - currentMinute, remainingMinutes);
                 
-                Pane pane = createAppointmentPane(appointment);
-                GridPane.setRowIndex(pane, (appointment.getHour() > 8) ? appointment.getHour() - 8 : appointment.getHour() + rowOffset);
+                Pane pane = createAppointmentPane(appointment, rowOffset);
+                GridPane.setRowIndex(pane, rowIndex + rowOffset);
                 GridPane.setColumnIndex(pane, currentMinute / 15 + 1);
                 GridPane.setColumnSpan(pane, minutesThisHour / 15);
 
                 GridPane day = getDay(appointment);
-                if(day != null)
-                    day.getChildren().add(pane);
-                else return;
+                if(day == null) break;
+                
+                day.getChildren().add(pane);
                 
                 remainingMinutes -= minutesThisHour;
                 currentMinute = 0;
@@ -489,13 +491,13 @@ public class DashboardController extends AbstractController implements Initializ
     private GridPane getDay(Appointment appointment) {
         int dayOfWeek = appointment.getDate().getDay();
         return switch (dayOfWeek) {
-            case 0, 6 -> null; // no pane to add weekend appointments to
             case 1 -> monday_gridPane;
             case 2 -> tuesday_gridPane;
             case 3 -> wednesday_gridPane;
             case 4 -> thursday_gridPane;
             case 5 -> friday_gridPane;
-            default -> throw new IllegalArgumentException("Unknown date: " + dayOfWeek);
+            case 6, 0 -> null; // no pane to add weekend appointments to
+            default -> throw new IllegalArgumentException("Unknown Day Of Week: " + dayOfWeek);
         };
     }
     
@@ -507,15 +509,23 @@ public class DashboardController extends AbstractController implements Initializ
         status_label.setText(String.valueOf(currentUser.getStatus()));
     }
     
-    private Pane createAppointmentPane(Appointment appointment) {
-        Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: " + appointment.getColor() + ";");
-        
-        Label label = new Label(appointment.getCustomer() + ": " + appointment.getService() + " " + formatTime(appointment));
-        label.setWrapText(true);
-        label.setAlignment(Pos.CENTER);
-        
-        pane.getChildren().add(label);
+    private Pane createAppointmentPane(Appointment appointment, int offset) {
+        // StackPanes instead of panes because they format their children
+        StackPane pane = new StackPane();
+        pane.setStyle("-fx-background-color: " + appointment.getColor()); // must be one line
+
+        if(offset == 0) { // only putting label on first appointment pane
+            Label label = new Label(appointment.getCustomer() + ": " + appointment.getService() + " " + formatTime(appointment));
+            if(appointment.getNote() != null && !appointment.getNote().isEmpty())
+                label.setText(label.getText() + "(" + appointment.getNote() + ")");
+
+            label.setWrapText(true);
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            StackPane.setAlignment(label, Pos.CENTER_LEFT);
+            pane.getChildren().add(label);
+        }
+
         return pane;
     }
     
@@ -526,7 +536,7 @@ public class DashboardController extends AbstractController implements Initializ
                 endHour = hour,
                 endMinute = min + dur;
         
-        while (endMinute > 60) {
+        while (endMinute >= 60) {
             endHour++;
             endMinute -= 60;
         }
@@ -534,7 +544,7 @@ public class DashboardController extends AbstractController implements Initializ
         hour -= hour > 12 ? 12 : 0;
         endHour -= endHour > 12 ? 12 : 0;
         
-        return hour + ":" + min + "-" + endHour + ":" + endMinute;
+        return hour + ":" + ((min == 0) ? "00" : min) + "-" + endHour + ":" + ((endMinute == 0) ? "00" : endMinute);
     }
     
     private void reloadAppointmentTables() {
