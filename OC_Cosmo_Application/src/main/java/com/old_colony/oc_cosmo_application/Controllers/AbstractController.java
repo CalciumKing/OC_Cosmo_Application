@@ -23,7 +23,7 @@ public abstract class AbstractController {
     @FXML
     protected AnchorPane main_pane;
     @FXML
-    protected FontAwesomeIcon darkModeIcon;
+    protected FontAwesomeIcon maximizeIcon, darkModeIcon;
     protected boolean isMaximized, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
     
@@ -100,27 +100,27 @@ public abstract class AbstractController {
     
     @FXML
     protected void toggleMaximize() {
-        if (!isMaximized) {
+        if (!isMaximized) { // maximizing
             Scene scene = main_pane.getScene();
             double initWidth = scene.getWidth(),
                     initHeight = scene.getHeight();
             
-            defaultWidth = (defaultWidth == 0) ? scene.getWidth() : defaultWidth;
-            defaultHeight = (defaultHeight == 0) ? scene.getHeight() : defaultHeight;
+            defaultWidth = (defaultWidth == 0) ? initWidth : defaultWidth;
+            defaultHeight = (defaultHeight == 0) ? initHeight : defaultHeight;
             
-            maxHelper(initWidth, initHeight, false);
-        } else
-            maxHelper(defaultWidth, defaultHeight, true);
+            maxHelper(initWidth, initHeight);
+        } else // un-maximizing
+            maxHelper(defaultWidth, defaultHeight);
         
         isMaximized = !isMaximized;
     }
     
-    private void maxHelper(double width, double height,
-                           boolean alreadyMaximized) {
+    private void maxHelper(double width, double height) {
         Stage stage = (Stage) main_pane.getScene().getWindow();
         Scene scene = stage.getScene();
         
-        stage.setMaximized(!alreadyMaximized);
+        stage.setMaximized(!isMaximized);
+        maximizeIcon.setGlyphName(isMaximized ? "SQUARE" : "MINUS_SQUARE");
         
         double ratio = width / height,
                 newWidth = scene.getWidth(), newHeight = scene.getHeight(),

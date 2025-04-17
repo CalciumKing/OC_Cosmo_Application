@@ -1037,7 +1037,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
                <graphic>
-                  <FontAwesomeIcon glyphName="SQUARE" />
+                  <FontAwesomeIcon fx:id="maximizeIcon" glyphName="SQUARE" />
                </graphic>
             </Button>
             <Button layoutX="892.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
