@@ -19,16 +19,18 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public abstract class AbstractController {
+public abstract sealed class AbstractController permits DashboardController, StartController {
     @FXML
     protected AnchorPane main_pane;
     @FXML
     protected FontAwesomeIcon maximizeIcon, darkModeIcon;
     protected boolean isMaximized, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
-    
-    
-    protected void changeScene(String sceneName, User user) {
+
+
+    protected abstract void init(User user, boolean darkMode);
+
+    protected final void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
             Parent root = fxmlLoader.load();
@@ -56,40 +58,37 @@ public abstract class AbstractController {
         }
     }
     
-    protected abstract void init(User user, boolean darkMode);
-    
     @FXML
-    protected void toggleDarkMode() {
-        if(!isDarkMode) { // switching to dark mode
-            main_pane.getStyleClass().set(0, "darkMode");
-            darkModeIcon.setGlyphName("SUN_ALT"); // light mode icon
-        } else { // switching to light mode
-            main_pane.getStyleClass().set(0, "lightMode");
-            darkModeIcon.setGlyphName("MOON_ALT"); // dark mode icon
-        }
-        
+    protected final void toggleDarkMode() {
+        main_pane.getStylesheets().removeLast();
+        String theme = (isDarkMode ? "lightMode" : "darkMode") + ".css",
+                icon = isDarkMode ? "MOON_ALT" : "SUN_ALT";
+
+        main_pane.getStylesheets().addLast(getClass().getResource("/com/old_colony/oc_cosmo_application/CSSFiles/" + theme).toExternalForm());
+        darkModeIcon.setGlyphName(icon);
+
         isDarkMode = !isDarkMode;
     }
     
     // region Window Methods
     @FXML
-    protected void windowMinimize(ActionEvent event) {
+    protected final void windowMinimize(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
     }
     
     @FXML
-    protected void windowClose() {
+    protected final void windowClose() {
         Platform.exit();
     }
     
     @FXML
-    protected void windowClick(MouseEvent event) {
+    protected final void windowClick(MouseEvent event) {
         xOffset = event.getSceneX();
         yOffset = event.getSceneY();
     }
     
     @FXML
-    protected void windowDrag(MouseEvent event) {
+    protected final void windowDrag(MouseEvent event) {
         if (isMaximized)
             toggleMaximize(); // undoing maximization
         
@@ -99,7 +98,7 @@ public abstract class AbstractController {
     }
     
     @FXML
-    protected void toggleMaximize() {
+    protected final void toggleMaximize() {
         if (!isMaximized) { // maximizing
             Scene scene = main_pane.getScene();
             double initWidth = scene.getWidth(),

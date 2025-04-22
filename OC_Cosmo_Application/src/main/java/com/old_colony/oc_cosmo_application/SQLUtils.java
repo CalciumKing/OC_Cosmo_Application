@@ -160,14 +160,6 @@ public class SQLUtils {
         }
     }
     
-    private static Status createStatus(int status) {
-        return switch (status) {
-            case 0 -> Status.STUDENT;
-            case 1 -> Status.ADMIN;
-            default -> Status.ERROR;
-        };
-    }
-    
     public static void createAppointment(int hour, int minute,
                                          int duration, int studentID,
                                          String customer, String service,
@@ -316,6 +308,34 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
+
+    public static void updateUser(String username, String password,
+                                  String secQuestion, String secAnswer,
+                                  boolean isAdmin) {
+        try (Connection connection = connectDB()) {
+            if(connection == null) return;
+
+            String sql = "update users set password = ?, securityQuestion = ?, securityAnswer = ?, status = ? where username = ?;";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+            prepared.setString(1, password);
+            prepared.setString(2, secQuestion);
+            prepared.setString(3, secAnswer);
+            prepared.setInt(4, isAdmin ? 1 : 0);
+            prepared.setString(5, username);
+
+            prepared.executeUpdate();
+
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in updateUser",
+                    "Error Updating A User",
+                    "There was an error updating a user, please try again."
+            );
+            e.printStackTrace();
+        }
+    }
     
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
@@ -379,7 +399,7 @@ public class SQLUtils {
         return null;
     }
     
-    public static ObservableList<Appointment> getTodaysAppointments(int id) {
+    public static ObservableList<Appointment> getTodayAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
             
@@ -416,6 +436,24 @@ public class SQLUtils {
             e.printStackTrace();
             return null;
         }
+    }
+    // endregion
+
+    // region Helper Methods
+    private static Status createStatus(int status) {
+        return switch (status) {
+            case 0 -> Status.STUDENT;
+            case 1 -> Status.ADMIN;
+            default -> Status.ERROR;
+        };
+    }
+
+    private static int createIntStatus(Status status) {
+        return switch(status){
+            case STUDENT -> 0;
+            case ADMIN -> 1;
+            default -> -1;
+        };
     }
     // endregion
 }

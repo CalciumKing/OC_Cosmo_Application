@@ -16,7 +16,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -33,7 +32,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class DashboardController extends AbstractController implements Initializable {
+public final class DashboardController extends AbstractController implements Initializable {
     // region FXML Variables
     @FXML
     private Button home_btn, schedule_btn,
@@ -53,7 +52,7 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private AnchorPane home_pane, schedule_pane,
-            account_pane, admin_pane;
+            account_pane, admin_pane, display_pane;
     
     @FXML
     private GridPane monday_gridPane, tuesday_gridPane,
@@ -61,7 +60,7 @@ public class DashboardController extends AbstractController implements Initializ
     
     @FXML
     private TextField customerName_field, username_field, password_field,
-            securityQuestion_field, securityAnswer_field;
+            secQuestion_field, secAnswer_field;
     
     // region Tables
     @FXML
@@ -228,13 +227,28 @@ public class DashboardController extends AbstractController implements Initializ
     private void addUser() {
         String username = username_field.getText(),
                 password = password_field.getText(),
-                secQuestion = securityQuestion_field.getText(),
-                secAnswer = securityAnswer_field.getText();
+                secQuestion = secQuestion_field.getText(),
+                secAnswer = secAnswer_field.getText();
         
         boolean isAdmin = admin_radio.isSelected();
+
+        // check if a user with that name is already in database
+        ObservableList<User> users = users_table.getItems();
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                Utils.normalAlert(
+                        Alert.AlertType.ERROR,
+                        "User Add Failure",
+                        "User Already In Database",
+                        "Please enter a username for a user that does not already exist"
+                );
+                return;
+            }
+        }
         
         SQLUtils.createUser(username, password, secQuestion, secAnswer, isAdmin);
         reloadUserTable();
+        clearUserForm();
     }
     
     @FXML
@@ -250,7 +264,57 @@ public class DashboardController extends AbstractController implements Initializ
         if (optionSelected.isPresent() && !optionSelected.get().getText().equals("Cancel")) {
             SQLUtils.deleteUser(username_field.getText());
             reloadUserTable();
+            clearUserForm();
         }
+    }
+
+    @FXML
+    private void updateUser() {
+        String username = username_field.getText(),
+                password = password_field.getText(),
+                secQuestion = secQuestion_field.getText(),
+                secAnswer = secAnswer_field.getText();
+
+        boolean isAdmin = admin_radio.isSelected();
+
+        // checks if user being edited is the current user
+        if(username.equals(currentUser.getUsername())) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "User Edit Failure",
+                    "Cannot Edit Current User",
+                    "Please edit a user that is not currently logged in on this device"
+            );
+            return;
+        }
+
+        // checks if username exists in table
+        ObservableList<User> users = users_table.getItems();
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                SQLUtils.updateUser(username, password, secQuestion, secAnswer, isAdmin);
+                reloadUserTable();
+                clearUserForm();
+                return;
+            }
+        }
+
+        // user not found
+        Utils.normalAlert(
+                Alert.AlertType.ERROR,
+                "User Edit Failure",
+                "No User Found With Username",
+                "Please edit a user with a username that already exists in the table"
+        );
+    }
+    
+    @FXML
+    private void clearUserForm() {
+        username_field.clear();
+        password_field.clear();
+        secQuestion_field.clear();
+        secAnswer_field.clear();
+        student_radio.setSelected(true);
     }
     
     @FXML
@@ -260,8 +324,8 @@ public class DashboardController extends AbstractController implements Initializ
         
         username_field.setText(user.getUsername());
         password_field.setText(user.getPassword());
-        securityQuestion_field.setText(user.getSecurityQuestion());
-        securityAnswer_field.setText(user.getSecurityAnswer());
+        secQuestion_field.setText(user.getSecurityQuestion());
+        secAnswer_field.setText(user.getSecurityAnswer());
         
         // no need to set other to false because they are in the same group
         if (user.getStatus().isAdmin())
@@ -305,14 +369,15 @@ public class DashboardController extends AbstractController implements Initializ
         animateWidth(isCollapsed ? 200 : 50);
         for (Node node : sideMenu.getChildren()) {
             if (node instanceof Button button) {
-                if (isCollapsed)
+                if (isCollapsed) // un-collapsing menu
                     button.setText((String) button.getUserData());
-                else {
+                else { // collapsing menu
                     button.setUserData(button.getText());
                     button.setText("");
                 }
             }
         }
+
         isCollapsed = !isCollapsed;
     }
     
@@ -418,7 +483,7 @@ public class DashboardController extends AbstractController implements Initializ
         homeName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
         homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
         
-        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+        dailySchedule_table.setItems(SQLUtils.getTodayAppointments(currentUser.getUserID()));
         
         date_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
@@ -548,7 +613,7 @@ public class DashboardController extends AbstractController implements Initializ
     }
     
     private void reloadAppointmentTables() {
-        dailySchedule_table.setItems(SQLUtils.getTodaysAppointments(currentUser.getUserID()));
+        dailySchedule_table.setItems(SQLUtils.getTodayAppointments(currentUser.getUserID()));
         ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(-1);
         schedule_table.setItems(appointments);
         adminAppointment_table.setItems(appointments);

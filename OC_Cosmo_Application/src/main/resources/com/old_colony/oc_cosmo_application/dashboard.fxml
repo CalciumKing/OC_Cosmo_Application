@@ -2,6 +2,7 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ColorPicker?>
@@ -32,11 +33,11 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
+<AnchorPane fx:id="main_pane" prefHeight="515.0" prefWidth="918.0" styleClass="whiteBackground" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
    <children>
-      <HBox prefHeight="515.0" prefWidth="918.0" styleClass="lightMode">
+      <HBox prefHeight="515.0" prefWidth="918.0" styleClass="mode">
          <children>
-            <VBox fx:id="sideMenu" prefHeight="515.0" prefWidth="165.0" style="-fx-alignment: center; -fx-spacing: 40px;">
+            <VBox fx:id="sideMenu" prefHeight="515.0" prefWidth="164.0" style="-fx-alignment: center; -fx-spacing: 40px;">
                <children>
                   <Pane prefHeight="167.0" prefWidth="164.0">
                      <children>
@@ -111,9 +112,9 @@
                   <String fx:value="startBackground" />
                </styleClass>
             </VBox>
-            <AnchorPane fx:id="cssParent" prefHeight="515.0" prefWidth="754.0">
+            <AnchorPane fx:id="display_pane" prefHeight="515.0" prefWidth="754.0">
                <children>
-                  <AnchorPane fx:id="home_pane" prefHeight="515.0" prefWidth="754.0" styleClass="lightMode">
+                  <AnchorPane fx:id="home_pane" prefHeight="524.0" prefWidth="754.0" styleClass="mode">
                      <children>
                         <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                            <font>
@@ -143,7 +144,7 @@
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="schedule_pane" prefHeight="515.0" prefWidth="754.0" styleClass="lightMode" visible="false">
+                  <AnchorPane fx:id="schedule_pane" prefHeight="524.0" prefWidth="754.0" styleClass="mode" visible="false">
                      <children>
                         <TabPane layoutY="29.0" prefHeight="486.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
@@ -651,7 +652,7 @@
                         </TabPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="515.0" prefWidth="754.0" styleClass="lightMode" visible="false">
+                  <AnchorPane fx:id="account_pane" layoutY="2.0" prefHeight="524.0" prefWidth="754.0" styleClass="mode" visible="false">
                      <children>
                         <Label layoutX="14.0" layoutY="30.0" text="Account">
                            <font>
@@ -666,7 +667,7 @@
                                  </font>
                               </Label>
                               <Line endX="100.0" layoutX="111.0" layoutY="44.0" startX="-100.0" />
-                              <VBox layoutX="9.0" layoutY="54.0" prefHeight="137.0" prefWidth="100.0" style="-fx-spacing: 10;" styleClass="darkModeText">
+                              <VBox layoutX="9.0" layoutY="54.0" prefHeight="137.0" prefWidth="194.0" style="-fx-spacing: 10;" styleClass="modeText">
                                  <children>
                                     <Label text="User ID:">
                                        <font>
@@ -678,7 +679,7 @@
                                           <Font name="System Bold" size="15.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="secQuestion_label" text="Security Question:" wrapText="true">
+                                    <Label fx:id="secQuestion_label" text="Security Question:">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
@@ -690,7 +691,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <VBox layoutX="109.0" layoutY="54.0" prefHeight="137.0" prefWidth="110.0" style="-fx-spacing: 10;" styleClass="darkModeText">
+                              <VBox layoutX="212.0" layoutY="54.0" prefHeight="137.0" prefWidth="194.0" style="-fx-spacing: 10;" styleClass="modeText">
                                  <children>
                                     <Label fx:id="id_label" text="ID">
                                        <font>
@@ -702,7 +703,7 @@
                                           <Font name="System Bold" size="15.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="secAnswer_label" text="Security Answer" wrapText="true">
+                                    <Label fx:id="secAnswer_label" text="Security Answer">
                                        <font>
                                           <Font name="System Bold" size="15.0" />
                                        </font>
@@ -718,11 +719,11 @@
                         </Pane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0" styleClass="darkMode" visible="false">
+                  <AnchorPane fx:id="admin_pane" layoutY="26.0" prefHeight="497.0" prefWidth="754.0" styleClass="mode" visible="false">
                      <children>
                         <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
-                            <Tab text="User Add/Delete">
+                            <Tab text="User Manage">
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
@@ -754,12 +755,12 @@
                                                       <Tooltip text="Enter the customer's full name." />
                                                    </tooltip>
                                                 </TextField>
-                                                <TextField fx:id="securityQuestion_field" layoutX="14.0" layoutY="49.0" prefHeight="27.0" prefWidth="159.0" promptText="Sec. Question" styleClass="textBoxes">
+                                                <TextField fx:id="secQuestion_field" layoutX="14.0" layoutY="49.0" prefHeight="27.0" prefWidth="159.0" promptText="Sec. Question" styleClass="textBoxes">
                                                    <tooltip>
                                                       <Tooltip text="Enter the customer's full name." />
                                                    </tooltip>
                                                 </TextField>
-                                                <TextField fx:id="securityAnswer_field" layoutX="184.0" layoutY="49.0" prefHeight="27.0" prefWidth="159.0" promptText="Sec. Answer" styleClass="textBoxes">
+                                                <TextField fx:id="secAnswer_field" layoutX="184.0" layoutY="49.0" prefHeight="27.0" prefWidth="159.0" promptText="Sec. Answer" styleClass="textBoxes">
                                                    <tooltip>
                                                       <Tooltip text="Enter the customer's full name." />
                                                    </tooltip>
@@ -790,6 +791,22 @@
                                           <Button layoutX="461.0" layoutY="257.0" mnemonicParsing="false" onAction="#deleteUser" styleClass="loginButtons" text="Delete User">
                                              <graphic>
                                                 <FontAwesomeIcon fill="WHITE" glyphName="TRASH" />
+                                             </graphic>
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font>
+                                          </Button>
+                                          <Button layoutX="520.0" layoutY="322.0" mnemonicParsing="false" onAction="#clearUserForm" styleClass="loginButtons" text="Clear">
+                                             <graphic>
+                                                <FontAwesomeIcon fill="WHITE" glyphName="REPEAT" />
+                                             </graphic>
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font>
+                                          </Button>
+                                          <Button layoutX="313.0" layoutY="322.0" mnemonicParsing="false" onAction="#updateUser" style="-fx-background-color: green;" styleClass="loginButtons" text="Update User">
+                                             <graphic>
+                                                <FontAwesomeIcon fill="WHITE" glyphName="EDIT" />
                                              </graphic>
                                              <font>
                                                 <Font name="System Bold" size="20.0" />
@@ -875,7 +892,7 @@
                                                 <Font name="System Bold" size="20.0" />
                                              </font>
                                              <graphic>
-                                                <FontAwesomeIcon glyphName="REPEAT" />
+                                                <FontAwesomeIcon fill="WHITE" glyphName="REPEAT" selectionFill="BLACK" />
                                              </graphic>
                                           </Button>
                                           <Button layoutX="595.0" layoutY="406.0" mnemonicParsing="false" onAction="#submitForm" style="-fx-background-color: green;" styleClass="loginButtons" text="Submit">
@@ -883,7 +900,7 @@
                                                 <Font name="System Bold" size="20.0" />
                                              </font>
                                              <graphic>
-                                                <FontAwesomeIcon glyphName="CHECK" />
+                                                <FontAwesomeIcon fill="WHITE" glyphName="CHECK" selectionFill="BLACK" />
                                              </graphic>
                                           </Button>
                                           <Label fx:id="costDur_lbl" layoutX="119.0" layoutY="406.0" text="Cost: $###.## Duration: #:##">
@@ -1008,7 +1025,7 @@
                </children>
                <styleClass>
                   <String fx:value="whiteBackground" />
-                  <String fx:value="lightMode" />
+                  <String fx:value="mode" />
                </styleClass>
             </AnchorPane>
          </children>
@@ -1050,7 +1067,7 @@
             </Button>
          </children>
       </Pane>
-      <AnchorPane layoutX="862.0" layoutY="434.0" prefHeight="42.0" prefWidth="56.0" style="-fx-background-radius: 15 0 0 15;" styleClass="darkModeButton" stylesheets="@styles.css">
+      <AnchorPane layoutX="862.0" layoutY="434.0" prefHeight="42.0" prefWidth="56.0" style="-fx-background-radius: 15 0 0 15; -fx-background-color: grey;" styleClass="modeButton">
          <children>
             <Button layoutX="10.0" layoutY="5.0" mnemonicParsing="false" onAction="#toggleDarkMode" style="-fx-background-color: none;" textAlignment="CENTER">
                <graphic>
@@ -1060,4 +1077,8 @@
          </children>
       </AnchorPane>
    </children>
+   <stylesheets>
+      <URL value="@CSSFiles/styles.css" />
+      <URL value="@CSSFiles/lightMode.css" />
+   </stylesheets>
 </AnchorPane>

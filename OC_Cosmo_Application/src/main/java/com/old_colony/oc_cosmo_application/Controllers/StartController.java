@@ -10,17 +10,17 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
-public class StartController extends AbstractController {
+public final class StartController extends AbstractController {
     // region FXML Variables
     @FXML
-    private TextField forgotAnswer_txt, forgotPassword_txt,
-            forgotUsername_txt, securityAnswer_txt, username_txt;
+    private TextField forgotAnswer_txt, forgotUsername_txt,
+            securityAnswer_txt, username_txt;
     
     @FXML
     private AnchorPane forgotPassword_pane, login_pane;
     
     @FXML
-    private PasswordField password_txt;
+    private PasswordField password_txt, forgotPassword_txt;
     
     @FXML
     private Label securityQuestion_lbl, forgotQuestion_lbl;
@@ -51,7 +51,9 @@ public class StartController extends AbstractController {
     
     @FXML
     private void setNewPassword() {
-        if (forgotPassword_txt.getText().isEmpty() || forgotUsername_txt.getText().isEmpty() || forgotAnswer_txt.getText().isEmpty()) {
+        if (forgotPassword_txt.getText().isEmpty() ||
+            forgotUsername_txt.getText().isEmpty() ||
+            forgotAnswer_txt.getText().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -62,12 +64,21 @@ public class StartController extends AbstractController {
         }
         
         SQLUtils.changePassword(forgotUsername_txt.getText(), forgotPassword_txt.getText());
+        logIn();
         clearForgotPassword();
     }
     
     @FXML
     private void logIn() {
-        if (username_txt.getText().isEmpty() || password_txt.getText().isEmpty() || securityAnswer_txt.getText().isEmpty()) {
+        if(forgotPassword_pane.isVisible()) {
+            changeScene("dashboard.fxml", SQLUtils.getUser(forgotUsername_txt.getText()));
+            main_pane.getScene().getWindow().hide();
+            return;
+        }
+
+        if (username_txt.getText().isEmpty() ||
+            password_txt.getText().isEmpty() ||
+            securityAnswer_txt.getText().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -76,8 +87,8 @@ public class StartController extends AbstractController {
             );
             return;
         }
-        
-        if (checkInformation()) {
+
+        if (checkLoginInfo()) {
             changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
             main_pane.getScene().getWindow().hide();
         } else
@@ -107,7 +118,7 @@ public class StartController extends AbstractController {
         question_lbl.setText(SQLUtils.getSecurityQuestion(username_txt.getText()));
     }
     
-    private boolean checkInformation() {
+    private boolean checkLoginInfo() {
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
     }
     

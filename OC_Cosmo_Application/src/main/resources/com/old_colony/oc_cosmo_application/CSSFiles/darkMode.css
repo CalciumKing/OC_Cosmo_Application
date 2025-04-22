@@ -1,0 +1,38 @@
+.modeButton {
+    -fx-background-color: #656565;
+}
+.whiteBackground {
+    -fx-background-color: #121212;
+}
+
+.mode > * {
+    -fx-background-color: #121212;
+}
+
+.mode > .label {
+    -fx-text-fill: white;
+}
+.mode > .vbox {
+    -fx-background-color: #3b3b3b;
+}
+.mode > .infoBox > .modeText > .label {
+    -fx-text-fill: white;
+}
+.mode > .tab-pane {
+    -fx-background-color: #808080;
+}
+.mode > .startBackground > .button {
+    -fx-text-fill: white;
+}
+.mode > * .infoBox {
+    -fx-background-color: #3b3b3b;
+}
+.mode > * .infoBox > .label {
+    -fx-text-fill: white;
+}
+.mode > * .icon {
+    -fx-fill: white;
+}
+.mode > * .modeButton {
+    -fx-background-color: white;
+}
