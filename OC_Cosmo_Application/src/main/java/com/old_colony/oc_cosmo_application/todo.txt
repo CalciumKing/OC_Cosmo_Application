@@ -1,12 +1,14 @@
-- make darkmode/lightmode each a unique script and change the script on darkmode activate/deactivate
-- fix all darkmode toggle errors in console
-- assign correct darkmode css classes to everything on dashboard.fxml
-- change darkmode and lightmode css classes to themeMode or something
-
-- update dashboard.fxml ratio to ratio of start.fxml
-
 - figure out "off months"
 
 - update user select dropdown on create/delete user
 
 - make it check if a student is working during the time of appointment scheduling
+
+- make services hashmap not sort alphabetically or change to something else
+
+for mason:
+- when in dark mode on login, security question cant be seen
+- make all dark mode display backgrounds black like the home and account page
+- do the same with tab backgrounds
+- fix appointment custom note border radius
+- inform Landen as to why we have 2 user constructors

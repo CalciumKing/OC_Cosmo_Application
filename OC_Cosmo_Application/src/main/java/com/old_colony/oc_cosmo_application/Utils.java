@@ -13,7 +13,7 @@ public class Utils {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
     }
-    
+
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
                                                     String headerText, String contentText,
                                                     String aText, String bText) {
@@ -23,7 +23,7 @@ public class Utils {
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
-    
+
     private static Alert createAlert(Alert.AlertType type, String title,
                                      String headerText, String contentText) {
         Alert alert = new Alert(type);

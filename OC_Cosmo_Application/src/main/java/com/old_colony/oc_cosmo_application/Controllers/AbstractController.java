@@ -19,6 +19,10 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.FileNotFoundException;
+import java.net.URL;
+
+@SuppressWarnings({"CallToPrintStackTrace", "unused"})
 public abstract sealed class AbstractController permits DashboardController, StartController {
     @FXML
     protected AnchorPane main_pane;
@@ -28,7 +32,7 @@ public abstract sealed class AbstractController permits DashboardController, Sta
     private double xOffset, yOffset, defaultWidth, defaultHeight;
 
 
-    protected abstract void init(User user, boolean darkMode);
+    protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
 
     protected final void changeScene(String sceneName, User user) {
         try {
@@ -37,16 +41,22 @@ public abstract sealed class AbstractController permits DashboardController, Sta
             Stage stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setScene(new Scene(root));
-            stage.getIcons().add(new Image(getClass().getResource("/images/AppIcon.png").toExternalForm()));
-            
+
+            URL url = getClass().getResource("/images/AppIcon.png");
+            if (url == null) throw new FileNotFoundException();
+            stage.getIcons().add(new Image(url.toExternalForm()));
+
+            stage.show();
+
             if (user != null) { // entering application
                 stage.setTitle("Cosmetology Application | " + user.getUsername());
                 DashboardController dashboardController = fxmlLoader.getController();
-                dashboardController.init(user, isDarkMode);
-            } else // exiting application
+                dashboardController.init(user, isDarkMode, isMaximized);
+            } else { // exiting application
                 stage.setTitle("Cosmetology Application | Login");
-            
-            stage.show();
+                StartController startController = fxmlLoader.getController();
+                startController.init(null, isDarkMode, isMaximized);
+            }
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -57,82 +67,85 @@ public abstract sealed class AbstractController permits DashboardController, Sta
             e.printStackTrace();
         }
     }
-    
+
     @FXML
     protected final void toggleDarkMode() {
         main_pane.getStylesheets().removeLast();
         String theme = (isDarkMode ? "lightMode" : "darkMode") + ".css",
                 icon = isDarkMode ? "MOON_ALT" : "SUN_ALT";
 
-        main_pane.getStylesheets().addLast(getClass().getResource("/com/old_colony/oc_cosmo_application/CSSFiles/" + theme).toExternalForm());
+        URL url = getClass().getResource("/com/old_colony/oc_cosmo_application/CSSFiles/" + theme);
+        if (url == null) return;
+
+        main_pane.getStylesheets().addLast(url.toExternalForm());
         darkModeIcon.setGlyphName(icon);
 
         isDarkMode = !isDarkMode;
     }
-    
+
     // region Window Methods
     @FXML
     protected final void windowMinimize(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
     }
-    
+
     @FXML
     protected final void windowClose() {
         Platform.exit();
     }
-    
+
     @FXML
     protected final void windowClick(MouseEvent event) {
         xOffset = event.getSceneX();
         yOffset = event.getSceneY();
     }
-    
+
     @FXML
     protected final void windowDrag(MouseEvent event) {
         if (isMaximized)
             toggleMaximize(); // undoing maximization
-        
+
         Stage stage = (Stage) main_pane.getScene().getWindow();
         stage.setX(event.getScreenX() - xOffset);
         stage.setY(event.getScreenY() - yOffset);
     }
-    
+
     @FXML
     protected final void toggleMaximize() {
         if (!isMaximized) { // maximizing
             Scene scene = main_pane.getScene();
             double initWidth = scene.getWidth(),
                     initHeight = scene.getHeight();
-            
+
             defaultWidth = (defaultWidth == 0) ? initWidth : defaultWidth;
             defaultHeight = (defaultHeight == 0) ? initHeight : defaultHeight;
-            
+
             maxHelper(initWidth, initHeight);
         } else // un-maximizing
             maxHelper(defaultWidth, defaultHeight);
-        
+
         isMaximized = !isMaximized;
     }
-    
+
     private void maxHelper(double width, double height) {
         Stage stage = (Stage) main_pane.getScene().getWindow();
         Scene scene = stage.getScene();
-        
+
         stage.setMaximized(!isMaximized);
         maximizeIcon.setGlyphName(isMaximized ? "SQUARE" : "MINUS_SQUARE");
-        
+
         double ratio = width / height,
                 newWidth = scene.getWidth(), newHeight = scene.getHeight(),
                 scaleFactor = (newWidth / newHeight > ratio) ? newHeight / height : newWidth / width;
         boolean condition = scaleFactor >= 1;
-        
+
         if (condition) {
             Scale scale = new Scale(scaleFactor, scaleFactor);
             scale.setPivotX(0);
             scale.setPivotY(0);
             scene.getRoot().getTransforms().setAll(scale);
         }
-        
+
         main_pane.setPrefWidth(condition ? newWidth / scaleFactor : Math.max(width, newWidth));
         main_pane.setPrefHeight(condition ? newHeight / scaleFactor : Math.max(height, newHeight));
     }

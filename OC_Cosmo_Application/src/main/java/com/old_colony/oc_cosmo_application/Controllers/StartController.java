@@ -15,45 +15,47 @@ public final class StartController extends AbstractController {
     @FXML
     private TextField forgotAnswer_txt, forgotUsername_txt,
             securityAnswer_txt, username_txt;
-    
+
     @FXML
     private AnchorPane forgotPassword_pane, login_pane;
-    
+
     @FXML
     private PasswordField password_txt, forgotPassword_txt;
-    
+
     @FXML
     private Label securityQuestion_lbl, forgotQuestion_lbl;
     // endregion
-    
+
     @Override
-    protected void init(User user, boolean darkMode) {
-        isDarkMode = darkMode;
-        if(darkMode) toggleDarkMode();
+    protected void init(User user, boolean isDarkMode, boolean isMaximized) {
+        // default is light mode and not maximized
+        // toggles to the previous applications settings if needed
+        if (isDarkMode) toggleDarkMode();
+        if (isMaximized) toggleMaximize();
     }
-    
+
     // region FXML Methods
     @FXML
     private void changeSecurityLbl() {
         fillQuestionLbl(securityQuestion_lbl, username_txt);
     }
-    
+
     @FXML
     private void changeForgotSecurityLbl() {
         fillQuestionLbl(forgotQuestion_lbl, forgotUsername_txt);
     }
-    
+
     @FXML
     private void enableForgotPassword() {
         if (!forgotAnswer_txt.getText().isEmpty() || !forgotUsername_txt.getText().isEmpty())
             forgotPassword_txt.setDisable(false);
     }
-    
+
     @FXML
     private void setNewPassword() {
         if (forgotPassword_txt.getText().isEmpty() ||
-            forgotUsername_txt.getText().isEmpty() ||
-            forgotAnswer_txt.getText().isEmpty()) {
+                forgotUsername_txt.getText().isEmpty() ||
+                forgotAnswer_txt.getText().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -62,23 +64,23 @@ public final class StartController extends AbstractController {
             );
             return;
         }
-        
+
         SQLUtils.changePassword(forgotUsername_txt.getText(), forgotPassword_txt.getText());
         logIn();
         clearForgotPassword();
     }
-    
+
     @FXML
     private void logIn() {
-        if(forgotPassword_pane.isVisible()) {
+        if (forgotPassword_pane.isVisible()) {
             changeScene("dashboard.fxml", SQLUtils.getUser(forgotUsername_txt.getText()));
             main_pane.getScene().getWindow().hide();
             return;
         }
 
         if (username_txt.getText().isEmpty() ||
-            password_txt.getText().isEmpty() ||
-            securityAnswer_txt.getText().isEmpty()) {
+                password_txt.getText().isEmpty() ||
+                securityAnswer_txt.getText().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -99,7 +101,7 @@ public final class StartController extends AbstractController {
                     "Please Try Again"
             );
     }
-    
+
     @FXML
     private void swapPane() {
         if (login_pane.isVisible()) {
@@ -112,23 +114,23 @@ public final class StartController extends AbstractController {
         }
     }
     // endregion
-    
-    // region Private Helper Methods
+
+    // region Helper Methods
     private void fillQuestionLbl(Label question_lbl, TextField username_txt) {
         question_lbl.setText(SQLUtils.getSecurityQuestion(username_txt.getText()));
     }
-    
+
     private boolean checkLoginInfo() {
         return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
     }
-    
+
     private void clearForgotPassword() {
         forgotPassword_txt.clear();
         forgotUsername_txt.clear();
         forgotAnswer_txt.clear();
         forgotQuestion_lbl.setText("");
     }
-    
+
     private void setInfoOnSwap() {
         forgotUsername_txt.setText(username_txt.getText());
         forgotQuestion_lbl.setText(securityQuestion_lbl.getText());

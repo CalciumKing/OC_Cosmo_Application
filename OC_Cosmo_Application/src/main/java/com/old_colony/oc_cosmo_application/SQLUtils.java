@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import java.sql.*;
 import java.time.LocalDate;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class SQLUtils {
     public static Connection connectDB() {
         try {
@@ -26,7 +27,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     public static String getColor(String name) {
         try {
             Color color = Color.web(name.toUpperCase());
@@ -46,21 +47,21 @@ public class SQLUtils {
             return "#808080"; // grey fallback color
         }
     }
-    
+
     // region Start
     public static boolean logInCheck(String username, String password,
                                      String securityAnswer) {
         try (Connection connect = connectDB()) {
             if (connect == null) return false;
-            
+
             String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ?";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
-            
+
             prepare.setString(1, username);
             prepare.setString(2, password);
             prepare.setString(3, securityAnswer);
-            
+
             ResultSet resultSet = prepare.executeQuery();
             if (resultSet.next())
                 return resultSet.getString("password").equals(password)
@@ -75,20 +76,20 @@ public class SQLUtils {
             );
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     public static void changePassword(String username, String newPassword) {
         try (Connection connect = connectDB()) {
             if (connect == null) return;
-            
+
             String sql = "UPDATE users SET password = ? WHERE username = ?";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, newPassword);
             prepare.setString(2, username);
-            
+
             prepare.executeUpdate();
         } catch (SQLException e) {
             Utils.normalAlert(
@@ -100,17 +101,17 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     public static String getSecurityQuestion(String username) {
         try (Connection connect = connectDB()) {
             if (connect == null) return null;
-            
+
             String sql = "SELECT securityQuestion FROM users WHERE username = ?";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, username);
             ResultSet resultSet = prepare.executeQuery();
-            
+
             if (resultSet.next())
                 return resultSet.getString("securityQuestion");
         } catch (SQLException e) {
@@ -125,18 +126,18 @@ public class SQLUtils {
         return null;
     }
     // endregion
-    
+
     // region Dashboard
     public static ObservableList<User> getAllUsers() {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users;";
-            
+
             ObservableList<User> data = FXCollections.observableArrayList();
             PreparedStatement prepared = connection.prepareStatement(sql);
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new User(
                         result.getString("username"),
@@ -146,7 +147,7 @@ public class SQLUtils {
                         result.getInt("userID"),
                         createStatus(result.getInt("status"))
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -159,7 +160,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     public static void createAppointment(int hour, int minute,
                                          int duration, int studentID,
                                          String customer, String service,
@@ -168,7 +169,7 @@ public class SQLUtils {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
             String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?,?)";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, hour);
             prepared.setInt(2, minute);
@@ -180,7 +181,7 @@ public class SQLUtils {
             prepared.setDate(8, Date.valueOf(date));
             prepared.setString(9, color.toString());
             prepared.setString(10, note);
-            
+
             prepared.executeUpdate();
         } catch (Exception e) {
             Utils.normalAlert(
@@ -192,18 +193,21 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     public static void deleteAppointment(String username, String service) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
             String sql = "DELETE FROM appointments WHERE userID = ? AND service = ?";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setInt(1, getUser(username).getUserID());
+            User user = getUser(username);
+            if (user == null) throw new IllegalArgumentException("User Not Found");
+
+            prepared.setInt(1, user.getUserID());
             prepared.setString(2, service);
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -214,25 +218,25 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from appointments";
             boolean filterByID = id != -1;
-            
+
             if (filterByID)
                 sql += " where userID = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
-            
+
             if (filterByID)
                 prepared.setInt(1, id);
-            
+
             ObservableList<Appointment> data = FXCollections.observableArrayList();
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new Appointment(
                         result.getString("custName"),
@@ -246,7 +250,7 @@ public class SQLUtils {
                         result.getInt("duration"),
                         result.getString("note")
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -259,23 +263,23 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     public static void createUser(String username, String password,
                                   String secQuestion, String secAnswer,
                                   boolean isAdmin) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
             String sql = "INSERT INTO users (username, password, securityQuestion, securityAnswer, status) VALUES (?,?,?,?,?)";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, username);
             prepared.setString(2, password);
             prepared.setString(3, secQuestion);
             prepared.setString(4, secAnswer);
             prepared.setInt(5, isAdmin ? 1 : 0);
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -286,18 +290,18 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     public static void deleteUser(String username) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "DELETE FROM users WHERE username = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, username);
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -313,7 +317,7 @@ public class SQLUtils {
                                   String secQuestion, String secAnswer,
                                   boolean isAdmin) {
         try (Connection connection = connectDB()) {
-            if(connection == null) return;
+            if (connection == null) return;
 
             String sql = "update users set password = ?, securityQuestion = ?, securityAnswer = ?, status = ? where username = ?;";
 
@@ -336,17 +340,17 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where userID = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
-            
+
             if (result.next())
                 return new User(
                         result.getString("username"),
@@ -367,17 +371,17 @@ public class SQLUtils {
         }
         return null;
     }
-    
+
     public static User getUser(String username) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where username = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, username);
             ResultSet result = prepared.executeQuery();
-            
+
             if (result.next())
                 return new User(
                         result.getString("username"),
@@ -395,22 +399,23 @@ public class SQLUtils {
                     "There was an error getting a user from the database, please try again."
             );
             e.printStackTrace();
+
         }
         return null;
     }
-    
+
     public static ObservableList<Appointment> getTodayAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from appointments where date(appDate) = curdate() and userID = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
-            
+
             ObservableList<Appointment> data = FXCollections.observableArrayList();
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new Appointment(
                         result.getString("custName"),
@@ -424,12 +429,12 @@ public class SQLUtils {
                         result.getInt("duration"),
                         result.getString("note")
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
-                    "Error in getTodaysAppointments",
+                    "Error in getTodayAppointments",
                     "Error Getting Today's Appointments From Database",
                     "There was an error getting today's appointments from the database, please try again."
             );
@@ -445,14 +450,6 @@ public class SQLUtils {
             case 0 -> Status.STUDENT;
             case 1 -> Status.ADMIN;
             default -> Status.ERROR;
-        };
-    }
-
-    private static int createIntStatus(Status status) {
-        return switch(status){
-            case STUDENT -> 0;
-            case ADMIN -> 1;
-            default -> -1;
         };
     }
     // endregion
