@@ -1,10 +1,8 @@
 - figure out "off months"
 
-- update user select dropdown on create/delete user
+- make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
-- make it check if a student is working during the time of appointment scheduling
-
-- make services hashmap not sort alphabetically or change to something else
+- ask mr riley if we should have edit appointments, if not then delete unused methods in appointment class
 
 for mason:
 - when in dark mode on login, security question cant be seen
@@ -12,3 +10,4 @@ for mason:
 - do the same with tab backgrounds
 - fix appointment custom note border radius
 - inform Landen as to why we have 2 user constructors
+- tell landen what enableForgotPassword() is for

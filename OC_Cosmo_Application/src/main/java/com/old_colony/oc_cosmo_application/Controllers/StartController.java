@@ -8,19 +8,20 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
-public final class StartController extends AbstractController {
+public class StartController extends AbstractController {
     // region FXML Variables
     @FXML
-    private TextField forgotAnswer_txt, forgotUsername_txt,
-            securityAnswer_txt, username_txt;
+    private TextField forgotAnswer_field, forgotUsername_field,
+            securityAnswer_field, username_field;
 
     @FXML
     private AnchorPane forgotPassword_pane, login_pane;
 
     @FXML
-    private PasswordField password_txt, forgotPassword_txt;
+    private PasswordField password_field, forgotPassword_field;
 
     @FXML
     private Label securityQuestion_lbl, forgotQuestion_lbl;
@@ -36,26 +37,28 @@ public final class StartController extends AbstractController {
 
     // region FXML Methods
     @FXML
-    private void changeSecurityLbl() {
-        fillQuestionLbl(securityQuestion_lbl, username_txt);
+    private void updateSecQuestionLbl(KeyEvent event) {
+        TextField source = (TextField) event.getSource();
+
+        if(source.equals(username_field))
+            securityQuestion_lbl.setText(SQLUtils.getSecurityQuestion(username_field.getText()));
+        else if(source.equals(forgotUsername_field))
+            forgotQuestion_lbl.setText(SQLUtils.getSecurityQuestion(forgotUsername_field.getText()));
+        else
+            System.out.println("not working");
     }
 
     @FXML
-    private void changeForgotSecurityLbl() {
-        fillQuestionLbl(forgotQuestion_lbl, forgotUsername_txt);
-    }
-
-    @FXML
-    private void enableForgotPassword() {
-        if (!forgotAnswer_txt.getText().isEmpty() || !forgotUsername_txt.getText().isEmpty())
-            forgotPassword_txt.setDisable(false);
+    private void enableForgotPassword() { // for what purpose???
+        if (!forgotAnswer_field.getText().isEmpty() || !forgotUsername_field.getText().isEmpty())
+            forgotPassword_field.setDisable(false);
     }
 
     @FXML
     private void setNewPassword() {
-        if (forgotPassword_txt.getText().isEmpty() ||
-                forgotUsername_txt.getText().isEmpty() ||
-                forgotAnswer_txt.getText().isEmpty()) {
+        if (forgotPassword_field.getText().isEmpty() ||
+                forgotUsername_field.getText().isEmpty() ||
+                forgotAnswer_field.getText().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -65,22 +68,24 @@ public final class StartController extends AbstractController {
             return;
         }
 
-        SQLUtils.changePassword(forgotUsername_txt.getText(), forgotPassword_txt.getText());
+        SQLUtils.changePassword(forgotUsername_field.getText(), forgotPassword_field.getText());
         logIn();
-        clearForgotPassword();
     }
 
     @FXML
     private void logIn() {
+        // skip checks because its already been verified in setNewPassword()
         if (forgotPassword_pane.isVisible()) {
-            changeScene("dashboard.fxml", SQLUtils.getUser(forgotUsername_txt.getText()));
+            changeScene("dashboard", SQLUtils.getUser(forgotUsername_field.getText()));
             main_pane.getScene().getWindow().hide();
             return;
         }
 
-        if (username_txt.getText().isEmpty() ||
-                password_txt.getText().isEmpty() ||
-                securityAnswer_txt.getText().isEmpty()) {
+        String username = username_field.getText(),
+                password = password_field.getText(),
+                secAnswer = securityAnswer_field.getText();
+
+        if (username.isEmpty() || password.isEmpty() || secAnswer.isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -90,8 +95,8 @@ public final class StartController extends AbstractController {
             return;
         }
 
-        if (checkLoginInfo()) {
-            changeScene("dashboard.fxml", SQLUtils.getUser(username_txt.getText()));
+        if (SQLUtils.logInCheck(username, password, secAnswer)) {
+            changeScene("dashboard", SQLUtils.getUser(username));
             main_pane.getScene().getWindow().hide();
         } else
             Utils.normalAlert(
@@ -104,37 +109,25 @@ public final class StartController extends AbstractController {
 
     @FXML
     private void swapPane() {
-        if (login_pane.isVisible()) {
-            login_pane.setVisible(false);
-            forgotPassword_pane.setVisible(true);
-            setInfoOnSwap();
-        } else if (forgotPassword_pane.isVisible()) {
-            forgotPassword_pane.setVisible(false);
-            login_pane.setVisible(true);
-        }
-    }
-    // endregion
+        boolean toForgot = login_pane.isVisible();
 
-    // region Helper Methods
-    private void fillQuestionLbl(Label question_lbl, TextField username_txt) {
-        question_lbl.setText(SQLUtils.getSecurityQuestion(username_txt.getText()));
-    }
+        login_pane.setVisible(!toForgot);
+        forgotPassword_pane.setVisible(toForgot);
 
-    private boolean checkLoginInfo() {
-        return SQLUtils.logInCheck(username_txt.getText(), password_txt.getText(), securityAnswer_txt.getText());
-    }
+        TextField fromUsername = toForgot ? username_field : forgotUsername_field,
+                fromAnswer = toForgot ? securityAnswer_field : forgotAnswer_field,
+                toUsername = toForgot ? forgotUsername_field : username_field,
+                toAnswer = toForgot ? forgotAnswer_field : securityAnswer_field;
 
-    private void clearForgotPassword() {
-        forgotPassword_txt.clear();
-        forgotUsername_txt.clear();
-        forgotAnswer_txt.clear();
-        forgotQuestion_lbl.setText("");
-    }
+        Label fromQuestion = toForgot ? securityQuestion_lbl : forgotQuestion_lbl,
+                toQuestion = toForgot ? forgotQuestion_lbl : securityQuestion_lbl;
 
-    private void setInfoOnSwap() {
-        forgotUsername_txt.setText(username_txt.getText());
-        forgotQuestion_lbl.setText(securityQuestion_lbl.getText());
-        forgotAnswer_txt.setText(securityAnswer_txt.getText());
+        if (toUsername.getText().isEmpty())
+            toUsername.setText(fromUsername.getText());
+        if (toQuestion.getText().isEmpty())
+            toQuestion.setText(fromQuestion.getText());
+        if (toAnswer.getText().isEmpty())
+            toAnswer.setText(fromAnswer.getText());
     }
     // endregion
 }

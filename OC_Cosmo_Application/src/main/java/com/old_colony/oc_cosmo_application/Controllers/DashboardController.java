@@ -27,12 +27,10 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.time.LocalTime;
+import java.util.*;
 
-public final class DashboardController extends AbstractController implements Initializable {
+public class DashboardController extends AbstractController implements Initializable {
     // region FXML Variables
     @FXML
     private Button home_btn, schedule_btn,
@@ -110,7 +108,7 @@ public final class DashboardController extends AbstractController implements Ini
     // region Private Variables
     private User currentUser;
     private boolean isCollapsed;
-    private final HashMap<String, ArrayList<Integer>> servicesAndCost = new HashMap<>();
+    private final LinkedHashMap<String, ArrayList<Integer>> servicesAndCost = new LinkedHashMap<>(); // maintains inserted order
     // endregion
 
     @Override
@@ -149,6 +147,24 @@ public final class DashboardController extends AbstractController implements Ini
     }
 
     @FXML
+    private void serviceSelect() {
+        String service = services_combobox.getValue();
+
+        if (service == null || invalidService(service)) return;
+
+        ArrayList<Integer> item = servicesAndCost.get(service);
+
+        int cost = item.getFirst(),
+            duration = item.getLast(),
+            hour = hour_spinner.getValue(),
+            minute = minute_spinner.getValue();
+
+        invalidAppointmentTime(minute, duration, hour);
+
+        costDur_lbl.setText("Cost: $" + cost + " Duration: " + duration);
+    }
+
+    @FXML
     private void showPage(ActionEvent event) {
         AnchorPane[] panes = new AnchorPane[]{
                 home_pane, schedule_pane,
@@ -181,7 +197,7 @@ public final class DashboardController extends AbstractController implements Ini
         hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
         minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
         customerName_field.clear();
-        services_combobox.setValue("Services");
+        services_combobox.setValue(null);
         student_combobox.setValue("Select Student");
         color_picker.setValue(Color.GREY);
         note_area.clear();
@@ -194,15 +210,7 @@ public final class DashboardController extends AbstractController implements Ini
         String customer = customerName_field.getText(),
                 service = services_combobox.getValue();
 
-        if (service.contains("---")) { // divider, not a valid service
-            Utils.normalAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Divider Selected",
-                    "Cannot Select A Divider For A Service",
-                    "Please select a valid service that is not a divider item."
-            );
-            return;
-        }
+        if (invalidService(service)) return;
 
         User user = SQLUtils.getUser(student_combobox.getValue());
         if (user == null) return;
@@ -213,9 +221,16 @@ public final class DashboardController extends AbstractController implements Ini
                 cost = servicesAndCost.get(service).getFirst(),
                 duration = servicesAndCost.get(service).getLast();
 
+        if (invalidAppointmentTime(minute, duration, hour)) return;
+
         String note = note_area.getText();
         LocalDate date = dateSelect_picker.getValue();
         Color color = color_picker.getValue();
+
+        if(!am_radio.isSelected())
+            hour += 12;
+
+        if (studentUnavailable(studentID, date, hour, minute, duration)) return;
 
         SQLUtils.createAppointment(hour, minute, duration, studentID, customer, service, cost, date, color, note);
         resetForm();
@@ -230,6 +245,8 @@ public final class DashboardController extends AbstractController implements Ini
                 secAnswer = secAnswer_field.getText();
 
         boolean isAdmin = admin_radio.isSelected();
+
+        student_combobox.getItems().add(username);
 
         // check if a user with that name is already in database
         ObservableList<User> users = users_table.getItems();
@@ -260,8 +277,10 @@ public final class DashboardController extends AbstractController implements Ini
                 "Yes, Delete " + username_field.getText(),
                 "Cancel"
         );
+
         if (optionSelected.isPresent() && !optionSelected.get().getText().equals("Cancel")) {
             SQLUtils.deleteUser(username_field.getText());
+            student_combobox.getItems().remove(username_field.getText());
             reloadUserTable();
             clearUserForm();
         }
@@ -382,7 +401,7 @@ public final class DashboardController extends AbstractController implements Ini
 
     @FXML
     private void logOut() {
-        changeScene("start.fxml", null);
+        changeScene("start", null);
         main_pane.getScene().getWindow().hide();
     }
     // endregion
@@ -581,7 +600,7 @@ public final class DashboardController extends AbstractController implements Ini
         if (offset == 0) { // only putting label on first appointment pane
             Label label = new Label(appointment.getCustomer() + ": " + appointment.getService() + " " + formatTime(appointment));
             if (appointment.getNote() != null && !appointment.getNote().isEmpty())
-                label.setText(label.getText() + "(" + appointment.getNote() + ")");
+                label.setText(label.getText() + " (" + appointment.getNote() + ")");
 
             label.setWrapText(true);
             label.setAlignment(Pos.CENTER_LEFT);
@@ -628,6 +647,67 @@ public final class DashboardController extends AbstractController implements Ini
         KeyFrame keyFrame = new KeyFrame(Duration.millis(350), widthValue);
         Timeline timeline = new Timeline(keyFrame);
         timeline.play();
+    }
+
+    private boolean invalidService(String service) {
+        if (service.contains("---")) { // divider, not a valid service
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Divider Selected",
+                    "Cannot Select A Divider For A Service",
+                    "Please select a valid service that is not a divider item."
+            );
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean invalidAppointmentTime(int minute, int duration, int hour) {
+        if(am_radio.isSelected()) return false; // nothing can go from the morning to end of day
+
+        hour += 12;
+
+        LocalTime requestedStartTime = LocalTime.of(hour, minute),
+                requestedEndTime = requestedStartTime.plusMinutes(duration),
+                schoolDayEndTime = LocalTime.of(14, 20);
+
+        if(requestedEndTime.isAfter(schoolDayEndTime)) {
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Duration Error",
+                    "Appointment Duration Exceeds School Day",
+                    "Please enter a different service that will take less time or schedule it for a different time"
+            );
+            return true;
+        }
+        
+        return false;
+    }
+
+    private boolean studentUnavailable(int studentID, LocalDate date, int hour, int minute, int duration) {
+        ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(studentID);
+        if(appointments == null) return true;
+
+        for(Appointment a : appointments) {
+            if(a.getDate().toLocalDate().equals(date)) {
+                LocalTime requestedStartTime = LocalTime.of(hour, minute),
+                        requestedEndTime = requestedStartTime.plusMinutes(duration),
+                        appStartTime = LocalTime.of(a.getHour(), a.getMinute()),
+                        appEndTime = appStartTime.plusMinutes(a.getDuration());
+
+                if(requestedStartTime == appStartTime || requestedEndTime == appEndTime ||
+                        requestedStartTime.isBefore(appEndTime) && requestedEndTime.isAfter(appStartTime)) {
+                    Utils.normalAlert(
+                            Alert.AlertType.INFORMATION,
+                            "Appointment Time Error",
+                            "Student Already Has Appointment At That Time",
+                            "Student is doing: " + a.getCustomer() + " - " + a.getService()
+                    );
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     // endregion
 }

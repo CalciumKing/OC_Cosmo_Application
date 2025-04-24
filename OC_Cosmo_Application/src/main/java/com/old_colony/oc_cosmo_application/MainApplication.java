@@ -6,18 +6,20 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import java.net.URL;
 
 import java.io.IOException;
 
 public class MainApplication extends Application {
     @Override
-    @SuppressWarnings("ConstantConditions") // app icon warning
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("dashboard.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");
-        stage.getIcons().add(new Image(getClass().getResource("/images/AppIcon.png").toExternalForm()));
+        URL url = getClass().getResource("/images/AppIcon.png");
+        if(url != null)
+            stage.getIcons().add(new Image(url.toExternalForm()));
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.show();

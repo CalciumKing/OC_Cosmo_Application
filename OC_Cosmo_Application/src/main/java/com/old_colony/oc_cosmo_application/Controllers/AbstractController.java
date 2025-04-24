@@ -22,8 +22,15 @@ import javafx.stage.StageStyle;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
+/**
+ * This controller should only ever be the parent of fxml controllers.
+ * <p>Methods include: window settings, dark mode, scene changing, and init.</p>
+ * <p>init() should be run in change scene to transfer information like user data or dark mode and maximized.</p>
+ * <p>After some simple fxids are assigned and onActions are implemented, the heavy duty work is finished.</p>
+ * */
+
 @SuppressWarnings({"CallToPrintStackTrace", "unused"})
-public abstract sealed class AbstractController permits DashboardController, StartController {
+abstract class AbstractController {
     @FXML
     protected AnchorPane main_pane;
     @FXML
@@ -32,15 +39,28 @@ public abstract sealed class AbstractController permits DashboardController, Sta
     private double xOffset, yOffset, defaultWidth, defaultHeight;
 
 
+    /**
+     * @param user pass in the logged-in user, null if exiting
+     * @param isDarkMode if the user was in dark mode before logging in
+     * @param isMaximized if the user was maximized before logging in
+     */
     protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
 
+    /**
+     * @param sceneName .fxml file to change to, only enter file name without .fxml
+     * @param user logged-in user as user object, null if exiting
+     */
     protected final void changeScene(String sceneName, User user) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName + ".fxml"));
             Parent root = fxmlLoader.load();
-            Stage stage = new Stage();
+            Stage oldStage = (Stage) main_pane.getScene().getWindow(), // getting main_pane from other controller
+                    stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setScene(new Scene(root));
+
+            stage.setX(oldStage.getX());
+            stage.setY(oldStage.getY());
 
             URL url = getClass().getResource("/images/AppIcon.png");
             if (url == null) throw new FileNotFoundException();

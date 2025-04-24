@@ -34,7 +34,7 @@
    </AnchorPane>
    <AnchorPane fx:id="login_pane" layoutX="-6.0" prefHeight="430.0" prefWidth="377.0" styleClass="startBackground">
       <AnchorPane layoutX="47.0" layoutY="52.0" prefHeight="363.0" prefWidth="270.0" styleClass="infoBox">
-         <TextField fx:id="username_txt" layoutX="29.0" layoutY="84.0" onKeyTyped="#changeSecurityLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="username_field" layoutX="29.0" layoutY="84.0" onKeyTyped="#updateSecQuestionLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
          <Label layoutX="34.0" layoutY="64.0" text="Username">
             <font>
                <Font size="14.0" />
@@ -45,9 +45,9 @@
                <Font name="cmb10" size="24.0" />
             </font>
          </Label>
-         <PasswordField fx:id="password_txt" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-         <TextField fx:id="securityAnswer_txt" layoutX="29.0" layoutY="269.0" onAction="#logIn" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-         <Hyperlink layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#f200ff" />
+         <PasswordField fx:id="password_field" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="securityAnswer_field" layoutX="29.0" layoutY="269.0" onAction="#logIn" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+         <Hyperlink layoutX="34.0" layoutY="169.0" onAction="#swapPane" text="Forgot Password" textFill="#f200ff" visited="true" />
          <Label layoutX="34.0" layoutY="124.0" text="Password">
             <font>
                <Font size="14.0" />
@@ -85,7 +85,7 @@
          </graphic>
       </Hyperlink>
       <AnchorPane layoutX="48.0" layoutY="70.0" prefHeight="350.0" prefWidth="270.0" styleClass="infoBox">
-         <TextField fx:id="forgotUsername_txt" layoutX="29.0" layoutY="99.0" onKeyPressed="#enableForgotPassword" onKeyTyped="#changeForgotSecurityLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="forgotUsername_field" layoutX="29.0" layoutY="99.0" onKeyPressed="#enableForgotPassword" onKeyTyped="#updateSecQuestionLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
          <Label layoutX="29.0" layoutY="79.0" text="Username">
             <font>
                <Font size="14.0" />
@@ -96,7 +96,7 @@
                <Font name="cmb10" size="24.0" />
             </font>
          </Label>
-         <TextField fx:id="forgotAnswer_txt" layoutX="29.0" layoutY="208.0" onKeyPressed="#enableForgotPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="forgotAnswer_field" layoutX="29.0" layoutY="208.0" onKeyPressed="#enableForgotPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
          <Label layoutX="29.0" layoutY="236.0" text="New Password">
             <font>
                <Font size="14.0" />
@@ -107,7 +107,7 @@
                <Font size="14.0" />
             </font>
          </Label>
-         <PasswordField fx:id="forgotPassword_txt" layoutX="29.0" layoutY="257.0" onAction="#setNewPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+         <PasswordField fx:id="forgotPassword_field" layoutX="29.0" layoutY="257.0" onAction="#setNewPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
          <Button layoutX="38.0" layoutY="296.0" mnemonicParsing="false" onAction="#setNewPassword" prefHeight="26.0" prefWidth="178.0" styleClass="loginButtons" text="Submit">
             <font>
                <Font size="18.0" />

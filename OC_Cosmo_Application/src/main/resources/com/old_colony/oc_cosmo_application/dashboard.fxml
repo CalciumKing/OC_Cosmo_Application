@@ -144,7 +144,7 @@
          </AnchorPane>
          <AnchorPane fx:id="schedule_pane" prefHeight="505.0" prefWidth="754.0" styleClass="mode" visible="false">
             <TabPane layoutY="29.0" prefHeight="483.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
-               <Tab text="Table View">
+               <Tab text="Table View All">
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <TableView fx:id="schedule_table" prefHeight="452.0" prefWidth="754.0">
                         <columns>
@@ -158,7 +158,7 @@
                      </TableView>
                   </AnchorPane>
                </Tab>
-               <Tab text="Neat View">
+               <Tab text="Neat View Weekly">
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <TabPane fx:id="weekSchedules_tabPane" prefHeight="459.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                         <Tab text="Monday">
@@ -780,7 +780,7 @@
                               <Tooltip text="Enter the customer's full name." />
                            </tooltip>
                         </TextField>
-                        <ComboBox fx:id="services_combobox" layoutX="66.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Services" styleClass="textBoxes">
+                        <ComboBox fx:id="services_combobox" layoutX="66.0" layoutY="76.0" onAction="#serviceSelect" prefHeight="25.0" prefWidth="125.0" promptText="Services" styleClass="textBoxes">
                            <tooltip>
                               <Tooltip text="Select the service the customer wants." />
                            </tooltip>
@@ -809,7 +809,7 @@
                            <Font name="System Bold" size="35.0" />
                         </font>
                      </Label>
-                     <Button layoutX="482.0" layoutY="406.0" mnemonicParsing="false" onAction="#resetForm" styleClass="loginButtons" text="Reset">
+                     <Button layoutX="433.0" layoutY="402.0" mnemonicParsing="false" onAction="#resetForm" styleClass="loginButtons" text="Reset">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
@@ -817,7 +817,7 @@
                            <FontAwesomeIcon fill="WHITE" glyphName="REPEAT" selectionFill="BLACK" />
                         </graphic>
                      </Button>
-                     <Button layoutX="595.0" layoutY="406.0" mnemonicParsing="false" onAction="#submitForm" style="-fx-background-color: green;" styleClass="loginButtons" text="Submit">
+                     <Button layoutX="546.0" layoutY="402.0" mnemonicParsing="false" onAction="#submitForm" style="-fx-background-color: green;" styleClass="loginButtons" text="Submit">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
@@ -825,7 +825,7 @@
                            <FontAwesomeIcon fill="WHITE" glyphName="CHECK" selectionFill="BLACK" />
                         </graphic>
                      </Button>
-                     <Label fx:id="costDur_lbl" layoutX="119.0" layoutY="406.0" text="Cost: $###.## Duration: #:##">
+                     <Label fx:id="costDur_lbl" layoutX="41.0" layoutY="410.0" text="Cost: $###.## Duration: #:##">
                         <font>
                            <Font name="System Bold" size="25.0" />
                         </font>

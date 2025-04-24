@@ -1,10 +1,16 @@
 package com.old_colony.oc_cosmo_application.DataClasses;
 
+/**
+ * class doesn't need setters
+ * <p>current user's values are never updated</p>
+ * <p>other users are only updated in database</p>
+ * */
+
 public class User {
-    private transient String password, securityQuestion;
-    private String username, securityAnswer;
+    private final String username, securityQuestion;
+    private final transient String password, securityAnswer;
     private final int userID;
-    private Status status;
+    private final Status status;
 
     public User(String username, String password,
                 String securityQuestion, String securityAnswer,
@@ -18,44 +24,30 @@ public class User {
     }
 
     public User(String username, String password,
-                String securityAnswer) {
+                String securityAnswer) { // maybe delete this and convert to record
         this.username = username;
         this.password = password;
+        securityQuestion = null;
         this.securityAnswer = securityAnswer;
-        this.userID = 0;
+        this.userID = -1;
+        status = null;
     }
 
-    // region Getters/Setters
+    // region Getters
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getSecurityQuestion() {
         return securityQuestion;
     }
 
-    public void setSecurityQuestion(String securityQuestion) {
-        this.securityQuestion = securityQuestion;
-    }
-
     public String getSecurityAnswer() {
         return securityAnswer;
-    }
-
-    public void setSecurityAnswer(String securityAnswer) {
-        this.securityAnswer = securityAnswer;
     }
 
     public int getUserID() {
@@ -64,10 +56,6 @@ public class User {
 
     public Status getStatus() {
         return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
     // endregion
 }

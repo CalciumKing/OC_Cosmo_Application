@@ -49,12 +49,11 @@ public class SQLUtils {
     }
 
     // region Start
-    public static boolean logInCheck(String username, String password,
-                                     String securityAnswer) {
+    public static boolean logInCheck(String username, String password, String securityAnswer) {
         try (Connection connect = connectDB()) {
             if (connect == null) return false;
 
-            String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ?";
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ? limit 1;";
 
             PreparedStatement prepare = connect.prepareStatement(sql);
 
