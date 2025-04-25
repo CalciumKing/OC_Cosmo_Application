@@ -14,8 +14,8 @@
 
 <AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" styleClass="mode" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
    <stylesheets>
-      <URL value="@CSSFiles/styles.css" />
-      <URL value="@CSSFiles/lightMode.css" />
+      <URL value="@CSS/styles.css" />
+      <URL value="@CSS/lightMode.css" />
    </stylesheets>
    <AnchorPane layoutX="370.0" prefHeight="430.0" prefWidth="395.0" styleClass="startPanelBackground">
       <Label alignment="CENTER" layoutX="28.0" layoutY="223.0" prefHeight="29.0" prefWidth="338.0" style="-fx-background-color: whitesmoke; -fx-border-color: black; -fx-border-radius: 10; -fx-background-radius: 10;" text="Cosmetology Appointment Scheduler" textAlignment="CENTER">
@@ -23,7 +23,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Button layoutX="352.0" layoutY="397.0" mnemonicParsing="false" onAction="#toggleDarkMode" prefHeight="26.0" prefWidth="26.0" styleClass="modeButton">
+      <Button layoutX="348.0" layoutY="384.0" mnemonicParsing="false" onAction="#toggleDarkMode" prefHeight="26.0" prefWidth="26.0" styleClass="modeButton">
          <graphic>
             <FontAwesomeIcon fx:id="darkModeIcon" glyphName="MOON_ALT" size="2em" />
          </graphic>
@@ -85,7 +85,7 @@
          </graphic>
       </Hyperlink>
       <AnchorPane layoutX="48.0" layoutY="70.0" prefHeight="350.0" prefWidth="270.0" styleClass="infoBox">
-         <TextField fx:id="forgotUsername_field" layoutX="29.0" layoutY="99.0" onKeyPressed="#enableForgotPassword" onKeyTyped="#updateSecQuestionLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="forgotUsername_field" layoutX="29.0" layoutY="99.0" onKeyTyped="#updateSecQuestionLbl" prefHeight="26.0" prefWidth="211.0" styleClass="textBoxes" />
          <Label layoutX="29.0" layoutY="79.0" text="Username">
             <font>
                <Font size="14.0" />
@@ -96,7 +96,7 @@
                <Font name="cmb10" size="24.0" />
             </font>
          </Label>
-         <TextField fx:id="forgotAnswer_field" layoutX="29.0" layoutY="208.0" onKeyPressed="#enableForgotPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
+         <TextField fx:id="forgotAnswer_field" layoutX="29.0" layoutY="208.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
          <Label layoutX="29.0" layoutY="236.0" text="New Password">
             <font>
                <Font size="14.0" />
@@ -126,7 +126,7 @@
       </AnchorPane>
    </AnchorPane>
    <Pane prefHeight="28.0" prefWidth="765.0">
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="766.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" onMouseReleased="#windowRelease" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="766.0" />
       <Label disable="true" layoutX="7.0" layoutY="1.0" text="Cosmetology Application Login">
          <font>
             <Font name="Arial Black" size="17.0" />

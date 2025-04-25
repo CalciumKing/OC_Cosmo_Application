@@ -5,9 +5,11 @@ import com.old_colony.oc_cosmo_application.MainApplication;
 import com.old_colony.oc_cosmo_application.Utils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -16,8 +18,10 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -35,11 +39,13 @@ abstract class AbstractController {
     protected AnchorPane main_pane;
     @FXML
     protected FontAwesomeIcon maximizeIcon, darkModeIcon;
-    protected boolean isMaximized, isDarkMode;
+    private boolean isMaximized, maximizedFromClick, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
 
 
     /**
+     * Abstract method required for every controller class
+     * <p>Manages what happens to user data parameters and can initialize anything that needs user data here</p>
      * @param user pass in the logged-in user, null if exiting
      * @param isDarkMode if the user was in dark mode before logging in
      * @param isMaximized if the user was maximized before logging in
@@ -47,6 +53,7 @@ abstract class AbstractController {
     protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
 
     /**
+     * Changes to desired scene based on file name, user parameter can be used to transfer user data excluding dark mode and maximized
      * @param sceneName .fxml file to change to, only enter file name without .fxml
      * @param user logged-in user as user object, null if exiting
      */
@@ -58,7 +65,9 @@ abstract class AbstractController {
                     stage = new Stage();
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setScene(new Scene(root));
+            stage.setAlwaysOnTop(true);
 
+            // setting new stage in the same position as the previous one
             stage.setX(oldStage.getX());
             stage.setY(oldStage.getY());
 
@@ -69,7 +78,7 @@ abstract class AbstractController {
             stage.show();
 
             if (user != null) { // entering application
-                stage.setTitle("Cosmetology Application | " + user.getUsername());
+                stage.setTitle("Cosmetology Application | " + user.username());
                 DashboardController dashboardController = fxmlLoader.getController();
                 dashboardController.init(user, isDarkMode, isMaximized);
             } else { // exiting application
@@ -77,6 +86,8 @@ abstract class AbstractController {
                 StartController startController = fxmlLoader.getController();
                 startController.init(null, isDarkMode, isMaximized);
             }
+
+            main_pane.getScene().getWindow().hide();
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -88,16 +99,19 @@ abstract class AbstractController {
         }
     }
 
+    /**
+     * Toggles dark mode based on the isDarkMode variable
+     * <p>Changes the dark mode icon and alters current scene's css file with lightMode.css and darkMode.css</p>
+     */
     @FXML
     protected final void toggleDarkMode() {
         main_pane.getStylesheets().removeLast();
         String theme = (isDarkMode ? "lightMode" : "darkMode") + ".css",
                 icon = isDarkMode ? "MOON_ALT" : "SUN_ALT";
 
-        URL url = getClass().getResource("/com/old_colony/oc_cosmo_application/CSSFiles/" + theme);
-        if (url == null) return;
-
-        main_pane.getStylesheets().addLast(url.toExternalForm());
+        URL url = getClass().getResource("/com/old_colony/oc_cosmo_application/CSS/" + theme);
+        if (url != null)
+            main_pane.getStylesheets().addLast(url.toExternalForm());
         darkModeIcon.setGlyphName(icon);
 
         isDarkMode = !isDarkMode;
@@ -109,27 +123,95 @@ abstract class AbstractController {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
     }
 
+    /**
+     * Safely exits the application.
+     * <p>Program ends here.</p>
+     */
     @FXML
     protected final void windowClose() {
         Platform.exit();
     }
 
+    /**
+     * This method is needed to set the original x and y position to be used in windowDrag() and windowRelease()
+     * <p>Maximizes the window if clicked twice quickly.</p>
+     * @param event mouse clicking event
+     */
     @FXML
     protected final void windowClick(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+            toggleMaximize();
+            maximizedFromClick = true;
+            return;
+        }
+
         xOffset = event.getSceneX();
         yOffset = event.getSceneY();
     }
 
+    /**
+     * Moves the window and sets opacity to 75% upon mouse drag
+     * <p>Base case prevents window toggling maximization twice, then exits function without executing any code.</p>
+     * @param event mouse dragging event
+     */
     @FXML
     protected final void windowDrag(MouseEvent event) {
+        if(maximizedFromClick) {
+            maximizedFromClick = false;
+            return;
+        }
+
         if (isMaximized)
             toggleMaximize(); // undoing maximization
 
         Stage stage = (Stage) main_pane.getScene().getWindow();
         stage.setX(event.getScreenX() - xOffset);
         stage.setY(event.getScreenY() - yOffset);
+
+        stage.setOpacity(.75);
     }
 
+    /**
+     * Maximizes the window if the distance between the window and the top of the screen is less than 25 pixels.
+     * <p>Screen bound precautions preventing window from getting stuck anywhere outside screen bounds</p>
+     * <p>Sets window opacity to 100% upon dragging stopped</p>
+     * @param event dragging mouse event
+     */
+    @FXML
+    protected final void windowRelease(MouseEvent event) {
+        Scene scene = main_pane.getScene();
+        Window window = scene.getWindow();
+
+        ObservableList<Screen> allScreens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
+
+        Screen screen;
+        Stage stage = (Stage) window;
+
+        if(allScreens.isEmpty())
+            screen = Screen.getPrimary();
+        else
+            screen = allScreens.get(0);
+
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        if(Math.abs(window.getY() - bounds.getMinY()) <= 25)
+            toggleMaximize();
+        else if(window.getY() <= bounds.getMinY()) // prevents window getting stuck above screen
+            stage.setY(bounds.getMinY());
+        else if (window.getY() + window.getHeight() >= bounds.getMaxY()) // prevents window getting stuck below screen
+            stage.setY(bounds.getMaxY() - stage.getHeight());
+
+        if(window.getX() <= bounds.getMinX()) // prevents window getting stuck to left of screen
+            stage.setX(bounds.getMinX());
+        else if (window.getX() + window.getWidth() >= bounds.getMaxX()) // prevents window getting stuck to right of screen
+            stage.setX(bounds.getMaxX() - stage.getWidth());
+
+        window.setOpacity(1);
+    }
+
+    /**
+     * Toggles window maximization based on isMaximized variable
+     */
     @FXML
     protected final void toggleMaximize() {
         if (!isMaximized) { // maximizing
@@ -147,6 +229,11 @@ abstract class AbstractController {
         isMaximized = !isMaximized;
     }
 
+    /**
+     * Does the actual window and icon changing that toggleMaximize() sets up for it
+     * @param width desired width of the screen
+     * @param height desired height of the screen
+     */
     private void maxHelper(double width, double height) {
         Stage stage = (Stage) main_pane.getScene().getWindow();
         Scene scene = stage.getScene();

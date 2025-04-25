@@ -27,6 +27,9 @@ public class StartController extends AbstractController {
     private Label securityQuestion_lbl, forgotQuestion_lbl;
     // endregion
 
+    /**
+     * No user is ever passed in when exiting to start.fxml, so we don't need to manage any user information or initialize anything other than dark mode and maximized
+     */
     @Override
     protected void init(User user, boolean isDarkMode, boolean isMaximized) {
         // default is light mode and not maximized
@@ -36,6 +39,12 @@ public class StartController extends AbstractController {
     }
 
     // region FXML Methods
+    /**
+     * Updates security label based on coresponding page being typed on.
+     * <p>If the normal login username field is being typed, fill in the security question on that page,
+     * same with the username field on the forgot page.</p>
+     * @param event whichever text field the user is typing in
+     */
     @FXML
     private void updateSecQuestionLbl(KeyEvent event) {
         TextField source = (TextField) event.getSource();
@@ -44,14 +53,6 @@ public class StartController extends AbstractController {
             securityQuestion_lbl.setText(SQLUtils.getSecurityQuestion(username_field.getText()));
         else if(source.equals(forgotUsername_field))
             forgotQuestion_lbl.setText(SQLUtils.getSecurityQuestion(forgotUsername_field.getText()));
-        else
-            System.out.println("not working");
-    }
-
-    @FXML
-    private void enableForgotPassword() { // for what purpose???
-        if (!forgotAnswer_field.getText().isEmpty() || !forgotUsername_field.getText().isEmpty())
-            forgotPassword_field.setDisable(false);
     }
 
     @FXML
@@ -72,12 +73,16 @@ public class StartController extends AbstractController {
         logIn();
     }
 
+    /**
+     * Used for both standard login and forgot password login.
+     * <p>Forgot password information is already verified in setNewPassword(),
+     * base case handles that without checking other information.</p>
+     */
     @FXML
     private void logIn() {
         // skip checks because its already been verified in setNewPassword()
         if (forgotPassword_pane.isVisible()) {
             changeScene("dashboard", SQLUtils.getUser(forgotUsername_field.getText()));
-            main_pane.getScene().getWindow().hide();
             return;
         }
 
@@ -97,7 +102,6 @@ public class StartController extends AbstractController {
 
         if (SQLUtils.logInCheck(username, password, secAnswer)) {
             changeScene("dashboard", SQLUtils.getUser(username));
-            main_pane.getScene().getWindow().hide();
         } else
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -107,6 +111,11 @@ public class StartController extends AbstractController {
             );
     }
 
+    /**
+     * When swapping between login and forgot password panes,
+     * this method fills in any already user filled out information
+     * to avoid rewriting information after changing screens.
+     */
     @FXML
     private void swapPane() {
         boolean toForgot = login_pane.isVisible();

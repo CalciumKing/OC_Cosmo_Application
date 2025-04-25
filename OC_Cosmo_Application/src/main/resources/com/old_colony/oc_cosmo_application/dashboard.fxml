@@ -35,8 +35,8 @@
 
 <AnchorPane fx:id="main_pane" prefHeight="517.0" prefWidth="896.0" styleClass="whiteBackground" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
    <stylesheets>
-      <URL value="@CSSFiles/styles.css" />
-      <URL value="@CSSFiles/lightMode.css" />
+      <URL value="@CSS/styles.css" />
+      <URL value="@CSS/lightMode.css" />
    </stylesheets>
    <HBox prefHeight="517.0" prefWidth="912.0" styleClass="mode">
       <VBox fx:id="sideMenu" prefHeight="488.0" prefWidth="164.0" style="-fx-alignment: center; -fx-spacing: 40px;">
@@ -101,7 +101,7 @@
                <Cursor fx:constant="HAND" />
             </cursor>
          </Button>
-         <Button fx:id="logOut_btn" layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#logOut" styleClass="navButton" text="Log Out">
+         <Button layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#logOut" styleClass="navButton" text="Log Out">
             <graphic>
                <FontAwesomeIcon glyphName="ARROW_LEFT" />
             </graphic>
@@ -135,7 +135,7 @@
                </Label>
                <TableView fx:id="dailySchedule_table" layoutX="13.0" layoutY="53.0" prefHeight="296.0" prefWidth="459.0">
                   <columns>
-                     <TableColumn fx:id="time_col" prefWidth="82.0" text="Time" />
+                     <TableColumn fx:id="homeTime_col" prefWidth="82.0" text="Time" />
                      <TableColumn fx:id="homeName_col" prefWidth="204.66665649414062" text="Customer Name" />
                      <TableColumn fx:id="homeService_col" prefWidth="167.0" text="Service" />
                   </columns>
@@ -148,12 +148,12 @@
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <TableView fx:id="schedule_table" prefHeight="452.0" prefWidth="754.0">
                         <columns>
-                           <TableColumn fx:id="date_col" prefWidth="89.33334350585938" text="Date/Time" />
-                           <TableColumn fx:id="cost_col" prefWidth="66.66664123535156" text="Cost" />
-                           <TableColumn fx:id="custName_col" prefWidth="133.99993896484375" text="Customer Name" />
-                           <TableColumn fx:id="service_col" prefWidth="140.66665649414062" text="Service" />
-                           <TableColumn fx:id="student_col" prefWidth="150.0" text="Student" />
-                           <TableColumn fx:id="duration_col" prefWidth="174.66668701171875" text="Duration" />
+                           <TableColumn fx:id="date_col" prefWidth="136.80007016658783" text="Date/Time" />
+                           <TableColumn fx:id="cost_col" prefWidth="71.20001220703125" text="Cost" />
+                           <TableColumn fx:id="custName_col" prefWidth="201.60003662109375" text="Customer Name" />
+                           <TableColumn fx:id="service_col" prefWidth="171.19998168945312" text="Service" />
+                           <TableColumn fx:id="student_col" prefWidth="126.39996337890625" text="Student" />
+                           <TableColumn fx:id="duration_col" prefWidth="55.199951171875" text="Duration" />
                         </columns>
                      </TableView>
                   </AnchorPane>
@@ -657,7 +657,7 @@
          </AnchorPane>
          <AnchorPane fx:id="admin_pane" layoutY="23.0" prefHeight="493.0" prefWidth="754.0" styleClass="mode" visible="false">
             <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
-               <Tab text="User Manage">
+               <Tab text="Manage Users">
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="731.0">
                      <Label layoutX="14.0" layoutY="14.0" text="User Add/Delete">
                         <font>
@@ -933,7 +933,7 @@
       </AnchorPane>
    </HBox>
    <Pane prefHeight="28.0" prefWidth="918.0">
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="918.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" onMouseReleased="#windowRelease" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="918.0" />
       <Label fx:id="windowTitle_lbl" disable="true" layoutX="7.0" layoutY="1.0" text="Cosmetology Application | USERNAME">
          <font>
             <Font name="Arial Black" size="17.0" />

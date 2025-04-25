@@ -13,12 +13,29 @@ import java.util.Optional;
  */
 public class Utils {
     // region Alert Methods
+    /**
+     * Creates a regular alert with the contents of the parameters
+     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title window title text
+     * @param headerText main error header text
+     * @param contentText error description or future instructions
+     */
     public static void normalAlert(Alert.AlertType type, String title,
                                    String headerText, String contentText) {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
     }
 
+    /**
+     * Creates a confirmation alert with the contents of the parameters
+     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title window title text
+     * @param headerText main error header text
+     * @param contentText error description or future instructions
+     * @param aText the confirm button text, can be used to confirm the user's choice of the alert
+     * @param bText the cancel button text, can be used to confirm the users choice of the alert
+     * @return returns {@code Optional<ButtonType>} to be used with .isPresent() and .getText() to confirm the user's choice of the alert
+     */
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
                                                     String headerText, String contentText,
                                                     String aText, String bText) {
@@ -29,6 +46,15 @@ public class Utils {
         return alert.showAndWait();
     }
 
+    /**
+     * Does the actual work of creating a regular alert.
+     * <p>Used by normalAlert() and confirmAlert()</p>
+     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title window title text
+     * @param headerText main error header text
+     * @param contentText error description or future instructions
+     * @return returns {@code Alert} to be used elsewhere
+     */
     private static Alert createAlert(Alert.AlertType type, String title,
                                      String headerText, String contentText) {
         Alert alert = new Alert(type);
@@ -40,6 +66,11 @@ public class Utils {
     }
     // endregion Alert Methods
 
+    /**
+     * Gets the current stage based on the available windows.
+     * <p>Used only if no stage data is given and the stage is needed.</p>
+     * @return the currently open application's stage
+     */
     private static Stage getCurrentStage() {
         for (Window window : Window.getWindows())
             if (window instanceof Stage)

@@ -202,7 +202,7 @@ public class SQLUtils {
             User user = getUser(username);
             if (user == null) throw new IllegalArgumentException("User Not Found");
 
-            prepared.setInt(1, user.getUserID());
+            prepared.setInt(1, user.userID());
             prepared.setString(2, service);
 
             prepared.executeUpdate();

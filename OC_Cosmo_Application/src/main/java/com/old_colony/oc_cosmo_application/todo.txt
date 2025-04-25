@@ -2,12 +2,13 @@
 
 - make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
-- ask mr riley if we should have edit appointments, if not then delete unused methods in appointment class
+- ask mr riley if we should have edit appointments, if not then delete unused methods in appointment class and possibly convert to record
+- ask if we should make stock management
+- do anything with pdfs or data exports?
+- possible analytics page (activity tracking count, appointments per day, etc.)
 
 for mason:
 - when in dark mode on login, security question cant be seen
 - make all dark mode display backgrounds black like the home and account page
 - do the same with tab backgrounds
 - fix appointment custom note border radius
-- inform Landen as to why we have 2 user constructors
-- tell landen what enableForgotPassword() is for
