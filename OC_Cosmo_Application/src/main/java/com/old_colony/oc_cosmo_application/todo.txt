@@ -7,6 +7,8 @@
 - do anything with pdfs or data exports?
 - possible analytics page (activity tracking count, appointments per day, etc.)
 
+- add sql class documentation
+
 for mason:
 - when in dark mode on login, security question cant be seen
 - make all dark mode display backgrounds black like the home and account page

@@ -75,7 +75,7 @@ public class StartController extends AbstractController {
 
     /**
      * Used for both standard login and forgot password login.
-     * <p>Forgot password information is already verified in setNewPassword(),
+     * <p>Forgot password information is already verified in {@code setNewPassword()},
      * base case handles that without checking other information.</p>
      */
     @FXML

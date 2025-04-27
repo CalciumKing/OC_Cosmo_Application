@@ -29,7 +29,7 @@ import java.net.URL;
 /**
  * This controller should only ever be the parent of fxml controllers.
  * <p>Methods include: window settings, dark mode, scene changing, and init.</p>
- * <p>init() should be run in change scene to transfer information like user data or dark mode and maximized.</p>
+ * <p>{@code init()} should be run in change scene to transfer information like user data or dark mode and maximized.</p>
  * <p>After some simple fxids are assigned and onActions are implemented, the heavy duty work is finished.</p>
  * */
 
@@ -39,7 +39,7 @@ abstract class AbstractController {
     protected AnchorPane main_pane;
     @FXML
     protected FontAwesomeIcon maximizeIcon, darkModeIcon;
-    private boolean isMaximized, maximizedFromClick, isDarkMode;
+    private boolean isMaximized, maximizedFromClick, preventDrag, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
 
 
@@ -133,7 +133,7 @@ abstract class AbstractController {
     }
 
     /**
-     * This method is needed to set the original x and y position to be used in windowDrag() and windowRelease()
+     * This method is needed to set the original x and y position to be used in {@code windowDrag()} and {@code windowRelease()}
      * <p>Maximizes the window if clicked twice quickly.</p>
      * @param event mouse clicking event
      */
@@ -142,6 +142,7 @@ abstract class AbstractController {
         if (event.getClickCount() == 2) {
             toggleMaximize();
             maximizedFromClick = true;
+            preventDrag = true;
             return;
         }
 
@@ -151,11 +152,16 @@ abstract class AbstractController {
 
     /**
      * Moves the window and sets opacity to 75% upon mouse drag
-     * <p>Base case prevents window toggling maximization twice, then exits function without executing any code.</p>
+     * <p>Base cases prevent window toggling maximization twice, and double clicking maximization glitching, then exits function.</p>
      * @param event mouse dragging event
      */
     @FXML
     protected final void windowDrag(MouseEvent event) {
+        if(preventDrag) {
+            preventDrag = false;
+            return;
+        }
+
         if(maximizedFromClick) {
             maximizedFromClick = false;
             return;
@@ -179,6 +185,12 @@ abstract class AbstractController {
      */
     @FXML
     protected final void windowRelease(MouseEvent event) {
+        if(maximizedFromClick) {
+            maximizedFromClick = false;
+            preventDrag = false;
+            return;
+        }
+
         Scene scene = main_pane.getScene();
         Window window = scene.getWindow();
 
@@ -207,6 +219,8 @@ abstract class AbstractController {
             stage.setX(bounds.getMaxX() - stage.getWidth());
 
         window.setOpacity(1);
+
+        maximizedFromClick = false;
     }
 
     /**
@@ -230,7 +244,7 @@ abstract class AbstractController {
     }
 
     /**
-     * Does the actual window and icon changing that toggleMaximize() sets up for it
+     * Does the actual window and icon changing that {@code toggleMaximize()} sets up for it
      * @param width desired width of the screen
      * @param height desired height of the screen
      */
