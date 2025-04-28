@@ -2,10 +2,9 @@
 
 - make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
-- ask mr riley if we should have edit appointments, if not then delete unused methods in appointment class and possibly convert to record
-- ask if we should make stock management
-- do anything with pdfs or data exports?
-- possible analytics page (activity tracking count, appointments per day, etc.)
+- make appointments updatable (don't convert to record)
+- add a pdf export daily/weekly appointments page
+- create analytics page (activity tracking count, appointments per day, etc.)
 
 - add sql class documentation
 

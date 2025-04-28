@@ -1,6 +1,6 @@
 package com.old_colony.oc_cosmo_application.Controllers;
 
-import com.old_colony.oc_cosmo_application.DataClasses.User;
+import com.old_colony.oc_cosmo_application.Data.User;
 import com.old_colony.oc_cosmo_application.MainApplication;
 import com.old_colony.oc_cosmo_application.Utils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -28,10 +28,10 @@ import java.net.URL;
 
 /**
  * This controller should only ever be the parent of fxml controllers.
- * <p>Methods include: window settings, dark mode, scene changing, and init.</p>
+ * <p>Methods include: various window settings, dark mode, scene changing, and init.</p>
  * <p>{@code init()} should be run in change scene to transfer information like user data or dark mode and maximized.</p>
- * <p>After some simple fxids are assigned and onActions are implemented, the heavy duty work is finished.</p>
- * */
+ * <p>After some simple fx-ids are assigned and onActions are implemented, the heavy duty work is finished.</p>
+ */
 
 @SuppressWarnings({"CallToPrintStackTrace", "unused"})
 abstract class AbstractController {
@@ -41,7 +41,6 @@ abstract class AbstractController {
     protected FontAwesomeIcon maximizeIcon, darkModeIcon;
     private boolean isMaximized, maximizedFromClick, preventDrag, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
-
 
     /**
      * Abstract method required for every controller class
@@ -206,7 +205,7 @@ abstract class AbstractController {
 
         Rectangle2D bounds = screen.getVisualBounds();
 
-        if(Math.abs(window.getY() - bounds.getMinY()) <= 25)
+        if(Math.abs(window.getY() - bounds.getMinY()) <= 25) // maximize window when placed at top of screen
             toggleMaximize();
         else if(window.getY() <= bounds.getMinY()) // prevents window getting stuck above screen
             stage.setY(bounds.getMinY());

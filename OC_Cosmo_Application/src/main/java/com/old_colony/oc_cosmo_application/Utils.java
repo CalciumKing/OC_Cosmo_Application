@@ -15,7 +15,7 @@ public class Utils {
     // region Alert Methods
     /**
      * Creates a regular alert with the contents of the parameters
-     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
      * @param title window title text
      * @param headerText main error header text
      * @param contentText error description or future instructions
@@ -28,13 +28,13 @@ public class Utils {
 
     /**
      * Creates a confirmation alert with the contents of the parameters
-     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
      * @param title window title text
      * @param headerText main error header text
      * @param contentText error description or future instructions
      * @param aText the confirm button text, can be used to confirm the user's choice of the alert
      * @param bText the cancel button text, can be used to confirm the users choice of the alert
-     * @return returns {@code Optional<ButtonType>} to be used with {@code .isPresent()} and {@code .getText()} to confirm the user's choice of the alert
+     * @return returns {@code Optional<ButtonType>} to be used with {@code isPresent()} and {@code getText()} to confirm the user's choice of the alert
      */
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
                                                     String headerText, String contentText,
@@ -49,7 +49,7 @@ public class Utils {
     /**
      * Does the actual work of creating a regular alert.
      * <p>Used by {@code normalAlert()} and {@code confirmAlert()}</p>
-     * @param type alert type of type Alert.AlertType (Ex: information, confirmation, error, none, warning, etc.)
+     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
      * @param title window title text
      * @param headerText main error header text
      * @param contentText error description or future instructions

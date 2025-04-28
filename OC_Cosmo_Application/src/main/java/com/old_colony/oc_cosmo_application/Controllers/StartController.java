@@ -1,6 +1,6 @@
 package com.old_colony.oc_cosmo_application.Controllers;
 
-import com.old_colony.oc_cosmo_application.DataClasses.User;
+import com.old_colony.oc_cosmo_application.Data.User;
 import com.old_colony.oc_cosmo_application.SQLUtils;
 import com.old_colony.oc_cosmo_application.Utils;
 import javafx.fxml.FXML;

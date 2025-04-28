@@ -1,4 +1,4 @@
-package com.old_colony.oc_cosmo_application.DataClasses;
+package com.old_colony.oc_cosmo_application.Data;
 
 /**
  * STUDENT is sql status 0

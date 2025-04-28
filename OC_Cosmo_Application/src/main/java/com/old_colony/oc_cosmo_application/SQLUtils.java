@@ -1,8 +1,8 @@
 package com.old_colony.oc_cosmo_application;
 
-import com.old_colony.oc_cosmo_application.DataClasses.Appointment;
-import com.old_colony.oc_cosmo_application.DataClasses.Status;
-import com.old_colony.oc_cosmo_application.DataClasses.User;
+import com.old_colony.oc_cosmo_application.Data.Appointment;
+import com.old_colony.oc_cosmo_application.Data.Status;
+import com.old_colony.oc_cosmo_application.Data.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
