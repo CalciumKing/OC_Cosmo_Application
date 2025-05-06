@@ -5,3 +5,6 @@
 .mode > * .startPanelBackground {
     -fx-background-color:linear-gradient(to top right, #ad55ce, lavender);
 }
+.mode > .AnchorPane{
+    -fx-background-color: black;
+}

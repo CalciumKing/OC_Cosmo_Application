@@ -9,7 +9,4 @@
 - add sql class documentation
 
 for mason:
-- when in dark mode on login, security question cant be seen
-- make all dark mode display backgrounds black like the home and account page
-- do the same with tab backgrounds
 - fix appointment custom note border radius

@@ -12,6 +12,16 @@
 .mode > .label {
     -fx-text-fill: white;
 }
+
+
+#securityQuestion_lbl{
+    -fx-text-fill: black;
+}
+
+#forgotQuestion_lbl{
+    -fx-text-fill: black;
+}
+
 .mode > .vbox {
     -fx-background-color: #3b3b3b;
 }

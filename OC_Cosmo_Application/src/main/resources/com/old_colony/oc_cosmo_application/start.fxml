@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" styleClass="mode" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
+<AnchorPane fx:id="main_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="766.0" style="-fx-background-color: black;" styleClass="mode" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.StartController">
    <stylesheets>
       <URL value="@CSS/styles.css" />
       <URL value="@CSS/lightMode.css" />
@@ -42,7 +42,7 @@
          </Label>
          <Label layoutX="17.0" layoutY="14.0" text="LOG IN ">
             <font>
-               <Font name="cmb10" size="24.0" />
+               <Font name="Wingdings 2" size="24.0" />
             </font>
          </Label>
          <PasswordField fx:id="password_field" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
@@ -63,7 +63,7 @@
                <Font size="18.0" />
             </font>
          </Button>
-         <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;">
+         <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;" text="efd">
             <font>
                <Font size="14.0" />
             </font>
