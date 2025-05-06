@@ -38,7 +38,7 @@ public class DashboardController extends AbstractController implements Initializ
             account_btn, admin_btn;
 
     @FXML
-    private ColorPicker color_picker;
+    private ColorPicker color_picker, updateColor_picker;
 
     @FXML
     private Label welcome_lbl, costDur_lbl, windowTitle_lbl,
@@ -47,7 +47,7 @@ public class DashboardController extends AbstractController implements Initializ
             cost_label, service_label, student_label, duration_label;
 
     @FXML
-    private TextArea note_area;
+    private TextArea note_area, updateNote_area;
 
     @FXML
     private AnchorPane home_pane, schedule_pane,
@@ -59,12 +59,13 @@ public class DashboardController extends AbstractController implements Initializ
 
     @FXML
     private TextField customerName_field, username_field, password_field,
-            secQuestion_field, secAnswer_field;
+            secQuestion_field, secAnswer_field, updateCustomerName_field;
 
     // region Tables
     @FXML
     private TableView<Appointment> dailySchedule_table,
-            schedule_table, adminAppointment_table;
+            schedule_table, adminDeleteAppointment_table,
+            adminUpdateAppointment_table;
 
     @FXML
     private TableView<User> users_table;
@@ -88,16 +89,18 @@ public class DashboardController extends AbstractController implements Initializ
     // endregion
 
     @FXML
-    private DatePicker dateSelect_picker;
+    private DatePicker dateSelect_picker, updateDate_picker;
 
     @FXML
-    private Spinner<Integer> hour_spinner, minute_spinner;
+    private Spinner<Integer> hour_spinner, minute_spinner,
+            updateHour_spinner, updateMinute_spinner;
 
     @FXML
-    private ComboBox<String> services_combobox, student_combobox;
+    private ComboBox<String> services_combobox, student_combobox,
+            updateServices_combobox, updateStudent_combobox;
 
     @FXML
-    private RadioButton am_radio, admin_radio, student_radio;
+    private RadioButton am_radio, updateAm_radio, admin_radio, student_radio;
 
     @FXML
     private TabPane weekSchedules_tabPane;
@@ -113,8 +116,8 @@ public class DashboardController extends AbstractController implements Initializ
     // endregion
 
     /**
-     * Method from 'Initializable' interface
-     * <p>Initializes everything that doesnt need user data.</p>
+     * Method from {@code Initializable} interface
+     * <p>Initializes everything that doesn't need user data.</p>
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -148,9 +151,14 @@ public class DashboardController extends AbstractController implements Initializ
 
     // region FXML Methods
     @FXML
-    private void setAMPM() {
-        hour_spinner.setValueFactory(
-                am_radio.isSelected() ?
+    private void setAMPM(ActionEvent event) {
+        Spinner<Integer> source = (Spinner<Integer>) event.getSource(),
+                spinner = (source == hour_spinner) ? hour_spinner : updateHour_spinner;
+        
+        RadioButton button = (source == hour_spinner) ? am_radio : updateAm_radio;
+        
+        spinner.setValueFactory(
+                button.isSelected() ?
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
         );
@@ -219,8 +227,21 @@ public class DashboardController extends AbstractController implements Initializ
         student_combobox.setValue("Select Student");
         color_picker.setValue(Color.GREY);
         note_area.clear();
-        setAMPM();
+        am_radio.setSelected(true);
         costDur_lbl.setText("Cost: $0.00 Duration: 0.00");
+    }
+    
+    @FXML
+    private void resetUpdateAppointment() {
+        updateDate_picker.setValue(null);
+        updateCustomerName_field.clear();
+        updateServices_combobox.setValue(null);
+        updateStudent_combobox.setValue("Select Student");
+        updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
+        updateMinute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
+        updateAm_radio.setSelected(true);
+        color_picker.setValue(Color.GREY);
+        updateNote_area.clear();
     }
 
     @FXML
@@ -390,23 +411,68 @@ public class DashboardController extends AbstractController implements Initializ
             reloadAppointmentTables();
         }
     }
+    
+    @FXML
+    private void updateAppointment() {
+        String customer = updateCustomerName_field.getText(),
+                service = updateServices_combobox.getValue();
+        
+        if (invalidService(service)) return;
+        
+        User user = SQLUtils.getUser(updateStudent_combobox.getValue());
+        if (user == null) return;
+        
+        int hour = updateHour_spinner.getValue(),
+                minute = updateMinute_spinner.getValue(),
+                studentID = user.userID(),
+                cost = servicesAndCost.get(service).getFirst(),
+                duration = servicesAndCost.get(service).getLast();
+        
+        if (invalidAppointmentTime(minute, hour, duration)) return;
+        
+        String note = updateNote_area.getText();
+        LocalDate date = updateDate_picker.getValue();
+        Color color = updateColor_picker.getValue();
+        
+        if(!updateAm_radio.isSelected())
+            hour += 12;
+        
+        if (studentUnavailable(studentID, date, hour, minute, duration)) return;
+        
+        SQLUtils.updateAppointment(hour, minute, duration, studentID, customer, service, cost, date, color, note);
+        resetUpdateAppointment();
+        reloadAppointmentTables();
+    }
 
     /**
      * Fills in the appointment data in the Delete Appointment tab when the appointment table is clicked.
      * <p>If a table item is clicked it fills in the correct information, if a blank spot is clicked, nothing happens.</p>
      */
     @FXML
-    private void appointmentTableSelected() {
-        Appointment a = adminAppointment_table.getSelectionModel().getSelectedItem();
+    private void appointmentTablesSelected(ActionEvent event) {
+        TableView<Appointment> table = (TableView<Appointment>) event.getSource();
+        Appointment a = table.getSelectionModel().getSelectedItem();
         if (a == null) return;
-
-        date_label.setText(a.getDate().toString());
-        service_label.setText(a.getCustomer());
-        cost_label.setText("$" + a.getCost());
-        service_label.setText(a.getService());
-        User student = a.getStudent();
-        student_label.setText((student == null) ? "Error" : student.username());
-        duration_label.setText(a.getDuration() + " minutes");
+        
+        if(table == adminDeleteAppointment_table) {
+            date_label.setText(a.getDate().toString());
+            service_label.setText(a.getCustomer());
+            cost_label.setText("$" + a.getCost());
+            service_label.setText(a.getService());
+//            User student = a.getStudent();
+//            student_label.setText((student == null) ? "Error" : student.username());
+            student_label.setText(a.getStudent().username());
+            duration_label.setText(a.getDuration() + " minutes");
+        } else if (table == adminUpdateAppointment_table) {
+            updateDate_picker.setValue(a.getDate().toLocalDate());
+            updateCustomerName_field.setText(a.getCustomer());
+            updateServices_combobox.setValue(a.getService());
+            updateStudent_combobox.setValue(a.getStudent().username());
+            updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
+            updateMinute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
+            updateColor_picker.setValue(Color.valueOf(a.getColor()));
+            updateNote_area.setText(a.getNote());
+        }
     }
 
     /**
@@ -509,6 +575,7 @@ public class DashboardController extends AbstractController implements Initializ
         });
 
         resetForm();
+        resetUpdateAppointment();
     }
 
     /**
@@ -532,6 +599,8 @@ public class DashboardController extends AbstractController implements Initializ
     }
 
     private void initTables() {
+        ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
+        
         // home page
         homeTime_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
@@ -561,7 +630,7 @@ public class DashboardController extends AbstractController implements Initializ
         });
         duration_col.setCellValueFactory(new PropertyValueFactory<>("duration"));
 
-        schedule_table.setItems(SQLUtils.getAllAppointments(-1));
+        schedule_table.setItems(allAppointments);
 
         // init admin tables
         if (currentUser.status().isAdmin()) {
@@ -585,8 +654,9 @@ public class DashboardController extends AbstractController implements Initializ
                 String username = (user != null) ? user.username() : "Unknown";
                 return new SimpleStringProperty(username);
             });
-
-            adminAppointment_table.setItems(SQLUtils.getAllAppointments(-1));
+            
+            adminDeleteAppointment_table.setItems(allAppointments);
+            adminUpdateAppointment_table.setItems(allAppointments);
         }
     }
 
@@ -685,7 +755,8 @@ public class DashboardController extends AbstractController implements Initializ
         dailySchedule_table.setItems(SQLUtils.getTodayAppointments(currentUser.userID()));
         ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(-1);
         schedule_table.setItems(appointments);
-        adminAppointment_table.setItems(appointments);
+        adminDeleteAppointment_table.setItems(appointments);
+        adminUpdateAppointment_table.setItems(appointments);
         initNeatView();
     }
 

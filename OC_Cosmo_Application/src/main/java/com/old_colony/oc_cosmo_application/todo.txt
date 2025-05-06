@@ -2,11 +2,9 @@
 
 - make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
-- make appointments updatable (don't convert to record)
+- make appointments updatable (possibly convert to record)
 - add a pdf export daily/weekly appointments page
 - create analytics page (activity tracking count, appointments per day, etc.)
-
-- add sql class documentation
 
 for mason:
 - fix appointment custom note border radius
