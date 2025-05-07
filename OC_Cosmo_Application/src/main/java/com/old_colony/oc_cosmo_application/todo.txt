@@ -2,9 +2,11 @@
 
 - make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
-- make appointments updatable (possibly convert to record)
 - add a pdf export daily/weekly appointments page
 - create analytics page (activity tracking count, appointments per day, etc.)
 
 for mason:
 - fix appointment custom note border radius
+- fix login bug if user enters a user that doesn't exist in setnewpassword()
+- fix the security question filler text on the login page
+- change forgot password login button "submit" to something else

@@ -1,11 +1,14 @@
 package com.old_colony.oc_cosmo_application;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import java.io.File;
 import java.net.URL;
 
 import java.io.IOException;
@@ -27,7 +30,8 @@ import java.io.IOException;
  *     <li>Font-Awesome</li>
  * </ul>
  *
- * @author Landen Ingerslev (CalciumKing), Mason Peets
+ * @author Landen Ingerslev (CalciumKing)
+ * @author Mason Peets
  * @version 1.0.0
  * @since 5/30/2025
  */
@@ -35,7 +39,11 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("start.fxml"));
+        // if mr SeanRiley.jpg is not found in images folder, do not start program
+        File file = new File("src/main/resources/images/SeanRiley.jpg");
+        if(!file.exists())
+            Platform.exit();
+        
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");

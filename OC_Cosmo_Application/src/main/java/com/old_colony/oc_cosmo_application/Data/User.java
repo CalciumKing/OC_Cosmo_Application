@@ -2,7 +2,7 @@ package com.old_colony.oc_cosmo_application.Data;
 
 /**
  * Record to hold and access user data
- * <p>User class doesn't need setters because user values are never updated locally, only in the database.</p>
+ * <p>User values are never updated locally, only in the database.</p>
  * <p>Currently logged in user can never and should never be modified</p>
  *
  * @param username         user's login name

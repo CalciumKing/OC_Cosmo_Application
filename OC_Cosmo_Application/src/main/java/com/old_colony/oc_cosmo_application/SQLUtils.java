@@ -1,7 +1,6 @@
 package com.old_colony.oc_cosmo_application;
 
 import com.old_colony.oc_cosmo_application.Data.Appointment;
-import com.old_colony.oc_cosmo_application.Data.Status;
 import com.old_colony.oc_cosmo_application.Data.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,12 +8,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 
 import java.sql.*;
-import java.time.LocalDate;
 
 /**
- * This file is for any utilities that use SQL and SQL helper methods
+ * This class is for any utilities that use SQL
  */
-@SuppressWarnings("CallToPrintStackTrace")
+@SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class SQLUtils {
     /**
      * Makes a connection to the cosmo database
@@ -178,7 +176,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        createStatus(result.getInt("status"))
+                        Utils.createStatus(result.getInt("status"))
                 ));
 
             return data;
@@ -196,37 +194,26 @@ public class SQLUtils {
     
     /**
      * Adds a new appointment containing the specified information to the database
-     * @param hour starting hour
-     * @param minute starting minute
-     * @param duration duration of appointment
-     * @param studentID student ID of student completing the appointment
-     * @param customer customer receiving the service
-     * @param service the service to be completed
-     * @param cost cost of the service
-     * @param date date of appointment
-     * @param color student generated color of appointment to be used in the neat-view calendar
-     * @param note a custom note containing any information that might be useful to the appointment
+     * <p>Information is of type {@code Appointment} to avoid many parameters</p>
+     * @param a appointment data to be created
      */
-    public static void createAppointment(int hour, int minute,
-                                         int duration, int studentID,
-                                         String customer, String service,
-                                         int cost, LocalDate date,
-                                         Color color, String note) {
+    public static void createAppointment(Appointment a) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
+            
             String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?,?);";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setInt(1, hour);
-            prepared.setInt(2, minute);
-            prepared.setInt(3, duration);
-            prepared.setInt(4, studentID);
-            prepared.setString(5, customer);
-            prepared.setString(6, service);
-            prepared.setInt(7, cost);
-            prepared.setDate(8, Date.valueOf(date));
-            prepared.setString(9, color.toString());
-            prepared.setString(10, note);
+            prepared.setInt(1, a.hour());
+            prepared.setInt(2, a.minute());
+            prepared.setInt(3, a.duration());
+            prepared.setInt(4, a.student().userID());
+            prepared.setString(5, a.customer());
+            prepared.setString(6, a.service());
+            prepared.setDouble(7, a.cost());
+            prepared.setDate(8, a.date());
+            prepared.setString(9, a.color());
+            prepared.setString(10, a.note());
 
             prepared.executeUpdate();
         } catch (Exception e) {
@@ -241,40 +228,47 @@ public class SQLUtils {
     }
     
     /**
-     * Updates a specific appointment from the database with the parameterized information
-     * @param hour starting hour
-     * @param minute starting minute
-     * @param duration duration of appointment
-     * @param studentID student ID of student completing the appointment
-     * @param customer customer receiving the service
-     * @param service the service to be completed
-     * @param cost cost of the service
-     * @param date date of appointment
-     * @param color student generated color of appointment to be used in the neat-view calendar
-     * @param note a custom note containing any information that might be useful to the appointment
+     * Updates a specific appointment from the database with the parameterized appointment information
+     * <p>Information is of type {@code Appointment} to avoid many parameters</p>
+     * @param newAppointment new appointment information, what the old appointment will be set to
+     * @param oldAppointment old appointment information, used to find the appointment in the database
      */
-    public static void updateAppointment(int hour, int minute,
-                                         int duration, int studentID,
-                                         String customer, String service,
-                                         int cost, LocalDate date,
-                                         Color color, String note) {
+    public static void updateAppointment(Appointment newAppointment, Appointment oldAppointment) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
+            
             String sql = "update appointments set startHour = ?, startMinute = ?, " +
-                    "duration = ?, userID = ?, custName = ?, service = ?, cost = ?, " +
-                    "appDate = ?, color = ?, note = ? where SOMETHING HERE;";
+                    "duration = ?, userID = ?, custName = ? , service = ?, cost = ?, " +
+                    "appDate = ?, color = ?, note = ? where id like (" +
+                    "select id where startHour = ? and startMinute = ? and duration = ? " +
+                    "and userID = ? and custName = ? and service = ? and cost = ? and " +
+                    "appDate = ? limit 1);";
             
             PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setInt(1, hour);
-            prepared.setInt(2, minute);
-            prepared.setInt(3, duration);
-            prepared.setInt(4, studentID);
-            prepared.setString(5, customer);
-            prepared.setString(6, service);
-            prepared.setInt(7, cost);
-            prepared.setDate(8, Date.valueOf(date));
-            prepared.setString(9, color.toString());
-            prepared.setString(10, note);
+            
+            // new appointment details
+            prepared.setInt(1, newAppointment.hour());
+            prepared.setInt(2, newAppointment.minute());
+            prepared.setInt(3, newAppointment.duration());
+            prepared.setInt(4, newAppointment.student().userID());
+            prepared.setString(5, newAppointment.customer());
+            prepared.setString(6, newAppointment.service());
+            prepared.setDouble(7, newAppointment.cost());
+            prepared.setDate(8, newAppointment.date());
+            prepared.setString(9, newAppointment.color());
+            prepared.setString(10, newAppointment.note());
+            
+            // old appointment details
+            prepared.setInt(11, oldAppointment.hour());
+            prepared.setInt(12, oldAppointment.minute());
+            prepared.setInt(13, oldAppointment.duration());
+            prepared.setInt(14, oldAppointment.student().userID());
+            prepared.setString(15, oldAppointment.customer());
+            prepared.setString(16, oldAppointment.service());
+            prepared.setDouble(17, oldAppointment.cost());
+            prepared.setDate(18, oldAppointment.date());
+            
+            System.out.println(prepared);
             
             prepared.executeUpdate();
         } catch (Exception e) {
@@ -296,6 +290,7 @@ public class SQLUtils {
     public static void deleteAppointment(String username, String service) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
+            
             String sql = "DELETE FROM appointments WHERE userID = ? AND service = ?";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
@@ -372,25 +367,21 @@ public class SQLUtils {
     
     /**
      * Creates a user with the specific information
-     * @param username unique username for new student
-     * @param password student password
-     * @param secQuestion student security question, used for login
-     * @param secAnswer student security answer, used for login
-     * @param isAdmin status of student, used to initialize and show extra tables and pages if student is an admin
+     * <p>Information is of type {@code User} to avoid many parameters</p>
+     * @param user new user data to be added to the database
      */
-    public static void createUser(String username, String password,
-                                  String secQuestion, String secAnswer,
-                                  boolean isAdmin) {
+    public static void createUser(User user) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
+            
             String sql = "INSERT INTO users (username, password, securityQuestion, securityAnswer, status) VALUES (?,?,?,?,?)";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setString(1, username);
-            prepared.setString(2, password);
-            prepared.setString(3, secQuestion);
-            prepared.setString(4, secAnswer);
-            prepared.setInt(5, isAdmin ? 1 : 0);
+            prepared.setString(1, user.username());
+            prepared.setString(2, user.password());
+            prepared.setString(3, user.securityQuestion());
+            prepared.setString(4, user.securityAnswer());
+            prepared.setInt(5, Utils.createStatus(user.status()));
 
             prepared.executeUpdate();
 
@@ -434,15 +425,10 @@ public class SQLUtils {
     
     /**
      * Updates the user with the unique username with the specified information
-     * @param username unique username, used to find user
-     * @param password user password
-     * @param secQuestion security question
-     * @param secAnswer security answer
-     * @param isAdmin admin status
+     * <p>Information is of type {@code User} to avoid many parameters</p>
+     * @param user new user data, username is used to find already existing user
      */
-    public static void updateUser(String username, String password,
-                                  String secQuestion, String secAnswer,
-                                  boolean isAdmin) {
+    public static void updateUser(User user) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
 
@@ -450,11 +436,11 @@ public class SQLUtils {
                     "securityAnswer = ?, status = ? where username = ?;";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
-            prepared.setString(1, password);
-            prepared.setString(2, secQuestion);
-            prepared.setString(3, secAnswer);
-            prepared.setInt(4, isAdmin ? 1 : 0);
-            prepared.setString(5, username);
+            prepared.setString(1, user.password());
+            prepared.setString(2, user.securityQuestion());
+            prepared.setString(3, user.securityAnswer());
+            prepared.setInt(4, Utils.createStatus(user.status()));
+            prepared.setString(5, user.username());
 
             prepared.executeUpdate();
 
@@ -492,7 +478,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        createStatus(result.getInt("status"))
+                        Utils.createStatus(result.getInt("status"))
                 );
         } catch (Exception e) {
             Utils.normalAlert(
@@ -552,38 +538,6 @@ public class SQLUtils {
     }
     // endregion
 
-    // region Helper Methods
-    /**
-     * Determines the user's status based on the SQL integer status
-     * <table>
-     *     <tr>
-     *         <th>SQL Status Code</th>
-     *         <th>Java Enum Status</th>
-     *     </tr>
-     *     <tr>
-     *         <td>0</td>
-     *         <td>STUDENT</td>
-     *     </tr>
-     *     <tr>
-     *         <td>1</td>
-     *         <td>ADMIN</td>
-     *     </tr>
-     *     <tr>
-     *         <td>Other</td>
-     *         <td>ERROR</td>
-     *     </tr>
-     * </table>
-     * @param status SQL int status
-     * @return Java status as enum type {@code Status}
-     */
-    private static Status createStatus(int status) {
-        return switch (status) {
-            case 0 -> Status.STUDENT;
-            case 1 -> Status.ADMIN;
-            default -> Status.ERROR;
-        };
-    }
-    
     /**
      * Gets a user based on a unique id
      * <p>Runs "{@code select * from users where userID = ? limit 1;}"</p>
@@ -607,7 +561,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        createStatus(result.getInt("status"))
+                        Utils.createStatus(result.getInt("status"))
                 );
         } catch (Exception e) {
             Utils.normalAlert(
@@ -620,5 +574,4 @@ public class SQLUtils {
         }
         return null;
     }
-    // endregion
 }

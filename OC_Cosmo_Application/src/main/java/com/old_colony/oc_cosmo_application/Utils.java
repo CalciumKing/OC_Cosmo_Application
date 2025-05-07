@@ -1,5 +1,6 @@
 package com.old_colony.oc_cosmo_application;
 
+import com.old_colony.oc_cosmo_application.Data.Status;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -76,5 +77,76 @@ public class Utils {
             if (window instanceof Stage)
                 return (Stage) window;
         return null;
+    }
+    
+    /**
+     * Determines the user's status based on the SQL integer status
+     * <table>
+     *     <tr>
+     *         <th>SQL Status Code</th>
+     *         <th>Java Enum Status</th>
+     *     </tr>
+     *     <tr>
+     *         <td>0</td>
+     *         <td>STUDENT</td>
+     *     </tr>
+     *     <tr>
+     *         <td>1</td>
+     *         <td>ADMIN</td>
+     *     </tr>
+     *     <tr>
+     *         <td>Other</td>
+     *         <td>ERROR</td>
+     *     </tr>
+     * </table>
+     * @param status SQL int status
+     * @return Java status as enum type {@code Status}
+     */
+    public static Status createStatus(int status) {
+        return switch (status) {
+            case 0 -> Status.STUDENT;
+            case 1 -> Status.ADMIN;
+            default -> Status.ERROR;
+        };
+    }
+    
+    /**
+     * Determines the SQL status code based on the java enum status
+     * <table>
+     *     <tr>
+     *         <th>SQL Status Code</th>
+     *         <th>Java Enum Status</th>
+     *     </tr>
+     *     <tr>
+     *         <td>0</td>
+     *         <td>STUDENT</td>
+     *     </tr>
+     *     <tr>
+     *         <td>1</td>
+     *         <td>ADMIN</td>
+     *     </tr>
+     *     <tr>
+     *         <td>-1</td>
+     *         <td>ERROR</td>
+     *     </tr>
+     * </table>
+     * @param status java enum status
+     * @return SQL int status
+     */
+    public static int createStatus(Status status) {
+        return switch (status) {
+            case ERROR -> -1;
+            case STUDENT -> 0;
+            case ADMIN -> 1;
+        };
+    }
+    
+    /**
+     * Determines if the user is an admin based on a boolean
+     * @param isAdmin boolean used to determine if the user is an admin or a student
+     * @return admin or student status, (either {@code Status.ADMIN} or {@code Status.STUDENT})
+     */
+    public static Status createStatus(boolean isAdmin) {
+        return isAdmin ? Status.ADMIN : Status.STUDENT;
     }
 }

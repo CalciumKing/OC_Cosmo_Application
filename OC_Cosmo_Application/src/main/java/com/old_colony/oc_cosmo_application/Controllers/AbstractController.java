@@ -33,7 +33,6 @@ import java.net.URL;
  * <p>After some simple fx-ids are assigned and onActions are implemented, the heavy duty work is finished.</p>
  */
 
-@SuppressWarnings({"CallToPrintStackTrace", "unused"})
 abstract class AbstractController {
     @FXML
     protected AnchorPane main_pane;
@@ -49,6 +48,7 @@ abstract class AbstractController {
      * @param isDarkMode if the user was in dark mode before logging in
      * @param isMaximized if the user was maximized before logging in
      */
+    @SuppressWarnings("unused")
     protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
 
     /**
@@ -56,6 +56,7 @@ abstract class AbstractController {
      * @param sceneName .fxml file to change to, only enter file name without .fxml
      * @param user logged-in user as user object, null if exiting
      */
+    @SuppressWarnings({"CallToPrintStackTrace"})
     protected final void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName + ".fxml"));
@@ -180,10 +181,9 @@ abstract class AbstractController {
      * Maximizes the window if the distance between the window and the top of the screen is less than 25 pixels.
      * <p>Screen bound precautions preventing window from getting stuck anywhere outside screen bounds</p>
      * <p>Sets window opacity to 100% upon dragging stopped</p>
-     * @param event dragging mouse event
      */
     @FXML
-    protected final void windowRelease(MouseEvent event) {
+    protected final void windowRelease() {
         if(maximizedFromClick) {
             maximizedFromClick = false;
             preventDrag = false;

@@ -833,158 +833,142 @@
                   </AnchorPane>
                </Tab>
                <Tab text="Update Appointment">
-                  <content>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="724.0">
-                        <children>
-                           <Label layoutX="14.0" layoutY="14.0" text="Update Appointment">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="724.0">
+                     <Label layoutX="14.0" layoutY="14.0" text="Update Appointment">
+                        <font>
+                           <Font name="System Bold" size="35.0" />
+                        </font>
+                     </Label>
+                     <TableView fx:id="adminUpdateAppointment_table" layoutX="14.0" layoutY="83.0" onMouseClicked="#appointmentTablesSelected" prefHeight="330.0" prefWidth="330.0">
+                        <columns>
+                           <TableColumn fx:id="adminUpdateDate_col" prefWidth="99.0" text="Date/Time" />
+                           <TableColumn fx:id="adminUpdateCust_col" prefWidth="113.0" text="Customer Name" />
+                           <TableColumn fx:id="adminUpdateService_col" prefWidth="103.0" text="Service" />
+                        </columns>
+                     </TableView>
+                     <Button layoutX="364.0" layoutY="354.0" mnemonicParsing="false" onAction="#updateAppointment" style="-fx-background-color: green;" styleClass="loginButtons" text="Update Appointment">
+                        <graphic>
+                           <FontAwesomeIcon fill="WHITE" glyphName="EDIT" />
+                        </graphic>
+                        <font>
+                           <Font name="System Bold" size="20.0" />
+                        </font>
+                     </Button>
+                     <Pane layoutX="390.0" layoutY="47.0" prefHeight="296.0" prefWidth="352.0" styleClass="infoBox">
+                        <ComboBox layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
+                           <tooltip>
+                              <Tooltip text="Choose the student performing the service." />
+                           </tooltip>
+                        </ComboBox>
+                        <VBox layoutX="8.0" layoutY="8.0" prefHeight="123.0" prefWidth="118.0" style="-fx-spacing: 15;">
+                           <Label text="Date/Time:">
                               <font>
-                                 <Font name="System Bold" size="35.0" />
+                                 <Font name="System Bold" size="15.0" />
                               </font>
                            </Label>
-                           <TableView fx:id="adminUpdateAppointment_table" layoutX="14.0" layoutY="83.0" onMouseClicked="#appointmentTablesSelected" prefHeight="330.0" prefWidth="330.0">
-                              <columns>
-                                 <TableColumn fx:id="adminDate_col1" prefWidth="99.0" text="Date/Time" />
-                                 <TableColumn fx:id="adminCust_col1" prefWidth="113.0" text="Customer Name" />
-                                 <TableColumn fx:id="adminService_col1" prefWidth="103.0" text="Service" />
-                              </columns>
-                           </TableView>
-                           <Button layoutX="364.0" layoutY="354.0" mnemonicParsing="false" onAction="#updateAppointment" style="-fx-background-color: green;" styleClass="loginButtons" text="Update Appointment">
-                              <graphic>
-                                 <FontAwesomeIcon fill="WHITE" glyphName="EDIT" />
-                              </graphic>
+                           <Label layoutX="10.0" layoutY="10.0" text="Customer:">
                               <font>
-                                 <Font name="System Bold" size="20.0" />
+                                 <Font name="System Bold" size="15.0" />
                               </font>
-                           </Button>
-                           <Pane layoutX="390.0" layoutY="47.0" prefHeight="296.0" prefWidth="352.0" styleClass="infoBox">
-                              <children>
-                                 <ComboBox layoutX="274.0" layoutY="76.0" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes" visible="false">
-                                    <tooltip>
-                                       <Tooltip text="Choose the student performing the service." />
-                                    </tooltip>
-                                 </ComboBox>
-                                 <VBox layoutX="8.0" layoutY="8.0" prefHeight="123.0" prefWidth="118.0" style="-fx-spacing: 15;">
-                                    <children>
-                                       <Label text="Date/Time:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label layoutX="10.0" layoutY="10.0" text="Customer:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label text="Service:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label text="Student Name:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label layoutX="10.0" layoutY="73.0" text="Time:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label layoutX="10.0" layoutY="94.0" text="Color:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                       <Label layoutX="10.0" layoutY="115.0" text="Note:">
-                                          <font>
-                                             <Font name="System Bold" size="15.0" />
-                                          </font>
-                                       </Label>
-                                    </children>
-                                 </VBox>
-                                 <VBox layoutX="123.0" layoutY="8.0" prefHeight="259.0" prefWidth="223.0" style="-fx-spacing: 8;">
-                                    <children>
-                                       <DatePicker fx:id="updateDate_picker" prefHeight="25.0" prefWidth="125.0" promptText="Date Select">
-                                          <tooltip>
-                                             <Tooltip text="Select the appointment date from the calendar." />
-                                          </tooltip>
-                                       </DatePicker>
-                                       <TextField fx:id="updateCustomerName_field" prefHeight="25.0" prefWidth="175.0" promptText="Customer Name" styleClass="textBoxes">
-                                          <tooltip>
-                                             <Tooltip text="Enter the customer's full name." />
-                                          </tooltip>
-                                       </TextField>
-                                       <ComboBox fx:id="updateServices_combobox" onAction="#serviceSelect" prefHeight="25.0" prefWidth="125.0" promptText="Services" styleClass="textBoxes">
-                                          <tooltip>
-                                             <Tooltip text="Select the service the customer wants." />
-                                          </tooltip>
-                                       </ComboBox>
-                                       <ComboBox fx:id="updateStudent_combobox" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes">
-                                          <tooltip>
-                                             <Tooltip text="Choose the student performing the service." />
-                                          </tooltip>
-                                       </ComboBox>
-                                       <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                                          <children>
-                                             <Spinner fx:id="updateHour_spinner" layoutY="6.0" prefHeight="25.0" prefWidth="53.0">
-                                                <tooltip>
-                                                   <Tooltip text="Choose the hour of the appointment." />
-                                                </tooltip>
-                                             </Spinner>
-                                             <Label layoutX="53.0" text=":">
-                                                <font>
-                                                   <Font name="System Bold" size="25.0" />
-                                                </font>
-                                             </Label>
-                                             <Spinner fx:id="updateMinute_spinner" layoutX="60.0" layoutY="6.0" prefHeight="21.0" prefWidth="63.0">
-                                                <tooltip>
-                                                   <Tooltip text="Select the minutes in 15-minute increments." />
-                                                </tooltip>
-                                             </Spinner>
-                                             <RadioButton fx:id="updateAm_radio" layoutX="129.0" layoutY="10.0" mnemonicParsing="false" onAction="#setAMPM" selected="true" text="AM">
-                                                <toggleGroup>
-                                                   <ToggleGroup fx:id="AMPM2" />
-                                                </toggleGroup>
-                                             </RadioButton>
-                                             <RadioButton layoutX="177.0" layoutY="10.0" mnemonicParsing="false" onAction="#setAMPM" text="PM" toggleGroup="$AMPM2" />
-                                          </children>
-                                       </AnchorPane>
-                                       <AnchorPane prefHeight="30.0" prefWidth="128.0">
-                                          <children>
-                                             <ColorPicker fx:id="updateColor_picker" prefHeight="30.0" prefWidth="127.0" styleClass="textBoxes">
-                                                <value>
-                                                   <Color red="1.0" green="0.7529411911964417" blue="0.7960784435272217" />
-                                                </value>
-                                                <tooltip>
-                                                   <Tooltip text="Choose a color to assign the appointment on the calendar" />
-                                                </tooltip>
-                                             </ColorPicker>
-                                          </children>
-                                       </AnchorPane>
-                                       <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                                          <children>
-                                             <TextArea fx:id="updateNote_area" prefHeight="63.0" prefWidth="223.0" promptText="Custom Note (Optional)" styleClass="textBoxes">
-                                                <tooltip>
-                                                   <Tooltip text="Add any special instructions or requests for this appointment." />
-                                                </tooltip>
-                                             </TextArea>
-                                          </children>
-                                       </AnchorPane>
-                                    </children>
-                                 </VBox>
-                              </children>
-                           </Pane>
-                           <Button layoutX="631.0" layoutY="354.0" mnemonicParsing="false" onAction="#resetUpdateAppointment" styleClass="loginButtons" text="Reset">
+                           </Label>
+                           <Label text="Service:">
                               <font>
-                                 <Font name="System Bold" size="20.0" />
+                                 <Font name="System Bold" size="15.0" />
                               </font>
-                              <graphic>
-                                 <FontAwesomeIcon fill="WHITE" glyphName="REPEAT" selectionFill="BLACK" />
-                              </graphic>
-                           </Button>
-                        </children>
-                     </AnchorPane>
-                  </content>
+                           </Label>
+                           <Label text="Student Name:">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </Label>
+                           <Label layoutX="10.0" layoutY="73.0" text="Time:">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </Label>
+                           <Label layoutX="10.0" layoutY="94.0" text="Color:">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </Label>
+                           <Label layoutX="10.0" layoutY="115.0" text="Note:">
+                              <font>
+                                 <Font name="System Bold" size="15.0" />
+                              </font>
+                           </Label>
+                        </VBox>
+                        <VBox layoutX="123.0" layoutY="8.0" prefHeight="259.0" prefWidth="223.0" style="-fx-spacing: 8;">
+                           <DatePicker fx:id="updateDate_picker" prefHeight="25.0" prefWidth="125.0" promptText="Date Select">
+                              <tooltip>
+                                 <Tooltip text="Select the appointment date from the calendar." />
+                              </tooltip>
+                           </DatePicker>
+                           <TextField fx:id="updateCustomerName_field" prefHeight="25.0" prefWidth="175.0" promptText="Customer Name" styleClass="textBoxes">
+                              <tooltip>
+                                 <Tooltip text="Enter the customer's full name." />
+                              </tooltip>
+                           </TextField>
+                           <ComboBox fx:id="updateServices_combobox" onAction="#serviceSelect" prefHeight="25.0" prefWidth="125.0" promptText="Services" styleClass="textBoxes">
+                              <tooltip>
+                                 <Tooltip text="Select the service the customer wants." />
+                              </tooltip>
+                           </ComboBox>
+                           <ComboBox fx:id="updateStudent_combobox" prefHeight="25.0" prefWidth="125.0" promptText="Student Select" styleClass="textBoxes">
+                              <tooltip>
+                                 <Tooltip text="Choose the student performing the service." />
+                              </tooltip>
+                           </ComboBox>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                              <Spinner fx:id="updateHour_spinner" layoutY="6.0" prefHeight="25.0" prefWidth="53.0">
+                                 <tooltip>
+                                    <Tooltip text="Choose the hour of the appointment." />
+                                 </tooltip>
+                              </Spinner>
+                              <Label layoutX="53.0" text=":">
+                                 <font>
+                                    <Font name="System Bold" size="25.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="updateMinute_spinner" layoutX="60.0" layoutY="6.0" prefHeight="21.0" prefWidth="63.0">
+                                 <tooltip>
+                                    <Tooltip text="Select the minutes in 15-minute increments." />
+                                 </tooltip>
+                              </Spinner>
+                              <RadioButton fx:id="updateAm_radio" layoutX="129.0" layoutY="10.0" mnemonicParsing="false" onAction="#setUpdateAMPM" selected="true" text="AM">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="AMPM2" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="updatePm_radio" layoutX="177.0" layoutY="10.0" mnemonicParsing="false" onAction="#setUpdateAMPM" text="PM" toggleGroup="$AMPM2" />
+                           </AnchorPane>
+                           <AnchorPane prefHeight="30.0" prefWidth="128.0">
+                              <ColorPicker fx:id="updateColor_picker" prefHeight="30.0" prefWidth="127.0" styleClass="textBoxes">
+                                 <value>
+                                    <Color red="1.0" green="0.7529411911964417" blue="0.7960784435272217" />
+                                 </value>
+                                 <tooltip>
+                                    <Tooltip text="Choose a color to assign the appointment on the calendar" />
+                                 </tooltip>
+                              </ColorPicker>
+                           </AnchorPane>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                              <TextArea fx:id="updateNote_area" prefHeight="63.0" prefWidth="223.0" promptText="Custom Note (Optional)" styleClass="textBoxes">
+                                 <tooltip>
+                                    <Tooltip text="Add any special instructions or requests for this appointment." />
+                                 </tooltip>
+                              </TextArea>
+                           </AnchorPane>
+                        </VBox>
+                     </Pane>
+                     <Button layoutX="631.0" layoutY="354.0" mnemonicParsing="false" onAction="#resetUpdateAppointment" styleClass="loginButtons" text="Reset">
+                        <font>
+                           <Font name="System Bold" size="20.0" />
+                        </font>
+                        <graphic>
+                           <FontAwesomeIcon fill="WHITE" glyphName="REPEAT" selectionFill="BLACK" />
+                        </graphic>
+                     </Button>
+                  </AnchorPane>
                </Tab>
                <Tab text="Delete Appointment">
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="724.0">
@@ -995,10 +979,10 @@
                      </Label>
                      <TableView fx:id="adminDeleteAppointment_table" layoutX="14.0" layoutY="83.0" onMouseClicked="#appointmentTablesSelected" prefHeight="330.0" prefWidth="413.0">
                         <columns>
-                           <TableColumn fx:id="adminDate_col" prefWidth="99.0" text="Date/Time" />
-                           <TableColumn fx:id="adminCust_col" prefWidth="113.0" text="Customer Name" />
-                           <TableColumn fx:id="adminService_col" prefWidth="103.0" text="Service" />
-                           <TableColumn fx:id="adminStudent_col" prefWidth="92.0" text="Student" />
+                           <TableColumn fx:id="adminDeleteDate_col" prefWidth="99.0" text="Date/Time" />
+                           <TableColumn fx:id="adminDeleteCust_col" prefWidth="113.0" text="Customer Name" />
+                           <TableColumn fx:id="adminDeleteService_col" prefWidth="103.0" text="Service" />
+                           <TableColumn fx:id="adminDeleteStudent_col" prefWidth="92.0" text="Student" />
                         </columns>
                      </TableView>
                      <Pane layoutX="444.0" layoutY="95.0" prefHeight="144.0" prefWidth="297.0" styleClass="infoBox">

@@ -2,107 +2,29 @@ package com.old_colony.oc_cosmo_application.Data;
 
 import java.sql.Date;
 
-public class Appointment {
-    private User student;
-    private Date date;
-    private String customer, service, color, note;
-    private double cost;
-    private int hour, minute, duration;
-
-    public Appointment(String customer, User student, String color,
-                       String service, double cost, Date date,
-                       int hour, int minute, int duration, String note) {
-        this.customer = customer;
-        this.student = student;
-        this.color = color;
-        this.service = service;
-        this.cost = cost;
-        this.date = date;
-        this.hour = hour;
-        this.minute = minute;
-        this.duration = duration;
-        this.note = note;
-    }
-
-    // region Getters/Setters
-    public String getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(String customer) {
-        this.customer = customer;
-    }
-
-    public User getStudent() {
-        return student;
-    }
-
-    public void setStudent(User student) {
-        this.student = student;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public void setService(String service) {
-        this.service = service;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public int getHour() {
-        return hour;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public void setMinute(int minute) {
-        this.minute = minute;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-    // endregion
+/**
+ * Record to hold and access appointment data
+ * <p>Appointment values are never updated locally, only in the database.</p>
+ * @param customer The full name of the customer who booked the appointment
+ * @param student The {@code User} object representing the student performing the service
+ * @param color A color code or name used for visually identifying the appointment on the neat-view calendar
+ * @param service The type of service being performed
+ * @param cost The cost of the appointment in dollars. This reflects the price of the service provided.
+ * @param date The calendar date of the appointment. This does not include time, only the day. Formatted as YYYY-MM-DD
+ * @param hour The starting hour of the appointment, 24-hour format
+ * @param minute The starting minute of the appointment, usually 0, 15, 30, or 45.
+ * @param duration The total length of the appointment in minutes
+ * @param note Optional additional notes about the appointment, such as special requests or service details.
+ */
+public record Appointment(
+        String customer,
+        User student,
+        String color,
+        String service,
+        double cost,
+        Date date,
+        int hour,
+        int minute,
+        int duration,
+        String note) {
 }

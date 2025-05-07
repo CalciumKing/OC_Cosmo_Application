@@ -40,7 +40,7 @@ public class StartController extends AbstractController {
 
     // region FXML Methods
     /**
-     * Updates security label based on coresponding page being typed on.
+     * Updates security label based on corresponding page being typed on.
      * <p>If the normal login username field is being typed, fill in the security question on that page,
      * same with the username field on the forgot page.</p>
      * @param event whichever text field the user is typing in
@@ -54,7 +54,10 @@ public class StartController extends AbstractController {
         else if(source.equals(forgotUsername_field))
             forgotQuestion_lbl.setText(SQLUtils.getSecurityQuestion(forgotUsername_field.getText()));
     }
-
+    
+    /**
+     * Changes the user's password if the all information is filled in
+     */
     @FXML
     private void setNewPassword() {
         if (forgotPassword_field.getText().isEmpty() ||

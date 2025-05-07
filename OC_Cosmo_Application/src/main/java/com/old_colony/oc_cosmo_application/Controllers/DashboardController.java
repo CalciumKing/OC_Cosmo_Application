@@ -20,17 +20,25 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class DashboardController extends AbstractController implements Initializable {
     // region FXML Variables
     @FXML
@@ -75,8 +83,9 @@ public class DashboardController extends AbstractController implements Initializ
 
     @FXML
     private TableColumn<Appointment, String> date_col, custName_col, service_col,
-            student_col, homeTime_col, homeName_col, homeService_col, adminDate_col,
-            adminCust_col, adminService_col, adminStudent_col;
+            student_col, homeTime_col, homeName_col, homeService_col, adminDeleteDate_col,
+            adminDeleteCust_col, adminDeleteService_col, adminDeleteStudent_col, adminUpdateDate_col,
+            adminUpdateCust_col, adminUpdateService_col;
 
     @FXML
     private TableColumn<Appointment, Integer> duration_col;
@@ -100,7 +109,7 @@ public class DashboardController extends AbstractController implements Initializ
             updateServices_combobox, updateStudent_combobox;
 
     @FXML
-    private RadioButton am_radio, updateAm_radio, admin_radio, student_radio;
+    private RadioButton am_radio, updateAm_radio, updatePm_radio, admin_radio, student_radio;
 
     @FXML
     private TabPane weekSchedules_tabPane;
@@ -112,7 +121,7 @@ public class DashboardController extends AbstractController implements Initializ
     // region Private Variables
     private User currentUser;
     private boolean isCollapsed;
-    private final LinkedHashMap<String, ArrayList<Integer>> servicesAndCost = new LinkedHashMap<>(); // maintains inserted order
+    private final LinkedHashMap<String, int[]> servicesAndCost = new LinkedHashMap<>(); // maintains inserted order
     // endregion
 
     /**
@@ -139,7 +148,7 @@ public class DashboardController extends AbstractController implements Initializ
         currentUser = user;
 
         // default is light mode and not maximized
-        // toggles to the previous applications settings if needed
+        // toggles to the previous application page's settings if needed
         if (isDarkMode) toggleDarkMode();
         if (isMaximized) toggleMaximize();
 
@@ -151,14 +160,18 @@ public class DashboardController extends AbstractController implements Initializ
 
     // region FXML Methods
     @FXML
-    private void setAMPM(ActionEvent event) {
-        Spinner<Integer> source = (Spinner<Integer>) event.getSource(),
-                spinner = (source == hour_spinner) ? hour_spinner : updateHour_spinner;
-        
-        RadioButton button = (source == hour_spinner) ? am_radio : updateAm_radio;
-        
-        spinner.setValueFactory(
-                button.isSelected() ?
+    private void setAMPM() {
+        hour_spinner.setValueFactory(
+                am_radio.isSelected() ?
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
+        );
+    }
+    
+    @FXML
+    private void setUpdateAMPM() {
+        updateHour_spinner.setValueFactory(
+                updateAm_radio.isSelected() ?
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1) :
                         new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, 1, 1)
         );
@@ -171,10 +184,10 @@ public class DashboardController extends AbstractController implements Initializ
         // when clearing the service in resetForm, it triggers the onAction method with the value as null
         if (service == null || invalidService(service)) return;
 
-        ArrayList<Integer> item = servicesAndCost.get(service);
+        int[] item = servicesAndCost.get(service);
 
-        int cost = item.getFirst(),
-            duration = item.getLast(),
+        int cost = item[0],
+            duration = item[1],
             hour = hour_spinner.getValue(),
             minute = minute_spinner.getValue();
 
@@ -220,7 +233,7 @@ public class DashboardController extends AbstractController implements Initializ
     @FXML
     private void resetForm() {
         dateSelect_picker.setValue(null);
-        hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
+        hour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 8, 1));
         minute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
         customerName_field.clear();
         services_combobox.setValue(null);
@@ -237,7 +250,7 @@ public class DashboardController extends AbstractController implements Initializ
         updateCustomerName_field.clear();
         updateServices_combobox.setValue(null);
         updateStudent_combobox.setValue("Select Student");
-        updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
+        updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 8, 1));
         updateMinute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
         updateAm_radio.setSelected(true);
         color_picker.setValue(Color.GREY);
@@ -257,8 +270,8 @@ public class DashboardController extends AbstractController implements Initializ
         int hour = hour_spinner.getValue(),
                 minute = minute_spinner.getValue(),
                 studentID = user.userID(),
-                cost = servicesAndCost.get(service).getFirst(),
-                duration = servicesAndCost.get(service).getLast();
+                cost = servicesAndCost.get(service)[0],
+                duration = servicesAndCost.get(service)[1];
 
         if (invalidAppointmentTime(minute, hour, duration)) return;
 
@@ -270,8 +283,21 @@ public class DashboardController extends AbstractController implements Initializ
             hour += 12;
 
         if (studentUnavailable(studentID, date, hour, minute, duration)) return;
+        
+        Appointment appointment = new Appointment(
+                customer,
+                user,
+                color.toString(),
+                service,
+                cost,
+                Date.valueOf(date),
+                hour,
+                minute,
+                duration,
+                note
+        );
 
-        SQLUtils.createAppointment(hour, minute, duration, studentID, customer, service, cost, date, color, note);
+        SQLUtils.createAppointment(appointment);
         resetForm();
         reloadAppointmentTables();
     }
@@ -282,9 +308,7 @@ public class DashboardController extends AbstractController implements Initializ
                 password = password_field.getText(),
                 secQuestion = secQuestion_field.getText(),
                 secAnswer = secAnswer_field.getText();
-
-        boolean isAdmin = admin_radio.isSelected();
-
+        
         student_combobox.getItems().add(username);
 
         // check if a user with that name is already in database
@@ -300,8 +324,17 @@ public class DashboardController extends AbstractController implements Initializ
                 return;
             }
         }
+        
+        User user = new User(
+                username,
+                password,
+                secQuestion,
+                secAnswer,
+                -1, // not used
+                Utils.createStatus(admin_radio.isSelected())
+        );
 
-        SQLUtils.createUser(username, password, secQuestion, secAnswer, isAdmin);
+        SQLUtils.createUser(user);
         reloadUserTable();
         clearUserForm();
     }
@@ -331,9 +364,7 @@ public class DashboardController extends AbstractController implements Initializ
                 password = password_field.getText(),
                 secQuestion = secQuestion_field.getText(),
                 secAnswer = secAnswer_field.getText();
-
-        boolean isAdmin = admin_radio.isSelected();
-
+        
         // checks if user being edited is the current user
         if (username.equals(currentUser.username())) {
             Utils.normalAlert(
@@ -349,7 +380,15 @@ public class DashboardController extends AbstractController implements Initializ
         ObservableList<User> users = users_table.getItems();
         for (User user : users) {
             if (user.username().equals(username)) {
-                SQLUtils.updateUser(username, password, secQuestion, secAnswer, isAdmin);
+                User newUser = new User(
+                        username,
+                        password,
+                        secQuestion,
+                        secAnswer,
+                        -1, // not used
+                        Utils.createStatus(admin_radio.isSelected())
+                );
+                SQLUtils.updateUser(newUser);
                 reloadUserTable();
                 clearUserForm();
                 return;
@@ -425,8 +464,8 @@ public class DashboardController extends AbstractController implements Initializ
         int hour = updateHour_spinner.getValue(),
                 minute = updateMinute_spinner.getValue(),
                 studentID = user.userID(),
-                cost = servicesAndCost.get(service).getFirst(),
-                duration = servicesAndCost.get(service).getLast();
+                cost = servicesAndCost.get(service)[0],
+                duration = servicesAndCost.get(service)[1];
         
         if (invalidAppointmentTime(minute, hour, duration)) return;
         
@@ -439,46 +478,69 @@ public class DashboardController extends AbstractController implements Initializ
         
         if (studentUnavailable(studentID, date, hour, minute, duration)) return;
         
-        SQLUtils.updateAppointment(hour, minute, duration, studentID, customer, service, cost, date, color, note);
+        Appointment newAppointment = new Appointment(
+                customer,
+                user,
+                color.toString(),
+                service,
+                cost,
+                Date.valueOf(date),
+                hour,
+                minute,
+                duration,
+                note
+        ), oldAppointment = adminUpdateAppointment_table.getSelectionModel().getSelectedItem();
+        
+        SQLUtils.updateAppointment(newAppointment, oldAppointment);
         resetUpdateAppointment();
         reloadAppointmentTables();
     }
 
     /**
-     * Fills in the appointment data in the Delete Appointment tab when the appointment table is clicked.
+     * Fills in the appointment data in either the Delete Appointment tab or the Update Appointment tab when the appointment table is clicked.
      * <p>If a table item is clicked it fills in the correct information, if a blank spot is clicked, nothing happens.</p>
      */
     @FXML
-    private void appointmentTablesSelected(ActionEvent event) {
-        TableView<Appointment> table = (TableView<Appointment>) event.getSource();
-        Appointment a = table.getSelectionModel().getSelectedItem();
-        if (a == null) return;
-        
-        if(table == adminDeleteAppointment_table) {
-            date_label.setText(a.getDate().toString());
-            service_label.setText(a.getCustomer());
-            cost_label.setText("$" + a.getCost());
-            service_label.setText(a.getService());
-//            User student = a.getStudent();
-//            student_label.setText((student == null) ? "Error" : student.username());
-            student_label.setText(a.getStudent().username());
-            duration_label.setText(a.getDuration() + " minutes");
-        } else if (table == adminUpdateAppointment_table) {
-            updateDate_picker.setValue(a.getDate().toLocalDate());
-            updateCustomerName_field.setText(a.getCustomer());
-            updateServices_combobox.setValue(a.getService());
-            updateStudent_combobox.setValue(a.getStudent().username());
-            updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, 1, 1));
-            updateMinute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, 0, 15));
-            updateColor_picker.setValue(Color.valueOf(a.getColor()));
-            updateNote_area.setText(a.getNote());
+    private void appointmentTablesSelected(MouseEvent event) {
+        if(event.getSource().equals(adminDeleteAppointment_table)) {
+            Appointment a = adminDeleteAppointment_table.getSelectionModel().getSelectedItem();
+            if(a == null) return;
+            
+            date_label.setText(a.date().toString());
+            customer_label.setText(a.customer());
+            cost_label.setText("$" + a.cost());
+            service_label.setText(a.service());
+            student_label.setText(a.student().username());
+            duration_label.setText(a.duration() + " minutes");
+        } else if (event.getSource().equals(adminUpdateAppointment_table)) {
+            Appointment a = adminUpdateAppointment_table.getSelectionModel().getSelectedItem();
+            if(a == null) return;
+            
+            updateDate_picker.setValue(a.date().toLocalDate());
+            updateCustomerName_field.setText(a.customer());
+            updateServices_combobox.setValue(a.service());
+            updateStudent_combobox.setValue(a.student().username());
+            
+            if(8 <= a.hour() && a.hour() <= 12) { // appointment is in the morning
+                updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 12, a.hour(), 1));
+                updateAm_radio.setSelected(true);
+            } else {
+                updateHour_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2, a.hour(), 1));
+                updatePm_radio.setSelected(true);
+            }
+            
+            updateMinute_spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 45, a.minute(), 15));
+            updateColor_picker.setValue(Color.valueOf(a.color()));
+            updateNote_area.setText(a.note());
         }
     }
 
     /**
-     * Hamburger button toggles the size of the side nav bar to be big with text on each button or small with no text and only buttons
+     * Hamburger button toggles the size of the side nav bar to be big
+     * with text on each button or small with no text and only buttons
      * <p>The text for each of the buttons is stored in the individual button's 'user data'.</p>
-     * <p>Information is stored in user data to dynamically save the button text information without needing variables or an array.</p>
+     * <p>Information is stored in user data to dynamically save the button
+     * text information without needing variables or an array.</p>
      */
     @FXML
     private void toggleMenu() {
@@ -504,49 +566,57 @@ public class DashboardController extends AbstractController implements Initializ
     // endregion
 
     // region Helper Methods
+    /**
+     * Initializes all services in a LinkedHashMap
+     * <p>LinkedHashMap is used instead of a HashMap because it keeps its order</p>
+     */
     private void initHashMap() {
-        addService("--- Cuts ---", -1, -1);
-        addService("Haircut (No Blow Dry)", 5, 45);
-        addService("Haircut (Blow Dry)", 8, 60);
-        addService("--- Color ---", -1, -1);
-        addService("Hair Color Retouch", 30, 90);
-        addService("Full Color Application", 35, 120);
-        addService("Cap Highlight", 25, 90);
-        addService("'Sunshine' Highlight", 25, 90);
-        addService("Partial Foil", 35, 120);
-        addService("Full Head Foil", 50, 150);
-        addService("Special Effects Highlight/Color", 45, 120);
-        addService("--- Styling ---", -1, -1);
-        addService("Formal Up Styles", 15, 45);
-        addService("Braids or Twists", 10, 30);
-        addService("Wash & Blow Dry", 8, 30);
-        addService("--- Smoothing & Conditioning ---", -1, -1);
-        addService("Conditioning Treatment & Blow Dry", 15, 45);
-        addService("Keratin Complex Express Blow Out", 60, 120);
-        addService("Keratin Complex Treatment", 90, 120);
-        addService("Perms", 35, 90);
-        addService("--- Nails ---", -1, -1);
-        addService("Manicure", 10, 30);
-        addService("Manicure With Paraffin Wax", 15, 45);
-        addService("Hot Oil Manicure", 12, 45);
-        addService("Paraffin Wax Drip", 5, 15);
-        addService("Pedicure", 15, 30);
-        addService("Gel Nail Polish & Manicure", 15, 45);
-        addService("Gel Polish Removal", 8, 30);
-        addService("--- Makeup & Facials ---", -1, -1);
-        addService("Makeup Application", 10, 30);
-        addService("Facial Application & Mask", 10, 45);
-        addService("--- Hair Shaping & Removal ---", -1, -1);
-        addService("Facial Hair Tweezing", 3, 15);
-        addService("Single Area Waxing", 5, 15);
-        addService("Two Area Waxing", 8, 30);
-    }
-
-    private void addService(String name, int cost, int duration) {
-        ArrayList<Integer> temp = new ArrayList<>();
-        temp.add(cost);
-        temp.add(duration);
-        servicesAndCost.put(name, temp);
+        Object[][] entries = {
+                {"--- Cuts ---", -1, -1},
+                {"Haircut (No Blow Dry)", 5, 45},
+                {"Haircut (Blow Dry)", 8, 60},
+                
+                {"--- Color ---", -1, -1},
+                {"Hair Color Retouch", 30, 90},
+                {"Full Color Application", 35, 120},
+                {"Cap Highlight", 25, 90},
+                {"'Sunshine' Highlight", 25, 90},
+                {"Partial Foil", 35, 120},
+                {"Full Head Foil", 50, 150},
+                {"Special Effects Highlight/Color", 45, 120},
+                
+                {"--- Styling ---", -1, -1},
+                {"Formal Up Styles", 15, 45},
+                {"Braids or Twists", 10, 30},
+                {"Wash & Blow Dry", 8, 30},
+                
+                {"--- Smoothing & Conditioning ---", -1, -1},
+                {"Conditioning Treatment & Blow Dry", 15, 45},
+                {"Keratin Complex Express Blow Out", 60, 120},
+                {"Keratin Complex Treatment", 90, 120},
+                {"Perms", 35, 90},
+                
+                {"--- Nails ---", -1, -1},
+                {"Manicure", 10, 30},
+                {"Manicure With Paraffin Wax", 15, 45},
+                {"Hot Oil Manicure", 12, 45},
+                {"Paraffin Wax Drip", 5, 15},
+                {"Pedicure", 15, 30},
+                {"Gel Nail Polish & Manicure", 15, 45},
+                {"Gel Polish Removal", 8, 30},
+                
+                {"--- Makeup & Facials ---", -1, -1},
+                {"Makeup Application", 10, 30},
+                {"Facial Application & Mask", 10, 45},
+                
+                {"--- Hair Shaping & Removal ---", -1, -1},
+                {"Facial Hair Tweezing", 3, 15},
+                {"Single Area Waxing", 5, 15},
+                {"Two Area Waxing", 8, 30}
+        };
+        
+        for(Object[] entry : entries)
+            servicesAndCost.put((String) entry[0], new int[] {(int) entry[1], (int) entry[2]});
     }
 
     private void initForm() {
@@ -573,6 +643,10 @@ public class DashboardController extends AbstractController implements Initializ
                 }
             }
         });
+        
+        updateDate_picker.setDayCellFactory(dateSelect_picker.getDayCellFactory());
+        updateServices_combobox.setItems(services_combobox.getItems());
+        updateStudent_combobox.setItems(student_combobox.getItems());
 
         resetForm();
         resetUpdateAppointment();
@@ -597,14 +671,18 @@ public class DashboardController extends AbstractController implements Initializ
         for (; i >= 0; i--)
             tabs.remove(i);
     }
-
+    
+    /**
+     * Initializes all tables and each of their columns
+     * <p>Only initializes admin tables if the current user is of admin status</p>
+     */
     private void initTables() {
         ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
         
         // home page
         homeTime_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
-            LocalTime time = LocalTime.of(a.getHour(), a.getMinute());
+            LocalTime time = LocalTime.of(a.hour(), a.minute());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
             return new SimpleStringProperty(formatter.format(time));
         });
@@ -616,19 +694,19 @@ public class DashboardController extends AbstractController implements Initializ
         // schedule page
         date_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
-            LocalTime time = LocalTime.of(a.getHour(), a.getMinute());
+            LocalTime time = LocalTime.of(a.hour(), a.minute());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-            return new SimpleObjectProperty<>(a.getDate() + " @ " + formatter.format(time));
+            return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(time));
         });
-        cost_col.setCellValueFactory(new PropertyValueFactory<>("cost"));
-        custName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
-        service_col.setCellValueFactory(new PropertyValueFactory<>("service"));
+        cost_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().cost()));
+        custName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
+        service_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
         student_col.setCellValueFactory(cellData -> { // get rid of later
-            User user = cellData.getValue().getStudent();
+            User user = cellData.getValue().student();
             String username = (user != null) ? user.username() : "Unknown";
             return new SimpleStringProperty(username);
         });
-        duration_col.setCellValueFactory(new PropertyValueFactory<>("duration"));
+        duration_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().duration()));
 
         schedule_table.setItems(allAppointments);
 
@@ -636,27 +714,33 @@ public class DashboardController extends AbstractController implements Initializ
         if (currentUser.status().isAdmin()) {
             // users table
             usersUsername_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().username()));
-            usersStatus_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().status())); // new PropertyValueFactory<>("status")
+            usersStatus_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().status()));
 
             users_table.setItems(SQLUtils.getAllUsers());
-
-            // appointment table
-            adminDate_col.setCellValueFactory(cellData -> {
+            
+            // update appointment table
+            adminUpdateDate_col.setCellValueFactory(cellData -> {
                 Appointment a = cellData.getValue();
-                LocalTime time = LocalTime.of(a.getHour(), a.getMinute());
+                LocalTime time = LocalTime.of(a.hour(), a.minute());
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-                return new SimpleObjectProperty<>(a.getDate() + " @ " + formatter.format(time));
+                return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(time));
             });
-            adminCust_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
-            adminService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
-            adminStudent_col.setCellValueFactory(cellData -> { // get rid of later
-                User user = cellData.getValue().getStudent();
+            adminUpdateCust_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
+            adminUpdateService_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
+            
+            adminUpdateAppointment_table.setItems(allAppointments);
+
+            // delete appointment table
+            adminDeleteDate_col.setCellValueFactory(adminUpdateDate_col.getCellValueFactory());
+            adminDeleteCust_col.setCellValueFactory(adminUpdateCust_col.getCellValueFactory());
+            adminDeleteService_col.setCellValueFactory(adminUpdateService_col.getCellValueFactory());
+            adminDeleteStudent_col.setCellValueFactory(cellData -> {
+                User user = cellData.getValue().student();
                 String username = (user != null) ? user.username() : "Unknown";
                 return new SimpleStringProperty(username);
             });
             
             adminDeleteAppointment_table.setItems(allAppointments);
-            adminUpdateAppointment_table.setItems(allAppointments);
         }
     }
 
@@ -668,10 +752,10 @@ public class DashboardController extends AbstractController implements Initializ
         if (appointments == null) return;
 
         for (Appointment appointment : appointments) {
-            int remainingMinutes = appointment.getDuration(),
-                    currentMinute = appointment.getMinute(),
+            int remainingMinutes = appointment.duration(),
+                    currentMinute = appointment.minute(),
                     rowOffset = 0,
-                    rowIndex = appointment.getHour() % 8;
+                    rowIndex = appointment.hour() % 8;
 
             while (remainingMinutes > 0) {
                 int minutesThisHour = Math.min(60 - currentMinute, remainingMinutes);
@@ -681,7 +765,7 @@ public class DashboardController extends AbstractController implements Initializ
                 GridPane.setColumnIndex(pane, currentMinute / 15 + 1);
                 GridPane.setColumnSpan(pane, minutesThisHour / 15);
 
-                GridPane day = getDay(appointment.getDate().toLocalDate());
+                GridPane day = getDay(appointment.date().toLocalDate());
                 if (day == null) break;
 
                 day.getChildren().add(pane);
@@ -702,12 +786,12 @@ public class DashboardController extends AbstractController implements Initializ
      */
     private StackPane createAppointmentPane(Appointment appointment, int offset) {
         StackPane pane = new StackPane();
-        pane.setStyle("-fx-background-color: " + appointment.getColor());
+        pane.setStyle("-fx-background-color: " + appointment.color());
 
         if (offset == 0) { // only putting label on first appointment pane
-            Label label = new Label(appointment.getCustomer() + ": " + appointment.getService() + " " + formatTime(appointment));
-            if (appointment.getNote() != null && !appointment.getNote().isEmpty())
-                label.setText(label.getText() + " (" + appointment.getNote() + ")");
+            Label label = new Label(appointment.customer() + ": " + appointment.service() + " " + formatTime(appointment));
+            if (appointment.note() != null && !appointment.note().isEmpty())
+                label.setText(label.getText() + " (" + appointment.note() + ")");
 
             label.setWrapText(true);
             label.setAlignment(Pos.CENTER_LEFT);
@@ -720,6 +804,7 @@ public class DashboardController extends AbstractController implements Initializ
     }
 
     /**
+     * Determines which grid-pane to be used based on a local-date parameter
      * @param localDate the LocalDate information of an appointment, used to find the day of the week of the appointment
      * @return a neat view grid pane based on the day of the week the appointment is booked on
      */
@@ -733,7 +818,10 @@ public class DashboardController extends AbstractController implements Initializ
             case SATURDAY, SUNDAY -> null; // no pane to add weekend appointments to
         };
     }
-
+    
+    /**
+     * Fills in all the information on the account info page
+     */
     private void initAccountInfo() {
         id_label.setText(String.valueOf(currentUser.userID()));
         username_label.setText(currentUser.username());
@@ -741,10 +829,15 @@ public class DashboardController extends AbstractController implements Initializ
         secAnswer_label.setText(currentUser.securityAnswer());
         status_label.setText(String.valueOf(currentUser.status()));
     }
-
+    
+    /**
+     * Formats appointment time as HH:MM
+     * @param a appointment data, used to get hour and minute
+     * @return formatted time as a string
+     */
     private String formatTime(Appointment a) {
-        LocalTime start = LocalTime.of(a.getHour(), a.getMinute()),
-                end = start.plusMinutes(a.getDuration());
+        LocalTime start = LocalTime.of(a.hour(), a.minute()),
+                end = start.plusMinutes(a.duration());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
 
@@ -845,11 +938,11 @@ public class DashboardController extends AbstractController implements Initializ
         if(appointments == null) return true;
 
         for(Appointment a : appointments) {
-            if(a.getDate().toLocalDate().equals(date)) {
+            if(a.date().toLocalDate().equals(date)) {
                 LocalTime requestedStartTime = LocalTime.of(hour, minute),
                         requestedEndTime = requestedStartTime.plusMinutes(duration),
-                        appStartTime = LocalTime.of(a.getHour(), a.getMinute()),
-                        appEndTime = appStartTime.plusMinutes(a.getDuration());
+                        appStartTime = LocalTime.of(a.hour(), a.minute()),
+                        appEndTime = appStartTime.plusMinutes(a.duration());
 
                 if(requestedStartTime == appStartTime || requestedEndTime == appEndTime ||
                         requestedStartTime.isBefore(appEndTime) && requestedEndTime.isAfter(appStartTime)) {
@@ -857,7 +950,7 @@ public class DashboardController extends AbstractController implements Initializ
                             Alert.AlertType.INFORMATION,
                             "Appointment Time Error",
                             "Student Already Has Appointment At That Time",
-                            "Student is doing: " + a.getCustomer() + " - " + a.getService()
+                            "Student is doing: " + a.customer() + " - " + a.service()
                     );
                     return true;
                 }

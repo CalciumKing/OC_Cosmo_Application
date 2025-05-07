@@ -53,7 +53,7 @@
 }
 
 .navButton:hover {
-    -fx-background-color:lightgray;
+    -fx-background-color:lightgrey;
     -fx-opacity: .5;
     -fx-background-radius: 10;
 }
