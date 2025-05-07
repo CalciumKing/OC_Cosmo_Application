@@ -43,7 +43,8 @@ public class MainApplication extends Application {
         File file = new File("src/main/resources/images/SeanRiley.jpg");
         if(!file.exists())
             Platform.exit();
-        
+
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("start.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");
