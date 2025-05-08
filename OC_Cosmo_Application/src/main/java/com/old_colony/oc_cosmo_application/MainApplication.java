@@ -46,11 +46,13 @@ public class MainApplication extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("start.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setTitle("Cosmetology Application | Login");
+        
         URL url = getClass().getResource("/images/AppIcon.png");
         if(url != null)
             stage.getIcons().add(new Image(url.toExternalForm()));
+        
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setTitle("Cosmetology Application | Login");
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.show();

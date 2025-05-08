@@ -118,7 +118,7 @@ public class DashboardController extends AbstractController implements Initializ
     private VBox sideMenu;
     // endregion
 
-    // region Private Variables
+    // region Non-FXML Variables
     private User currentUser;
     private boolean isCollapsed;
     private final LinkedHashMap<String, int[]> servicesAndCost = new LinkedHashMap<>(); // maintains inserted order

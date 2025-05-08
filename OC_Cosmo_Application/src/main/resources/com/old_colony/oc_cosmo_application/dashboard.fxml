@@ -118,7 +118,7 @@
             <String fx:value="whiteBackground" />
             <String fx:value="mode" />
          </styleClass>
-         <AnchorPane fx:id="home_pane" prefHeight="517.0" prefWidth="754.0" styleClass="mode" visible="false">
+         <AnchorPane fx:id="home_pane" prefHeight="517.0" prefWidth="754.0" styleClass="mode">
             <Label fx:id="welcome_lbl" layoutX="14.0" layoutY="33.0" text="Welcome, USERNAME">
                <font>
                   <Font name="System Bold" size="35.0" />
@@ -655,7 +655,7 @@
                </VBox>
             </Pane>
          </AnchorPane>
-         <AnchorPane fx:id="admin_pane" layoutY="23.0" prefHeight="493.0" prefWidth="754.0" styleClass="mode">
+         <AnchorPane fx:id="admin_pane" layoutY="23.0" prefHeight="493.0" prefWidth="754.0" styleClass="mode" visible="false">
             <TabPane prefHeight="493.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">
                <Tab text="Manage Users">
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="731.0">

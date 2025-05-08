@@ -28,7 +28,9 @@ public class StartController extends AbstractController {
     // endregion
 
     /**
-     * No user is ever passed in when exiting to start.fxml, so we don't need to manage any user information or initialize anything other than dark mode and maximized
+     * No user is ever passed in when exiting to start.fxml,
+     * so we don't need to manage any user information or
+     * initialize anything other than dark mode and maximized
      */
     @Override
     protected void init(User user, boolean isDarkMode, boolean isMaximized) {
