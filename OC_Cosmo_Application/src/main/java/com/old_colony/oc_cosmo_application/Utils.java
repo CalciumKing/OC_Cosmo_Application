@@ -101,6 +101,7 @@ public class Utils {
      * </table>
      * @param status SQL int status
      * @return Java status as enum type {@code Status}
+     * @see Status
      */
     public static Status createStatus(int status) {
         return switch (status) {
@@ -132,6 +133,7 @@ public class Utils {
      * </table>
      * @param status java enum status
      * @return SQL int status
+     * @see Status
      */
     public static int createStatus(Status status) {
         return switch (status) {
@@ -145,6 +147,8 @@ public class Utils {
      * Determines if the user is an admin based on a boolean
      * @param isAdmin boolean used to determine if the user is an admin or a student
      * @return admin or student status, (either {@code Status.ADMIN} or {@code Status.STUDENT})
+     * @see Status
+     * @see Status#isAdmin() isAdmin()
      */
     public static Status createStatus(boolean isAdmin) {
         return isAdmin ? Status.ADMIN : Status.STUDENT;

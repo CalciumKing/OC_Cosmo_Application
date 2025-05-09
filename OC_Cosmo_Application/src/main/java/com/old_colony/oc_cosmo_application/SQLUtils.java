@@ -15,50 +15,6 @@ import java.time.LocalDate;
  */
 @SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class SQLUtils {
-    /**
-     * Makes a connection to the cosmo database
-     * @return a connection of type {@code Connection} or null if no connection was made
-     */
-    public static Connection connectDB() {
-        try {
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/cosmo", "root", "password");
-        } catch (SQLException e) {
-            Utils.normalAlert(
-                    Alert.AlertType.ERROR,
-                    "Connection Error",
-                    "Error Connecting To Cosmo Database",
-                    "Database could not be connected to, please try again."
-            );
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    /**
-     * Converts a string color name to a usable hex color
-     * @param name string color name (ex: red, pink, blue, etc.)
-     * @return a color in hex format as a String
-     */
-    public static String getColor(String name) {
-        try {
-            Color color = Color.web(name.toUpperCase());
-            int r = (int) (color.getRed() * 255),
-                    g = (int) (color.getGreen() * 255),
-                    b = (int) (color.getBlue() * 255),
-                    a = (int) (color.getOpacity() * 255);
-            return String.format("#%02X%02X%02X%02X", r, g, b, a); // hex formatting
-        } catch (Exception e) {
-            Utils.normalAlert(
-                    Alert.AlertType.ERROR,
-                    "Error in getColor",
-                    "Error Converting Color To Hex",
-                    "There was an error converting: " + name + " to hex code, please try again."
-            );
-            e.printStackTrace();
-            return "#808080"; // grey fallback color
-        }
-    }
-
     // region Start
     /**
      * Checks if the login information entered is valid
@@ -159,6 +115,7 @@ public class SQLUtils {
      * Gets all users from database
      * <p>Runs "{@code select * from users;}"</p>
      * @return a list of users as {@code ObservableList<User>}
+     * @see User
      */
     public static ObservableList<User> getAllUsers() {
         try (Connection connection = connectDB()) {
@@ -197,6 +154,7 @@ public class SQLUtils {
      * Adds a new appointment containing the specified information to the database
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
      * @param a appointment data to be created
+     * @see Appointment
      */
     public static void createAppointment(Appointment a) {
         try (Connection connection = connectDB()) {
@@ -233,6 +191,7 @@ public class SQLUtils {
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
      * @param newAppointment new appointment information, what the old appointment will be set to
      * @param oldAppointment old appointment information, used to find the appointment in the database
+     * @see Appointment
      */
     public static void updateAppointment(Appointment newAppointment, Appointment oldAppointment) {
         try (Connection connection = connectDB()) {
@@ -313,22 +272,29 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Checks for all appointments that are between the two parameter dates
+     * <p>Runs "{@code SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;}"</p>
+     * @param startOfWeek start date
+     * @param endOfWeek end date
+     * @return a list of users as {@code ObservableList<Appointment>}
+     * @see Appointment
+     */
     public static ObservableList<Appointment> selectAppointmentsByDate(LocalDate startOfWeek, LocalDate endOfWeek) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
             ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
 
-            String sql = "SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?";
+            String sql = "SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
-
             prepared.setDate(1, Date.valueOf(startOfWeek));
             prepared.setDate(2, Date.valueOf(endOfWeek));
 
             ResultSet rs = prepared.executeQuery();
 
-            while (rs.next()) {
+            while (rs.next())
                 appointmentObservableList.add(new Appointment(
                         rs.getString("custName"),
                         getUser(rs.getInt("userID")),
@@ -341,7 +307,7 @@ public class SQLUtils {
                         rs.getInt("duration"),
                         rs.getString("note")
                 ));
-            }
+            
             return appointmentObservableList;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -361,6 +327,7 @@ public class SQLUtils {
      * <p>Runs "{@code select * from appointments where userID = ?;}" if id is not -1</p>
      * @param id student id
      * @return all appointments as {@code ObservableList<Appointment>}
+     * @see Appointment
      */
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
@@ -411,6 +378,7 @@ public class SQLUtils {
      * Creates a user with the specific information
      * <p>Information is of type {@code User} to avoid many parameters</p>
      * @param user new user data to be added to the database
+     * @see User
      */
     public static void createUser(User user) {
         try (Connection connection = connectDB()) {
@@ -469,6 +437,7 @@ public class SQLUtils {
      * Updates the user with the unique username with the specified information
      * <p>Information is of type {@code User} to avoid many parameters</p>
      * @param user new user data, username is used to find already existing user
+     * @see User
      */
     public static void updateUser(User user) {
         try (Connection connection = connectDB()) {
@@ -502,6 +471,7 @@ public class SQLUtils {
      * <p>Runs {@code select * from users where username = ? limit 1;}</p>
      * @param username unique username
      * @return a user as type {@code User}
+     * @see User
      */
     public static User getUser(String username) {
         try (Connection connection = connectDB()) {
@@ -539,6 +509,7 @@ public class SQLUtils {
      * Gets all appointments happening during the current day for a specific user
      * @param id unique user id
      * @return a list of appointments as {@code ObservableList<Appointment>}
+     * @see Appointment
      */
     public static ObservableList<Appointment> getTodayAppointments(int id) {
         try (Connection connection = connectDB()) {
@@ -579,12 +550,58 @@ public class SQLUtils {
         }
     }
     // endregion
-
+    
+    // region Helper Methods
+    /**
+     * Makes a connection to the cosmo database
+     * @return a connection of type {@code Connection} or null if no connection was made
+     */
+    private static Connection connectDB() {
+        try {
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306/cosmo", "root", "password");
+        } catch (SQLException e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Connection Error",
+                    "Error Connecting To Cosmo Database",
+                    "Database could not be connected to, please try again."
+            );
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Converts a string color name to a usable hex color
+     * @param name string color name (ex: red, pink, blue, etc.)
+     * @return a color in hex format as a String
+     */
+    private static String getColor(String name) {
+        try {
+            Color color = Color.web(name.toUpperCase());
+            int r = (int) (color.getRed() * 255),
+                    g = (int) (color.getGreen() * 255),
+                    b = (int) (color.getBlue() * 255),
+                    a = (int) (color.getOpacity() * 255);
+            return String.format("#%02X%02X%02X%02X", r, g, b, a); // hex formatting
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in getColor",
+                    "Error Converting Color To Hex",
+                    "There was an error converting: " + name + " to hex code, please try again."
+            );
+            e.printStackTrace();
+            return "#808080"; // grey fallback color
+        }
+    }
+    
     /**
      * Gets a user based on a unique id
      * <p>Runs "{@code select * from users where userID = ? limit 1;}"</p>
      * @param id unique user id
      * @return a user as type {@code User}
+     * @see User
      */
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
@@ -616,4 +633,5 @@ public class SQLUtils {
         }
         return null;
     }
+    // endregion
 }

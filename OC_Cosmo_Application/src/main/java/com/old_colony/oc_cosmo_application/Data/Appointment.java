@@ -5,6 +5,8 @@ import java.sql.Date;
 /**
  * Record to hold and access appointment data
  * <p>Appointment values are never updated locally, only in the database.</p>
+ * <p>See {@link User} for more information on 'student' parameter</p>
+ *
  * @param customer The full name of the customer who booked the appointment
  * @param student The {@code User} object representing the student performing the service
  * @param color A color code or name used for visually identifying the appointment on the neat-view calendar
@@ -16,6 +18,7 @@ import java.sql.Date;
  * @param duration The total length of the appointment in minutes
  * @param note Optional additional notes about the appointment, such as special requests or service details.
  */
+
 public record Appointment(
         String customer,
         User student,

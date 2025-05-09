@@ -29,8 +29,9 @@ import java.net.URL;
 /**
  * This controller should only ever be the parent of fxml controllers.
  * <p>Methods include: various window settings, dark mode, scene changing, and init.</p>
- * <p>{@code init()} should be run in change scene to transfer information like user data or dark mode and maximized.</p>
+ * <p>{@link #init(User, boolean, boolean) init()} should be run in change scene to transfer information like user data or dark mode and maximized.</p>
  * <p>After some simple fx-ids are assigned and onActions are implemented, the heavy duty work is finished.</p>
+ * @see #init(User, boolean, boolean) init()
  */
 
 abstract class AbstractController {
@@ -47,6 +48,7 @@ abstract class AbstractController {
      * @param user pass in the logged-in user, null if exiting
      * @param isDarkMode if the user was in dark mode before logging in
      * @param isMaximized if the user was maximized before logging in
+     * @see User
      */
     @SuppressWarnings("unused")
     protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
@@ -55,6 +57,7 @@ abstract class AbstractController {
      * Changes to desired scene based on file name, user parameter can be used to transfer user data excluding dark mode and maximized
      * @param sceneName .fxml file to change to, only enter file name without .fxml
      * @param user logged-in user as user object, null if exiting
+     * @see User
      */
     @SuppressWarnings({"CallToPrintStackTrace"})
     protected final void changeScene(String sceneName, User user) {
@@ -76,15 +79,25 @@ abstract class AbstractController {
             stage.getIcons().add(new Image(url.toExternalForm()));
 
             stage.show();
-
-            if (user != null) { // entering application
-                stage.setTitle("Cosmetology Application | " + user.username());
-                DashboardController dashboardController = fxmlLoader.getController();
-                dashboardController.init(user, isDarkMode, isMaximized);
-            } else { // exiting application
-                stage.setTitle("Cosmetology Application | Login");
-                StartController startController = fxmlLoader.getController();
-                startController.init(null, isDarkMode, isMaximized);
+            
+            switch (sceneName) {
+                case "dashboard":
+                    stage.setTitle("Cosmetology Application | " + user.username());
+                    DashboardController dashboardController = fxmlLoader.getController();
+                    dashboardController.init(user, isDarkMode, isMaximized);
+                    break;
+                case "start":
+                    stage.setTitle("Cosmetology Application | Login");
+                    StartController startController = fxmlLoader.getController();
+                    startController.init(null, isDarkMode, isMaximized);
+                    break;
+                case "analytics":
+                    stage.setTitle("Cosmetology Analytics Application | " + user.username());
+                    AnalyticsController analyticsController = fxmlLoader.getController();
+                    analyticsController.init(user, isDarkMode, isMaximized);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + sceneName);
             }
 
             main_pane.getScene().getWindow().hide();

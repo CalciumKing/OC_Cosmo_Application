@@ -47,8 +47,8 @@
           <artifactId>log4j</artifactId>
         </exclusion>
       </exclusions>
-
     </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>

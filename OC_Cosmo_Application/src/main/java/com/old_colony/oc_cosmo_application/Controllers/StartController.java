@@ -28,6 +28,8 @@ public class StartController extends AbstractController {
     // endregion
 
     /**
+     * {@inheritDoc}
+     * <br>
      * No user is ever passed in when exiting to start.fxml,
      * so we don't need to manage any user information or
      * initialize anything other than dark mode and maximized

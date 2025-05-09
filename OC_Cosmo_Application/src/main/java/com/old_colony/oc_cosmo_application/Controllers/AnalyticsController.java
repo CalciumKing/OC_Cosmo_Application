@@ -3,14 +3,13 @@ package com.old_colony.oc_cosmo_application.Controllers;
 import com.old_colony.oc_cosmo_application.Data.Appointment;
 import com.old_colony.oc_cosmo_application.Data.User;
 import com.old_colony.oc_cosmo_application.SQLUtils;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,23 +18,24 @@ import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-@SuppressWarnings("null")
-public class AnalyticsController extends AbstractController implements Initializable {
+public class AnalyticsController extends AbstractController {
     @FXML
     private AnchorPane home_pane, summary_pane,
             charts_pane, tables_pane;
@@ -46,7 +46,10 @@ public class AnalyticsController extends AbstractController implements Initializ
             avgDuration_lbl, mostBookedDay_lbl;
     
     @FXML
-    private LineChart<?, ?> appointments_lineChart;
+    private LineChart<String, Integer> appointments_lineChart;
+    
+    @FXML
+    private BarChart<String, Double> revenue_barChart;
     
     @FXML
     private TableView<Appointment> appointments_table, service_table;
@@ -81,12 +84,6 @@ public class AnalyticsController extends AbstractController implements Initializ
     private Button home_btn;
     
     @FXML
-    private BarChart<?, ?> performance_barChart;
-    
-    @FXML
-    private BarChart<?, ?> revenue_barChart;
-    
-    @FXML
     private PieChart services_pieChart;
     
     @FXML
@@ -102,9 +99,11 @@ public class AnalyticsController extends AbstractController implements Initializ
     
     private User currentUser;
     
-    private final ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
+    private ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
     
     /**
+     * {@inheritDoc}
+     * <br>
      * No user is ever passed in when exiting to start.fxml,
      * so we don't need to manage any user information or
      * initialize anything other than dark mode and maximized
@@ -117,24 +116,19 @@ public class AnalyticsController extends AbstractController implements Initializ
         if (isMaximized) toggleMaximize();
         
         currentUser = user;
-    }
-    
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (allAppointments != null) { // still producing error in other methods
-            initSummary();
-            initTables();
-            initCharts();
-        }
+        
+        initCharts();
+        initSummary();
+        initTables();
     }
     
     @FXML
-    void exit() {
+    private void exit() {
         changeScene("dashboard", currentUser);
     }
     
     @FXML
-    void showPage(ActionEvent event) {
+    private void showPage(ActionEvent event) {
         AnchorPane[] panes = new AnchorPane[]{
                 home_pane, summary_pane,
                 charts_pane, tables_pane
@@ -286,7 +280,72 @@ public class AnalyticsController extends AbstractController implements Initializ
     }
     
     private void initCharts() {
+        weeklyAppointmentsLineGraph();
+        revenueByServiceBarChart();
+        pieChart();
+    }
     
+    private void pieChart() {
+        HashMap<String, Integer> services = new HashMap<>();
+        for(Appointment a : allAppointments) {
+            String name = a.service();
+            if(services.containsKey(name))
+                services.merge(name, 1, Integer::sum);
+            else
+                services.put(name, 1);
+        }
+        
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        for(Map.Entry<String, Integer> entry : services.entrySet())
+            data.add(new PieChart.Data(entry.getKey(), entry.getValue()));
+        
+        services_pieChart.setData(data);
+    }
+    
+    private void revenueByServiceBarChart() {
+        HashMap<String, Double> services = new HashMap<>();
+        for(Appointment a : allAppointments) {
+            String name = a.service();
+            if(services.containsKey(name))
+                services.merge(name, a.cost(), Double::sum);
+            else
+                services.put(name, a.cost());
+        }
+        
+        XYChart.Series<String, Double> series = new XYChart.Series<>();
+        series.setName("Services");
+        for(Map.Entry<String, Double> entry : services.entrySet())
+            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        
+        revenue_barChart.getData().add(series);
+    }
+    
+    private void weeklyAppointmentsLineGraph() {
+        LinkedHashMap<DayOfWeek, Integer> appointmentsPerDay = new LinkedHashMap<>();
+        LocalDate today = LocalDate.now();
+        
+        for (DayOfWeek day : DayOfWeek.values()) // adding only weekdays to the LinkedHashMap
+            if (day.getValue() >= DayOfWeek.MONDAY.getValue() && day.getValue() <= DayOfWeek.FRIDAY.getValue())
+                appointmentsPerDay.put(day, 0);
+        
+        for (Appointment a : allAppointments) { // getting only this week's appointments
+            LocalDate date = a.date().toLocalDate(),
+                    monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+                    friday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+            
+            if (!date.isBefore(monday) && !date.isAfter(friday)) {
+                DayOfWeek day = date.getDayOfWeek();
+                appointmentsPerDay.merge(day, 1, Integer::sum);
+            }
+        }
+        
+        // adding the valid days of the week and the values to the series
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+        series.setName("Services Per Day");
+        for(Map.Entry<DayOfWeek, Integer> entry : appointmentsPerDay.entrySet())
+            series.getData().add(new XYChart.Data<>(entry.getKey().name(), entry.getValue()));
+        
+        appointments_lineChart.getData().add(series);
     }
     
     private String getMostBookedDay() {

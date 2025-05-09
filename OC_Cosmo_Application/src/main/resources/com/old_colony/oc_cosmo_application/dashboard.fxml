@@ -141,6 +141,14 @@
                   </columns>
                </TableView>
             </Pane>
+            <Button contentDisplay="RIGHT" layoutX="532.0" layoutY="463.0" mnemonicParsing="false" onAction="#toAnalyticsPage" styleClass="textBoxes" text="Analytics Page">
+               <graphic>
+                  <FontAwesomeIcon glyphName="ARROW_RIGHT" selectionStart="1" />
+               </graphic>
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
          </AnchorPane>
          <AnchorPane fx:id="schedule_pane" prefHeight="505.0" prefWidth="754.0" styleClass="mode" visible="false">
             <TabPane layoutY="29.0" prefHeight="483.0" prefWidth="754.0" tabClosingPolicy="UNAVAILABLE">

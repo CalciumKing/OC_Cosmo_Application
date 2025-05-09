@@ -17,34 +17,34 @@ import com.old_colony.oc_cosmo_application.Data.Appointment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
 
+@SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class PDFGenerator {
+    private static final String ocLogo = "src/main/resources/images/OCLogo.png";
+    
     public static void main(String[] args) {
         ObservableList<Appointment> appointmentObservableList = SQLUtils.getAllAppointments(-1);
-
-        //dailyAppointments(appointmentObservableList);
-        //allAppointments(appointmentObservableList);
+        if(appointmentObservableList == null) return;
+        
+        dailyAppointments(appointmentObservableList);
+        allAppointments(appointmentObservableList);
         weeklyAppointments();
     }
 
     public static void weeklyAppointments() {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        String imgSource = "src/main/resources/images/OCLogo.png";
+        LocalDate today = LocalDate.now(),
+                startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+                endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        
         try {
             PdfWriter writer = new PdfWriter("weeklyAppointmentsPDF.pdf");
             PdfDocument pdfDoc = new PdfDocument(writer);
             Document document = new Document(pdfDoc);
 
-            ImageData data = ImageDataFactory.create(imgSource);
+            ImageData data = ImageDataFactory.create(ocLogo);
             Image icon = new Image(data);
 
             Paragraph title = new Paragraph("Daily Appointments")
@@ -52,142 +52,90 @@ public class PDFGenerator {
                     .setBold()
                     .setFontColor(ColorConstants.BLUE);
 
-            Table headerTable = new Table(2);
-            Table secondTable = new Table(6);
+            Table headerTable = new Table(2),
+                    secondTable = new Table(6);
+            
             headerTable.setWidth(UnitValue.createPercentValue(100));
             headerTable.addCell(new Cell().add(icon).setBorder(Border.NO_BORDER));
-            headerTable.addCell(
-                    new Cell().add(title).setTextAlignment(TextAlignment.CENTER)
-                            .setBorder(Border.NO_BORDER)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Old Colony RVTHS"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("(508) 763-8011"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("oldcolony@oldcolony.us"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Cosmetology Shop"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("5/8/2025"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-            );
-
-            secondTable.setWidth(UnitValue.createPercentValue(100));
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Student"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Service"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Cost"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Date"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Duration"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Customer"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-
+            createTopCell(headerTable, title);
+            createDataTable(secondTable);
+            
             if(SQLUtils.selectAppointmentsByDate(startOfWeek, endOfWeek) != null) {
-                for (Appointment appointment : SQLUtils.selectAppointmentsByDate(startOfWeek, endOfWeek)) {
-                    System.out.println(appointment.customer());
+                ObservableList<Appointment> appointments = SQLUtils.selectAppointmentsByDate(startOfWeek, endOfWeek);
+                if(appointments == null) return;
+                
+                for (Appointment appointment : appointments)
                     createTable(secondTable, appointment);
-                }
             }
-
 
             document.add(headerTable);
             document.add(new Paragraph("\n"));
             document.add(secondTable);
             document.close();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         }
     }
-
+    
     private static void createTable(Table secondTable, Appointment appointment) {
-        String username = "N/A";
-        if (appointment != null && appointment.student() != null && appointment.student().username() != null) {
-            username = appointment.student().username();
-        }
+        if (appointment == null) return;
+        
+        String username = appointment.student().username();
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(username))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
         );
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(String.valueOf(appointment.service())))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
         );
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(String.valueOf(appointment.cost())))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
         );
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(String.valueOf(appointment.date())))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
         );
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(String.valueOf(appointment.duration())))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER
+                        ).setBorder(Border.NO_BORDER)
         );
 
         secondTable.addCell(
                 new Cell().add(new Paragraph(String.valueOf(appointment.customer())))
-                        .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
         );
     }
 
     public static void dailyAppointments(ObservableList<Appointment> appointmentObservableList) {
         ObservableList<Appointment> todayAppointments = FXCollections.observableArrayList();
-        for (int i = 0; i < appointmentObservableList.size(); i++) {
-            int today = LocalDate.now().getDayOfMonth();
-            int month = LocalDate.now().getMonthValue();
-            int year = LocalDate.now().getYear();
-
-            if(appointmentObservableList.get(i).date().getDate() == today
-                    && appointmentObservableList.get(i).date().getMonth() == month - 1
-                    && appointmentObservableList.get(i).date().getYear() == year - 1900) {
-                todayAppointments.add(appointmentObservableList.get(i));
-            }
+        for (Appointment value : appointmentObservableList) {
+            LocalDate now = LocalDate.now();
+            
+            if (value.date().getDate() == now.getDayOfMonth() &&
+                    value.date().getMonth() == now.getMonthValue() - 1 &&
+                    value.date().getYear() == now.getYear() - 1900)
+                todayAppointments.add(value);
         }
-
-        String imgSource = "src/main/resources/images/OCLogo.png";
+        
         try {
             PdfWriter writer = new PdfWriter("weeklyAppointmentsPDF.pdf");
             PdfDocument pdfDoc = new PdfDocument(writer);
             Document document = new Document(pdfDoc);
 
-            ImageData data = ImageDataFactory.create(imgSource);
+            ImageData data = ImageDataFactory.create(ocLogo);
             Image icon = new Image(data);
 
             Paragraph title = new Paragraph("Daily Appointments")
@@ -195,89 +143,33 @@ public class PDFGenerator {
                     .setBold()
                     .setFontColor(ColorConstants.BLUE);
 
-            Table headerTable = new Table(2);
-            Table secondTable = new Table(6);
+            Table headerTable = new Table(2),
+                    secondTable = new Table(6);
+            
             headerTable.setWidth(UnitValue.createPercentValue(100));
             headerTable.addCell(new Cell().add(icon).setBorder(Border.NO_BORDER));
-            headerTable.addCell(
-                    new Cell().add(title).setTextAlignment(TextAlignment.CENTER)
-                            .setBorder(Border.NO_BORDER)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Old Colony RVTHS"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("(508) 763-8011"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("oldcolony@oldcolony.us"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Cosmetology Shop"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("5/8/2025"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-            );
-
-            secondTable.setWidth(UnitValue.createPercentValue(100));
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Student"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Service"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Cost"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Date"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Duration"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Customer"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-
-            for (Appointment appointment : todayAppointments) {
+            createTopCell(headerTable, title);
+            createDataTable(secondTable);
+            
+            for (Appointment appointment : todayAppointments)
                 createTable(secondTable, appointment);
-            }
-
 
             document.add(headerTable);
             document.add(new Paragraph("\n"));
             document.add(secondTable);
             document.close();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public static void allAppointments(ObservableList<Appointment> appointmentObservableList) {
-        String imgSource = "src/main/resources/images/OCLogo.png";
         try {
             PdfWriter writer = new PdfWriter("weeklyAppointmentsPDF.pdf");
             PdfDocument pdfDoc = new PdfDocument(writer);
             Document document = new Document(pdfDoc);
 
-            ImageData data = ImageDataFactory.create(imgSource);
+            ImageData data = ImageDataFactory.create(ocLogo);
             Image icon = new Image(data);
 
             Paragraph title = new Paragraph("Daily Appointments")
@@ -285,81 +177,88 @@ public class PDFGenerator {
                     .setBold()
                     .setFontColor(ColorConstants.BLUE);
 
-            Table headerTable = new Table(2);
-            Table secondTable = new Table(6);
+            Table headerTable = new Table(2),
+                    secondTable = new Table(6);
+            
             headerTable.setWidth(UnitValue.createPercentValue(100));
             headerTable.addCell(new Cell().add(icon).setBorder(Border.NO_BORDER));
-            headerTable.addCell(
-                    new Cell().add(title).setTextAlignment(TextAlignment.CENTER)
-                            .setBorder(Border.NO_BORDER)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Old Colony RVTHS"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("(508) 763-8011"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("oldcolony@oldcolony.us"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("Cosmetology Shop"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("5/8/2025"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-                            .add(new Paragraph("\n"))
-                            .setTextAlignment(TextAlignment.RIGHT)
-            );
-
-            secondTable.setWidth(UnitValue.createPercentValue(100));
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Student"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Service"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Cost"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Date"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Duration"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-            secondTable.addCell(
-                    new Cell().add(new Paragraph("Customer"))
-                            .setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER)
-            );
-
-            if(appointmentObservableList != null) {
-                for (Appointment appointment : appointmentObservableList) {
-
-                    createTable(secondTable, appointment);
-                }
-            }
-
+            createTopCell(headerTable, title);
+            createDataTable(secondTable);
+            
+            for (Appointment appointment : appointmentObservableList)
+                createTable(secondTable, appointment);
 
             document.add(headerTable);
             document.add(new Paragraph("\n"));
             document.add(secondTable);
             document.close();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         }
+    }
+    
+    private static void createTopCell(Table headerTable, Paragraph title) {
+        headerTable.addCell(
+                new Cell().add(title).setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("Old Colony RVTHS"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("(508) 763-8011"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("oldcolony@oldcolony.us"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("Cosmetology Shop"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("5/8/2025"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .add(new Paragraph("\n"))
+                        .setTextAlignment(TextAlignment.RIGHT)
+        );
+    }
+    
+    private static void createDataTable(Table secondTable) {
+        secondTable.setWidth(UnitValue.createPercentValue(100));
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Student"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Service"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Cost"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Date"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Duration"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
+        secondTable.addCell(
+                new Cell().add(new Paragraph("Customer"))
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setBorder(Border.NO_BORDER)
+        );
     }
 }

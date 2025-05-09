@@ -63,7 +63,7 @@
                <Font size="18.0" />
             </font>
          </Button>
-         <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;" text="efd">
+         <Label fx:id="securityQuestion_lbl" layoutX="29.0" layoutY="213.0" prefHeight="27.0" prefWidth="211.0" style="-fx-background-color: whitesmoke; -fx-border-radius: 10; -fx-border-color: gray; -fx-background-radius: 10;">
             <font>
                <Font size="14.0" />
             </font>

@@ -137,6 +137,8 @@ public class DashboardController extends AbstractController implements Initializ
     }
 
     /**
+     * {@inheritDoc}
+     * <br>
      * Sets information around the application that uses user data like username, dark mode, and maximized
      * <p>Initializes everything that requires user data (everything that wasn't initialized already in above method)</p>
      * <p>Makes admin panel visible if currentUser has the status of admin</p>
@@ -159,6 +161,11 @@ public class DashboardController extends AbstractController implements Initializ
     }
 
     // region FXML Methods
+    @FXML
+    private void toAnalyticsPage() {
+        changeScene("analytics", currentUser);
+    }
+    
     @FXML
     private void setAMPM() {
         hour_spinner.setValueFactory(
@@ -686,8 +693,8 @@ public class DashboardController extends AbstractController implements Initializ
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
             return new SimpleStringProperty(formatter.format(time));
         });
-        homeName_col.setCellValueFactory(new PropertyValueFactory<>("customer"));
-        homeService_col.setCellValueFactory(new PropertyValueFactory<>("service"));
+        homeName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
+        homeService_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
 
         dailySchedule_table.setItems(SQLUtils.getTodayAppointments(currentUser.userID()));
 
@@ -783,6 +790,7 @@ public class DashboardController extends AbstractController implements Initializ
      * @param appointment the appointment that's data is used to style and add information to the StackPane
      * @param offset information is only added to the first panel, if the appointment should go to another line, other panels are styled but left blank
      * @return returns the styled panel as {@code StackPane}
+     * @see Appointment
      */
     private StackPane createAppointmentPane(Appointment appointment, int offset) {
         StackPane pane = new StackPane();
@@ -834,6 +842,7 @@ public class DashboardController extends AbstractController implements Initializ
      * Formats appointment time as HH:MM
      * @param a appointment data, used to get hour and minute
      * @return formatted time as a string
+     * @see Appointment
      */
     private String formatTime(Appointment a) {
         LocalTime start = LocalTime.of(a.hour(), a.minute()),
