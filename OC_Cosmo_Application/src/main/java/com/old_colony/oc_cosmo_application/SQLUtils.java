@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 /**
  * This class is for any utilities that use SQL
@@ -311,6 +312,47 @@ public class SQLUtils {
             );
             e.printStackTrace();
         }
+    }
+
+    public static ObservableList<Appointment> selectAppointmentsByDate(LocalDate startOfWeek, LocalDate endOfWeek) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return null;
+            ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
+
+            String sql = "SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?";
+
+            PreparedStatement prepared = connection.prepareStatement(sql);
+
+            prepared.setDate(1, Date.valueOf(startOfWeek));
+            prepared.setDate(2, Date.valueOf(endOfWeek));
+
+            ResultSet rs = prepared.executeQuery();
+
+            while (rs.next()) {
+                appointmentObservableList.add(new Appointment(
+                        rs.getString("custName"),
+                        getUser(rs.getInt("userID")),
+                        getColor(rs.getString("color")),
+                        rs.getString("service"),
+                        rs.getDouble("cost"),
+                        rs.getDate("appDate"),
+                        rs.getInt("startHour"),
+                        rs.getInt("startMinute"),
+                        rs.getInt("duration"),
+                        rs.getString("note")
+                ));
+            }
+            return appointmentObservableList;
+        } catch (Exception e) {
+            Utils.normalAlert(
+                    Alert.AlertType.ERROR,
+                    "Error in selectAppointmentsByDate",
+                    "Error Selecting Appointments",
+                    "There was an error selecting the appointments, please try again."
+            );
+            e.printStackTrace();
+        }
+        return null;
     }
     
     /**

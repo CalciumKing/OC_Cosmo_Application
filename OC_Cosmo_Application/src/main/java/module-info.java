@@ -3,7 +3,10 @@ module com.old_colony.oc_cosmo_application {
     requires javafx.fxml;
     requires java.sql;
     requires fontawesomefx;
-    
+    requires layout;
+    requires io;
+    requires kernel;
+
     opens com.old_colony.oc_cosmo_application.Data to javafx.base;
     opens com.old_colony.oc_cosmo_application to javafx.fxml;
     exports com.old_colony.oc_cosmo_application;
