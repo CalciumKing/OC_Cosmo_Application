@@ -52,7 +52,7 @@ public class SQLUtils {
 
         return false;
     }
-    
+
     /**
      * Changes the specified username's password
      * @param username specified username used to find the user
@@ -79,7 +79,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gets the security question based on the user's username
      * @param username username used to find a specific user
@@ -149,7 +149,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Adds a new appointment containing the specified information to the database
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
@@ -159,7 +159,7 @@ public class SQLUtils {
     public static void createAppointment(Appointment a) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "INSERT INTO appointments (startHour, startMinute, duration, userID, custName, service, cost, appDate, color, note) VALUES (?,?,?,?,?,?,?,?,?,?);";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
@@ -185,7 +185,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Updates a specific appointment from the database with the parameterized appointment information
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
@@ -196,16 +196,16 @@ public class SQLUtils {
     public static void updateAppointment(Appointment newAppointment, Appointment oldAppointment) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "update appointments set startHour = ?, startMinute = ?, " +
                     "duration = ?, userID = ?, custName = ? , service = ?, cost = ?, " +
                     "appDate = ?, color = ?, note = ? where id like (" +
                     "select id where startHour = ? and startMinute = ? and duration = ? " +
                     "and userID = ? and custName = ? and service = ? and cost = ? and " +
                     "appDate = ? limit 1);";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
-            
+
             // new appointment details
             prepared.setInt(1, newAppointment.hour());
             prepared.setInt(2, newAppointment.minute());
@@ -217,7 +217,7 @@ public class SQLUtils {
             prepared.setDate(8, newAppointment.date());
             prepared.setString(9, newAppointment.color());
             prepared.setString(10, newAppointment.note());
-            
+
             // old appointment details
             prepared.setInt(11, oldAppointment.hour());
             prepared.setInt(12, oldAppointment.minute());
@@ -227,9 +227,9 @@ public class SQLUtils {
             prepared.setString(16, oldAppointment.service());
             prepared.setDouble(17, oldAppointment.cost());
             prepared.setDate(18, oldAppointment.date());
-            
+
             System.out.println(prepared);
-            
+
             prepared.executeUpdate();
         } catch (Exception e) {
             Utils.normalAlert(
@@ -241,7 +241,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes the appointment using the student username and the service to be completed
      * @param username student username
@@ -250,7 +250,7 @@ public class SQLUtils {
     public static void deleteAppointment(String username, String service) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "DELETE FROM appointments WHERE userID = ? AND service = ?";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
@@ -272,7 +272,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Checks for all appointments that are between the two parameter dates
      * <p>Runs "{@code SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;}"</p>
@@ -286,7 +286,7 @@ public class SQLUtils {
             if (connection == null) return null;
             ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
 
-            String sql = "SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;";
+            String sql = "SELECT * FROM appointments WHERE appDate BETWEEN ? AND ?;";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setDate(1, Date.valueOf(startOfWeek));
@@ -295,19 +295,20 @@ public class SQLUtils {
             ResultSet rs = prepared.executeQuery();
 
             while (rs.next())
-                appointmentObservableList.add(new Appointment(
-                        rs.getString("custName"),
-                        getUser(rs.getInt("userID")),
-                        getColor(rs.getString("color")),
-                        rs.getString("service"),
-                        rs.getDouble("cost"),
-                        rs.getDate("appDate"),
-                        rs.getInt("startHour"),
-                        rs.getInt("startMinute"),
-                        rs.getInt("duration"),
-                        rs.getString("note")
-                ));
-            
+                appointmentObservableList.add(
+                        new Appointment(
+                            rs.getString("custName"),
+                            getUser(rs.getInt("userID")),
+                            getColor(rs.getString("color")),
+                            rs.getString("service"),
+                            rs.getDouble("cost"),
+                            rs.getDate("appDate"),
+                            rs.getInt("startHour"),
+                            rs.getInt("startMinute"),
+                            rs.getInt("duration"),
+                            rs.getString("note"))
+                );
+
             return appointmentObservableList;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -320,7 +321,7 @@ public class SQLUtils {
         }
         return null;
     }
-    
+
     /**
      * Gets all appointments from cosmo database
      * <p>Runs "{@code select * from appointments;}" if id is -1</p>
@@ -373,7 +374,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Creates a user with the specific information
      * <p>Information is of type {@code User} to avoid many parameters</p>
@@ -383,7 +384,7 @@ public class SQLUtils {
     public static void createUser(User user) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "INSERT INTO users (username, password, securityQuestion, securityAnswer, status) VALUES (?,?,?,?,?)";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
@@ -405,7 +406,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes user with unique specified username
      * <p>Runs "{@code DELETE FROM users WHERE username = ?;}"</p>
@@ -432,7 +433,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Updates the user with the unique username with the specified information
      * <p>Information is of type {@code User} to avoid many parameters</p>
@@ -465,7 +466,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gets a used based on unique username
      * <p>Runs {@code select * from users where username = ? limit 1;}</p>
@@ -504,7 +505,7 @@ public class SQLUtils {
         }
         return null;
     }
-    
+
     /**
      * Gets all appointments happening during the current day for a specific user
      * @param id unique user id
@@ -550,7 +551,7 @@ public class SQLUtils {
         }
     }
     // endregion
-    
+
     // region Helper Methods
     /**
      * Makes a connection to the cosmo database
@@ -570,7 +571,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Converts a string color name to a usable hex color
      * @param name string color name (ex: red, pink, blue, etc.)
@@ -595,7 +596,7 @@ public class SQLUtils {
             return "#808080"; // grey fallback color
         }
     }
-    
+
     /**
      * Gets a user based on a unique id
      * <p>Runs "{@code select * from users where userID = ? limit 1;}"</p>
@@ -606,13 +607,13 @@ public class SQLUtils {
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where userID = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
-            
+
             if (result.next())
                 return new User(
                         result.getString("username"),

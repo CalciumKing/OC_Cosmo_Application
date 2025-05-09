@@ -16,8 +16,7 @@ import java.io.IOException;
 /**
  * <h2>Old Colony Cosmetology Application Project</h2>
  *
- * <p>This application was developed to help the cosmetology shop with scheduling,
- * service tracking, and user management.</p>
+ * <p>This application was developed to help our school's cosmetology shop with scheduling and service tracking.</p>
  *
  * <p>License<br>
  * MIT - Copyright (c) 2025 Old Colony Regional Vocational Technical High School</p>
