@@ -201,7 +201,7 @@ public class SQLUtils {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
             
-            String sql = "INSERT INTO appointments VALUES (?,?,?,?,?,?,?,?,?,?);";
+            String sql = "INSERT INTO appointments (startHour, startMinute, duration, userID, custName, service, cost, appDate, color, note) VALUES (?,?,?,?,?,?,?,?,?,?);";
 
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, a.hour());
