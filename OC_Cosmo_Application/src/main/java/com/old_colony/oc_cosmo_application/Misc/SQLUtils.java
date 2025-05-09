@@ -1,4 +1,4 @@
-package com.old_colony.oc_cosmo_application;
+package com.old_colony.oc_cosmo_application.Misc;
 
 import com.old_colony.oc_cosmo_application.Data.Appointment;
 import com.old_colony.oc_cosmo_application.Data.User;

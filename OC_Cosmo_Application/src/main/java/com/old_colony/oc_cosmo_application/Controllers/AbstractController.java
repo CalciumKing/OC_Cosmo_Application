@@ -2,7 +2,7 @@ package com.old_colony.oc_cosmo_application.Controllers;
 
 import com.old_colony.oc_cosmo_application.Data.User;
 import com.old_colony.oc_cosmo_application.MainApplication;
-import com.old_colony.oc_cosmo_application.Utils;
+import com.old_colony.oc_cosmo_application.Misc.Utils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;

@@ -38,6 +38,7 @@ import java.io.IOException;
  * @see <a href="https://github.com/CalciumKing/OC_Cosmo_Application">GitHub Repository</a>
  * @see com.old_colony.oc_cosmo_application.Controllers Controllers Folder
  * @see com.old_colony.oc_cosmo_application.Data Data Folder
+ * @see com.old_colony.oc_cosmo_application.Misc Misc Utils Folder
  */
 
 public class MainApplication extends Application {

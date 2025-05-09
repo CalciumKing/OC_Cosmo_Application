@@ -2,7 +2,7 @@ package com.old_colony.oc_cosmo_application.Controllers;
 
 import com.old_colony.oc_cosmo_application.Data.Appointment;
 import com.old_colony.oc_cosmo_application.Data.User;
-import com.old_colony.oc_cosmo_application.SQLUtils;
+import com.old_colony.oc_cosmo_application.Misc.SQLUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
@@ -27,7 +26,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
