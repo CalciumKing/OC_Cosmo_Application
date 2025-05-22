@@ -34,6 +34,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 public class AnalyticsController extends AbstractController {
+    // region FXML Variables
     @FXML
     private AnchorPane home_pane, summary_pane,
             charts_pane, tables_pane;
@@ -48,6 +49,9 @@ public class AnalyticsController extends AbstractController {
     
     @FXML
     private BarChart<String, Double> revenue_barChart;
+
+    @FXML
+    private PieChart services_pieChart;
     
     @FXML
     private TableView<Appointment> appointments_table, service_table;
@@ -76,28 +80,20 @@ public class AnalyticsController extends AbstractController {
     private TableColumn<User, Double> earnings_col, studentAvgDuration_col;
     
     @FXML
-    private Button charts_btn;
-    
-    @FXML
-    private Button home_btn;
-    
-    @FXML
-    private PieChart services_pieChart;
+    private Button home_btn, summary_btn, charts_btn, tables_btn;
     
     @FXML
     private VBox sideMenu;
-    
-    @FXML
-    private Button summary_btn;
-    
-    @FXML
-    private Button tables_btn;
-    
+    // endregion
+
+    // region Non-FXML Variables
     private boolean isCollapsed;
     
     private User currentUser;
-    
+
+    @SuppressWarnings("FieldMayBeFinal")
     private ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
+    // endregion
     
     /**
      * {@inheritDoc}
@@ -119,12 +115,20 @@ public class AnalyticsController extends AbstractController {
         initSummary();
         initTables();
     }
-    
+
+    // region FXML Methods
     @FXML
     private void exit() {
         changeScene("dashboard", currentUser);
     }
-    
+
+    /**
+     * Sets all panes to not visible
+     * <p>Finds what button the ActionEvent was triggered by</p>
+     * <p>The list of buttons and list of panes have correlating indexes (both home pane and button are 0, both admin pane and button are 3)</p>
+     * <p>When adding pages to dashboard, just add the pane to the list and its button to activate it at the same index in the buttons list</p>
+     * @param event ActionEvent that caused the method to be called, should only be triggered by buttons
+     */
     @FXML
     private void showPage(ActionEvent event) {
         AnchorPane[] panes = new AnchorPane[]{
@@ -151,7 +155,14 @@ public class AnalyticsController extends AbstractController {
         if (pageToShow != null)
             pageToShow.setVisible(true);
     }
-    
+
+    /**
+     * Hamburger button toggles the size of the side nav bar to be big
+     * with text on each button or small with no text and only buttons
+     * <p>The text for each of the buttons is stored in the individual button's 'user data'.</p>
+     * <p>Information is stored in user data to dynamically save the button
+     * text information without needing variables or an array.</p>
+     */
     @FXML
     private void toggleMenu() {
         animateWidth(isCollapsed ? 160 : 50);
@@ -168,7 +179,13 @@ public class AnalyticsController extends AbstractController {
         
         isCollapsed = !isCollapsed;
     }
-    
+    // endregion
+
+    // region Helper Methods
+    /**
+     * Animates sideMenu animation
+     * @param endWidth the desired width of the side menu when the animation is finished
+     */
     private void animateWidth(double endWidth) {
         KeyValue widthValue = new KeyValue(sideMenu.prefWidthProperty(), endWidth, Interpolator.LINEAR);
         KeyFrame keyFrame = new KeyFrame(Duration.millis(350), widthValue);
@@ -435,4 +452,5 @@ public class AnalyticsController extends AbstractController {
         }
         return students;
     }
+    // endregion
 }

@@ -3,9 +3,16 @@
 - make it check if appointment runs into student lunchtime, figure out when lunchtime is
 
 - delete Initializable initialize method from dashboard, move content to init(), should never run in practical use
-- analytics page should return to the dashboard if the currentuser is not null, if it is null, return to the login page, also make analytics page accessible frm the login page
+- fix weird vbox warning:
+May 09, 2025 9:07:50 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Caught java.lang.IllegalArgumentException: No enum constant javafx.geometry.Pos.left' while calculating value for '-fx-alignment' from inline style on VBox@d370184
+- change avg duration to just duration on the analytics service summary page
+- add pdf generation page possibly with file location choosing
 
 for mason:
 - fix appointment custom note border radius
 - fix login bug if user enters a user that doesn't exist in setnewpassword()
 - change forgot password login button "submit" to something else
+
+- make dark mode work on analytics page
+- fix dark mode styling on dashboard

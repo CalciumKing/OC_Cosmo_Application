@@ -97,7 +97,7 @@ abstract class AbstractController {
                     analyticsController.init(user, isDarkMode, isMaximized);
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + sceneName);
+                    throw new IllegalArgumentException("Unexpected value: " + sceneName);
             }
 
             main_pane.getScene().getWindow().hide();

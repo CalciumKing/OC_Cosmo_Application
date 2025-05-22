@@ -199,8 +199,8 @@ public class SQLUtils {
 
             String sql = "update appointments set startHour = ?, startMinute = ?, " +
                     "duration = ?, userID = ?, custName = ? , service = ?, cost = ?, " +
-                    "appDate = ?, color = ?, note = ? where id like (" +
-                    "select id where startHour = ? and startMinute = ? and duration = ? " +
+                    "appDate = ?, color = ?, note = ? where userId like (" +
+                    "select userId where startHour = ? and startMinute = ? and duration = ? " +
                     "and userID = ? and custName = ? and service = ? and cost = ? and " +
                     "appDate = ? limit 1);";
 
@@ -227,8 +227,6 @@ public class SQLUtils {
             prepared.setString(16, oldAppointment.service());
             prepared.setDouble(17, oldAppointment.cost());
             prepared.setDate(18, oldAppointment.date());
-
-            System.out.println(prepared);
 
             prepared.executeUpdate();
         } catch (Exception e) {
