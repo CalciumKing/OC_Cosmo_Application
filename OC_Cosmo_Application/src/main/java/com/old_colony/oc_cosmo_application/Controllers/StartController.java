@@ -11,6 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
+/**
+ * Controller for start.fxml (login and sign up pages)
+ */
+
 public class StartController extends AbstractController {
     // region FXML Variables
     @FXML

@@ -37,6 +37,10 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for dashboard.fxml (appointment and user view/management pages)
+ */
+
 @SuppressWarnings("SpellCheckingInspection")
 public class DashboardController extends AbstractController implements Initializable {
     // region FXML Variables

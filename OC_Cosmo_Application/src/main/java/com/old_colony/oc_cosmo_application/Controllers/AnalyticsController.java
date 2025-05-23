@@ -33,6 +33,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
+/**
+ * Controller for analytics.fxml (appointment and user data view/management page)
+ */
+
 public class AnalyticsController extends AbstractController {
     // region FXML Variables
     @FXML
