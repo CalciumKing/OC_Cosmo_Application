@@ -9,6 +9,19 @@
     -fx-background-color: #121212;
 }
 
+#home_pane > .label{
+    -fx-text-fill: white;
+}
+#summary_pane > .label{
+    -fx-text-fill: white;
+}
+#charts_pane > .label{
+    -fx-text-fill: white;
+}
+#tables_pane > .label{
+    -fx-text-fill: white;
+}
+
 .mode > .label {
     -fx-text-fill: white;
 }
@@ -28,6 +41,14 @@
 .mode > .infoBox > .modeText > .label {
     -fx-text-fill: white;
 }
+.mode > .infoBox > .label {
+    -fx-text-fill: white;
+}
+
+.mode > .infoBox{
+    -fx-background-color: #3b3b3b;
+}
+
 .mode > .tab-pane {
     -fx-background-color: #808080;
 }

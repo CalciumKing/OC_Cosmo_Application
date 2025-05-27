@@ -52,6 +52,16 @@
     -fx-background-color: whitesmoke;
 }
 
+.PDFButtons{
+    -fx-background-color: white;
+    -fx-border-color: gray;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.PDFButtons:hover{
+    -fx-background-color: #bbbbbb;
+}
+
 .navButton:hover {
     -fx-background-color:lightgrey;
     -fx-opacity: .5;

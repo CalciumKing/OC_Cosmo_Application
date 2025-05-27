@@ -2,6 +2,7 @@ package com.old_colony.oc_cosmo_application.Controllers;
 
 import com.old_colony.oc_cosmo_application.Data.Appointment;
 import com.old_colony.oc_cosmo_application.Data.User;
+import com.old_colony.oc_cosmo_application.Misc.PDFGenerator;
 import com.old_colony.oc_cosmo_application.Misc.SQLUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -32,6 +33,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
+import static java.lang.String.format;
 
 /**
  * Controller for analytics.fxml (appointment and user data view/management page)
@@ -84,7 +87,7 @@ public class AnalyticsController extends AbstractController {
     private TableColumn<User, Double> earnings_col, studentAvgDuration_col;
     
     @FXML
-    private Button home_btn, summary_btn, charts_btn, tables_btn;
+    private Button home_btn, summary_btn, charts_btn, tables_btn, all, weekly, daily;
     
     @FXML
     private VBox sideMenu;
@@ -259,7 +262,7 @@ public class AnalyticsController extends AbstractController {
             
             avg /= appointments.size();
             
-            return new SimpleObjectProperty<>(avg);
+            return new SimpleObjectProperty<>(Double.valueOf(String.format("%.2f", avg)));
         });
         
         students_table.setItems(SQLUtils.getAllUsers());
@@ -289,7 +292,7 @@ public class AnalyticsController extends AbstractController {
                 return true;
             }
         });
-        
+
         serviceName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
         times_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>((int) appointments.get(cellData.getValue().service())[0]));
         totalRev_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(appointments.get(cellData.getValue().service())[1]));
@@ -366,7 +369,18 @@ public class AnalyticsController extends AbstractController {
         
         appointments_lineChart.getData().add(series);
     }
-    
+
+    @FXML
+    private void getPushedPDFButton(ActionEvent event) {
+        if(event.getSource() == all){
+            PDFGenerator.createPDF("all");
+        }else if(event.getSource() == weekly){
+            PDFGenerator.createPDF("weekly");
+        }else if(event.getSource() == daily){
+            PDFGenerator.createPDF("daily");
+        }
+    }
+
     private String getMostBookedDay() {
         HashMap<DayOfWeek, Integer> days = new HashMap<>();
         
@@ -395,7 +409,7 @@ public class AnalyticsController extends AbstractController {
         for(Appointment a : allAppointments)
             avg += a.duration();
         avg /= allAppointments.size();
-        return avg + " minutes";
+        return String.format("%.2f", avg) + " minutes";
     }
     
     private String getTotalProfits() {
