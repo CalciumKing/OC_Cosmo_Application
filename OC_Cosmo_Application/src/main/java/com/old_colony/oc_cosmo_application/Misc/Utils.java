@@ -14,6 +14,7 @@ import java.util.Optional;
  */
 public class Utils {
     // region Alert Methods
+
     /**
      * Creates a regular alert with the contents of the parameters
      *
@@ -27,7 +28,7 @@ public class Utils {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
     }
-    
+
     /**
      * Creates a confirmation alert with the contents of the parameters
      *
@@ -48,7 +49,7 @@ public class Utils {
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
-    
+
     /**
      * Does the actual work of creating a regular alert.
      * <p>Used by {@code normalAlert()} and {@code confirmAlert()}</p>
@@ -69,7 +70,7 @@ public class Utils {
         return alert;
     }
     // endregion Alert Methods
-    
+
     /**
      * Gets the current stage based on the available windows.
      * <p>Used only if no stage data is given and the stage is needed.</p>
@@ -82,7 +83,7 @@ public class Utils {
                 return (Stage) window;
         return null;
     }
-    
+
     /**
      * Determines the user's status based on the SQL integer status
      * <table>
@@ -115,7 +116,7 @@ public class Utils {
             default -> Status.ERROR;
         };
     }
-    
+
     /**
      * Determines the SQL status code based on the java enum status
      * <table>
@@ -148,7 +149,7 @@ public class Utils {
             case ADMIN -> 1;
         };
     }
-    
+
     /**
      * Determines if the user is an admin based on a boolean
      *

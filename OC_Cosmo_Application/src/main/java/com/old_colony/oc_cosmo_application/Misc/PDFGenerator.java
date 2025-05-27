@@ -20,6 +20,8 @@ import javafx.scene.control.Alert;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 /**
  * This file handles the generation of all pdfs
@@ -28,35 +30,34 @@ import java.time.temporal.TemporalAdjusters;
 @SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class PDFGenerator {
     /**
-     * Handles which method creates a pdf based on the input
+     * Creates a PDF and manages which method adds data to it based on the type parameter
      *
-     * @param type the type of pdf to be created, either "daily", "weekly", or "all"
+     * @param type the type of pdf to be created (daily, weekly, all)
      * @param path file path location to generate the pdf
-     * @see #dailyAppointments(Document, ImageData) dailyAppointments()
-     * @see #weeklyAppointments(Document, ImageData) weeklyAppointments()
-     * @see #allAppointments(Document, ImageData) allAppointments()
+     * @see #dailyAppointments(Document) dailyAppointments()
+     * @see #weeklyAppointments(Document) weeklyAppointments()
+     * @see #allAppointments(Document) allAppointments()
      */
     public static void createPDF(String type, String path) {
         try {
             ImageData data = ImageDataFactory.create("src/main/resources/images/OCLogo.png");
-            Document document;
-            
-            switch (type) {
-                case "daily":
-                    document = new Document(new PdfDocument(new PdfWriter(path + "dailyAppointments.pdf")));
-                    dailyAppointments(document, data);
-                    break;
-                case "weekly":
-                    document = new Document(new PdfDocument(new PdfWriter(path + "weeklyAppointments.pdf")));
-                    weeklyAppointments(document, data);
-                    break;
-                case "all":
-                    document = new Document(new PdfDocument(new PdfWriter(path + "allAppointments.pdf")));
-                    allAppointments(document, data);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + type);
-            }
+
+            HashMap<String, Consumer<Document>> handlers = new HashMap<>();
+            handlers.put("daily", PDFGenerator::dailyAppointments);
+            handlers.put("weekly", PDFGenerator::weeklyAppointments);
+            handlers.put("all", PDFGenerator::allAppointments);
+
+            HashMap<String, String> fileNames = new HashMap<>();
+            fileNames.put("daily", "dailyAppointments.pdf");
+            fileNames.put("weekly", "weeklyAppointments.pdf");
+            fileNames.put("all", "allAppointments.pdf");
+
+            if (!handlers.containsKey(type))
+                throw new IllegalArgumentException("Unknown PDF Type: " + type);
+
+            Document doc = new Document(new PdfDocument(new PdfWriter(path + fileNames.get(type))));
+
+            handlers.get(type).accept(doc);
         } catch (Exception e) {
             e.printStackTrace();
             Utils.normalAlert(
@@ -67,153 +68,95 @@ public class PDFGenerator {
             );
         }
     }
-    
+
     // region Main Methods
+
     /**
-     * Creates a pdf to hold all appointments that are happening in the current week
+     * Adds appointments that are happening in the current week to the pdf
      *
      * @param document document to add tables data to
-     * @param data     image data to be used in {@link #createHeader(String, ImageData) createHeader()}
+     * @see #createFileData(ObservableList, Document, String) createFileData()
      */
-    private static void weeklyAppointments(Document document, ImageData data) {
+    private static void weeklyAppointments(Document document) {
         LocalDate today = LocalDate.now(),
                 startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
                 endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
-        
+
         ObservableList<Appointment> appointments = SQLUtils.selectAppointmentsByDate(startOfWeek, endOfWeek);
         if (appointments == null) return;
-        
-        Table secondTable = createDataTable();
-        
-        for (Appointment a : appointments) {
-            for (String s : new String[]{
-                    a.student().username(),
-                    a.service(),
-                    String.valueOf(a.cost()),
-                    String.valueOf(a.date()),
-                    String.valueOf(a.duration()),
-                    a.customer()
-            })
-                secondTable.addCell(createTableCell(s));
-        }
-        
-        document.add(createHeader("Weekly Appointments", data));
-        document.add(secondTable);
-        document.close();
+
+        createFileData(appointments, document, "Weekly Appointments");
     }
-    
+
     /**
-     * Creates a pdf to hold all appointments that are happening in the current day
+     * Adds appointments that are happening in the current day to the pdf
      *
      * @param document document to add tables data to
-     * @param data     image data to be used in {@link #createHeader(String, ImageData) createHeader()}
+     * @see #createFileData(ObservableList, Document, String) createFileData()
      */
-    private static void dailyAppointments(Document document, ImageData data) {
+    private static void dailyAppointments(Document document) {
         ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1),
                 todayAppointments = FXCollections.observableArrayList();
         if (allAppointments == null) return;
-        
+
         for (Appointment value : allAppointments)
             if (LocalDate.now().equals(value.date().toLocalDate()))
                 todayAppointments.add(value);
-        
-        Table secondTable = createDataTable();
-        
-        for (Appointment a : todayAppointments) {
-            if (a.student() == null) continue; // delete later, shouldn't exist after table drop
-            
-            for (String s : new String[]{
-                    a.student().username(),
-                    a.service(),
-                    String.valueOf(a.cost()),
-                    String.valueOf(a.date()),
-                    String.valueOf(a.duration()),
-                    a.customer()
-            })
-                secondTable.addCell(createTableCell(s));
-        }
-        
-        document.add(createHeader("Daily Appointments", data));
-        document.add(secondTable);
-        document.close();
+
+        createFileData(todayAppointments, document, "Daily Appointments");
     }
-    
+
     /**
-     * Creates a pdf to hold all appointment data
+     * Adds all appointments that are happening to the pdf
      *
      * @param document document to add tables data to
-     * @param data     image data to be used in {@link #createHeader(String, ImageData) createHeader()}
+     * @see #createFileData(ObservableList, Document, String) createFileData()
      */
-    private static void allAppointments(Document document, ImageData data) {
+    private static void allAppointments(Document document) {
         ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
         if (allAppointments == null) return;
-        
-        Table secondTable = createDataTable();
-        
-        for (Appointment a : allAppointments) {
-            if (a.student() == null) continue; // delete later, shouldn't exist after table drop
-            
-            for (String s : new String[]{
-                    a.student().username(),
-                    a.service(),
-                    String.valueOf(a.cost()),
-                    String.valueOf(a.date()),
-                    String.valueOf(a.duration()),
-                    a.customer()
-            })
-                secondTable.addCell(createTableCell(s));
-        }
-        
-        document.add(createHeader("All Appointments", data));
-        document.add(secondTable);
-        document.close();
+
+        createFileData(allAppointments, document, "All Appointments");
     }
     // endregion
-    
+
     // region Helper Methods
+
     /**
      * Creates the header for the pdf, all pdfs have the same header
      *
      * @param title text to be displayed at the top of the pdf, either "daily", "weekly", or "all"
-     * @param data  image data to be turned into an image
      * @return table to be put at the top of every pdf
      */
-    private static Table createHeader(String title, ImageData data) {
-        return new Table(2)
-                .setWidth(UnitValue.createPercentValue(100))
-                .addCell(
-                        new Cell().add(
-                                new Image(data)
-                        ).setBorder(Border.NO_BORDER))
-                .addCell(
-                        new Cell()
-                                .add(
-                                        new Paragraph(title + "\n\n")
-                                                .setFontSize(25)
-                                                .setBold()
-                                )
-                                .add(new Paragraph("Old Colony RVTHS\n\n"))
-                                .add(new Paragraph("(508) 763-8011\n\n"))
-                                .add(new Paragraph("oldcolony@oldcolony.us\n\n"))
-                                .add(new Paragraph("Cosmetology Shop\n\n"))
-                                .add(new Paragraph(LocalDate.now() + "\n\n"))
-                                .setBorder(Border.NO_BORDER)
-                                .setTextAlignment(TextAlignment.RIGHT)
-                );
+    private static Table createHeader(String title) {
+        try {
+            return new Table(2)
+                    .setWidth(UnitValue.createPercentValue(100))
+                    .addCell(
+                            new Cell().add(
+                                    new Image(ImageDataFactory.create("src/main/resources/images/OCLogo.png"))
+                            ).setBorder(Border.NO_BORDER))
+                    .addCell(
+                            new Cell()
+                                    .add(
+                                            new Paragraph(title + "\n\n")
+                                                    .setFontSize(25)
+                                                    .setBold()
+                                    )
+                                    .add(new Paragraph("Old Colony RVTHS\n\n"))
+                                    .add(new Paragraph("(508) 763-8011\n\n"))
+                                    .add(new Paragraph("oldcolony@oldcolony.us\n\n"))
+                                    .add(new Paragraph("Cosmetology Shop\n\n"))
+                                    .add(new Paragraph(LocalDate.now() + "\n\n"))
+                                    .setBorder(Border.NO_BORDER)
+                                    .setTextAlignment(TextAlignment.RIGHT)
+                    );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    
-    /**
-     * Creates the first row of the data table on the pdf
-     *
-     * @return Table to be added to by other methods and put on pdf
-     */
-    private static Table createDataTable() {
-        Table table = new Table(6).setWidth(UnitValue.createPercentValue(100));
-        for (String s : new String[]{"Student", "Service", "Cost", "Date", "Duration", "Customer"})
-            table.addCell(createTableCell(s));
-        return table;
-    }
-    
+
     /**
      * Creates a basic cell with a paragraph that displays specified text
      * <p>Text is center aligned.</p>
@@ -225,6 +168,38 @@ public class PDFGenerator {
         return new Cell().add(
                 new Paragraph(text)
         ).setTextAlignment(TextAlignment.CENTER);
+    }
+
+    /**
+     * Puts all the data onto the pdf document
+     * <p>Uses other methods to do repedative PDF data creation</p>
+     *
+     * @param appointments data to be put on the PDF
+     * @param doc          PDF document that data will be put on
+     * @param title        title or type of data on PDF (daily, weekly, all)
+     * @see #createHeader(String) createHeader()
+     * @see #createTableCell(String) createTableCell()
+     */
+    private static void createFileData(ObservableList<Appointment> appointments, Document doc, String title) {
+        Table table = new Table(6).setWidth(UnitValue.createPercentValue(100));
+        for (String s : new String[]{"Student", "Service", "Cost", "Date", "Duration", "Customer"})
+            table.addCell(createTableCell(s));
+
+        for (Appointment a : appointments) {
+            for (String s : new String[]{
+                    a.student().username(),
+                    a.service(),
+                    String.valueOf(a.cost()),
+                    String.valueOf(a.date()),
+                    String.valueOf(a.duration()),
+                    a.customer()
+            })
+                table.addCell(createTableCell(s));
+        }
+
+        doc.add(createHeader(title));
+        doc.add(table);
+        doc.close();
     }
     // endregion
 }

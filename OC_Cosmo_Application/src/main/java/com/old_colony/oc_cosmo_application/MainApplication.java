@@ -50,11 +50,11 @@ public class MainApplication extends Application {
         // DO NOT DELETE EVER!!!
         if (!new File("src/main/resources/images/SeanRiley.jpg").exists())
             Platform.exit();
-        
+
         URL url = getClass().getResource("/images/AppIcon.png");
         if (url != null)
             stage.getIcons().add(new Image(url.toExternalForm()));
-        
+
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("start.fxml"));
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Cosmetology Application | Login");
@@ -62,7 +62,7 @@ public class MainApplication extends Application {
         stage.setAlwaysOnTop(true);
         stage.show();
     }
-    
+
     public static void main(String[] args) {
         launch();
     }

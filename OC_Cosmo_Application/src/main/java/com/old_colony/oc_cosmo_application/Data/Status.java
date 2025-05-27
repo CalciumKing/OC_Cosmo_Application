@@ -31,7 +31,7 @@ public enum Status {
     ERROR,
     STUDENT,
     ADMIN;
-    
+
     /**
      * Checks if the status is admin
      * <p>Runs {@code return this == ADMIN;}</p>

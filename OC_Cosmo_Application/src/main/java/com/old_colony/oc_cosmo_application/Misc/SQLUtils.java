@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class SQLUtils {
     // region Start
+
     /**
      * Checks if the login information entered is valid
      *
@@ -27,15 +28,15 @@ public class SQLUtils {
     public static boolean logInCheck(String username, String password, String securityAnswer) {
         try (Connection connect = connectDB()) {
             if (connect == null) return false;
-            
+
             String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND securityAnswer = ? limit 1;";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
-            
+
             prepare.setString(1, username);
             prepare.setString(2, password);
             prepare.setString(3, securityAnswer);
-            
+
             ResultSet resultSet = prepare.executeQuery();
             if (resultSet.next())
                 return resultSet.getString("password").equals(password)
@@ -50,10 +51,10 @@ public class SQLUtils {
             );
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Changes the specified username's password
      *
@@ -63,13 +64,13 @@ public class SQLUtils {
     public static void changePassword(String username, String newPassword) {
         try (Connection connect = connectDB()) {
             if (connect == null) return;
-            
+
             String sql = "UPDATE users SET password = ? WHERE username = ?";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, newPassword);
             prepare.setString(2, username);
-            
+
             prepare.executeUpdate();
         } catch (SQLException e) {
             Utils.normalAlert(
@@ -81,7 +82,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gets the security question based on the user's username
      *
@@ -91,13 +92,13 @@ public class SQLUtils {
     public static String getSecurityQuestion(String username) {
         try (Connection connect = connectDB()) {
             if (connect == null) return null;
-            
+
             String sql = "SELECT securityQuestion FROM users WHERE username = ? limit 1;";
-            
+
             PreparedStatement prepare = connect.prepareStatement(sql);
             prepare.setString(1, username);
             ResultSet resultSet = prepare.executeQuery();
-            
+
             if (resultSet.next())
                 return resultSet.getString("securityQuestion");
         } catch (SQLException e) {
@@ -112,8 +113,9 @@ public class SQLUtils {
         return null;
     }
     // endregion
-    
+
     // region Dashboard
+
     /**
      * Gets all users from database
      * <p>Runs "{@code select * from users;}"</p>
@@ -124,13 +126,13 @@ public class SQLUtils {
     public static ObservableList<User> getAllUsers() {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users;";
-            
+
             ObservableList<User> data = FXCollections.observableArrayList();
             PreparedStatement prepared = connection.prepareStatement(sql);
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new User(
                         result.getString("username"),
@@ -140,7 +142,7 @@ public class SQLUtils {
                         result.getInt("userID"),
                         Utils.createStatus(result.getInt("status"))
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -153,7 +155,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Adds a new appointment containing the specified information to the database
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
@@ -164,9 +166,9 @@ public class SQLUtils {
     public static void createAppointment(Appointment a) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "INSERT INTO appointments (startHour, startMinute, duration, userID, custName, service, cost, appDate, color, note) VALUES (?,?,?,?,?,?,?,?,?,?);";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, a.hour());
             prepared.setInt(2, a.minute());
@@ -178,7 +180,7 @@ public class SQLUtils {
             prepared.setDate(8, a.date());
             prepared.setString(9, a.color());
             prepared.setString(10, a.note());
-            
+
             prepared.executeUpdate();
         } catch (Exception e) {
             Utils.normalAlert(
@@ -190,7 +192,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Updates a specific appointment from the database with the parameterized appointment information
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
@@ -202,16 +204,16 @@ public class SQLUtils {
     public static void updateAppointment(Appointment newAppointment, Appointment oldAppointment) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "update appointments set startHour = ?, startMinute = ?, " +
                     "duration = ?, userID = ?, custName = ? , service = ?, cost = ?, " +
                     "appDate = ?, color = ?, note = ? where userId like (" +
                     "select userId where startHour = ? and startMinute = ? and duration = ? " +
                     "and userID = ? and custName = ? and service = ? and cost = ? and " +
                     "appDate = ? limit 1);";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
-            
+
             // new appointment details
             prepared.setInt(1, newAppointment.hour());
             prepared.setInt(2, newAppointment.minute());
@@ -223,7 +225,7 @@ public class SQLUtils {
             prepared.setDate(8, newAppointment.date());
             prepared.setString(9, newAppointment.color());
             prepared.setString(10, newAppointment.note());
-            
+
             // old appointment details
             prepared.setInt(11, oldAppointment.hour());
             prepared.setInt(12, oldAppointment.minute());
@@ -233,7 +235,7 @@ public class SQLUtils {
             prepared.setString(16, oldAppointment.service());
             prepared.setDouble(17, oldAppointment.cost());
             prepared.setDate(18, oldAppointment.date());
-            
+
             prepared.executeUpdate();
         } catch (Exception e) {
             Utils.normalAlert(
@@ -245,7 +247,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes the appointment using the student username and the service to be completed
      *
@@ -255,18 +257,18 @@ public class SQLUtils {
     public static void deleteAppointment(String username, String service) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "DELETE FROM appointments WHERE userID = ? AND service = ?";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             User user = getUser(username);
             if (user == null) throw new IllegalArgumentException("User Not Found");
-            
+
             prepared.setInt(1, user.userID());
             prepared.setString(2, service);
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -277,7 +279,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Checks for all appointments that are between the two parameter dates
      * <p>Runs "{@code SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;}"</p>
@@ -291,15 +293,15 @@ public class SQLUtils {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
             ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
-            
+
             String sql = "SELECT * FROM appointments WHERE appDate BETWEEN ? AND ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setDate(1, Date.valueOf(startOfWeek));
             prepared.setDate(2, Date.valueOf(endOfWeek));
-            
+
             ResultSet rs = prepared.executeQuery();
-            
+
             while (rs.next())
                 appointmentObservableList.add(
                         new Appointment(
@@ -314,7 +316,7 @@ public class SQLUtils {
                                 rs.getInt("duration"),
                                 rs.getString("note"))
                 );
-            
+
             return appointmentObservableList;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -327,7 +329,7 @@ public class SQLUtils {
         }
         return null;
     }
-    
+
     /**
      * Gets all appointments from cosmo database
      * <p>Runs "{@code select * from appointments;}" if id is -1</p>
@@ -340,21 +342,21 @@ public class SQLUtils {
     public static ObservableList<Appointment> getAllAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from appointments";
             boolean filterByID = id != -1;
-            
+
             if (filterByID)
                 sql += " where userID = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
-            
+
             if (filterByID)
                 prepared.setInt(1, id);
-            
+
             ObservableList<Appointment> data = FXCollections.observableArrayList();
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new Appointment(
                         result.getString("custName"),
@@ -368,7 +370,7 @@ public class SQLUtils {
                         result.getInt("duration"),
                         result.getString("note")
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -381,7 +383,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Creates a user with the specific information
      * <p>Information is of type {@code User} to avoid many parameters</p>
@@ -392,18 +394,18 @@ public class SQLUtils {
     public static void createUser(User user) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "INSERT INTO users (username, password, securityQuestion, securityAnswer, status) VALUES (?,?,?,?,?)";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, user.username());
             prepared.setString(2, user.password());
             prepared.setString(3, user.securityQuestion());
             prepared.setString(4, user.securityAnswer());
             prepared.setInt(5, Utils.createStatus(user.status()));
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -414,7 +416,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes user with unique specified username
      * <p>Runs "{@code DELETE FROM users WHERE username = ?;}"</p>
@@ -424,14 +426,14 @@ public class SQLUtils {
     public static void deleteUser(String username) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "DELETE FROM users WHERE username = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, username);
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -442,7 +444,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Updates the user with the unique username with the specified information
      * <p>Information is of type {@code User} to avoid many parameters</p>
@@ -453,19 +455,19 @@ public class SQLUtils {
     public static void updateUser(User user) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
-            
+
             String sql = "update users set password = ?, securityQuestion = ?, " +
                     "securityAnswer = ?, status = ? where username = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, user.password());
             prepared.setString(2, user.securityQuestion());
             prepared.setString(3, user.securityAnswer());
             prepared.setInt(4, Utils.createStatus(user.status()));
             prepared.setString(5, user.username());
-            
+
             prepared.executeUpdate();
-            
+
         } catch (Exception e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -476,7 +478,7 @@ public class SQLUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Gets a used based on unique username
      * <p>Runs {@code select * from users where username = ? limit 1;}</p>
@@ -488,13 +490,13 @@ public class SQLUtils {
     public static User getUser(String username) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where username = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setString(1, username);
             ResultSet result = prepared.executeQuery();
-            
+
             if (result.next())
                 return new User(
                         result.getString("username"),
@@ -512,11 +514,11 @@ public class SQLUtils {
                     "There was an error getting a user from the database, please try again."
             );
             e.printStackTrace();
-            
+
         }
         return null;
     }
-    
+
     /**
      * Gets all appointments happening during the current day for a specific user
      *
@@ -527,15 +529,15 @@ public class SQLUtils {
     public static ObservableList<Appointment> getTodayAppointments(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from appointments where date(appDate) = curdate() and userID = ?;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
-            
+
             ObservableList<Appointment> data = FXCollections.observableArrayList();
             ResultSet result = prepared.executeQuery();
-            
+
             while (result.next())
                 data.add(new Appointment(
                         result.getString("custName"),
@@ -549,7 +551,7 @@ public class SQLUtils {
                         result.getInt("duration"),
                         result.getString("note")
                 ));
-            
+
             return data;
         } catch (Exception e) {
             Utils.normalAlert(
@@ -563,8 +565,9 @@ public class SQLUtils {
         }
     }
     // endregion
-    
+
     // region Helper Methods
+
     /**
      * Makes a connection to the cosmo database
      *
@@ -584,7 +587,7 @@ public class SQLUtils {
             return null;
         }
     }
-    
+
     /**
      * Converts a string color name to a usable hex color
      *
@@ -610,7 +613,7 @@ public class SQLUtils {
             return "#808080"; // grey fallback color
         }
     }
-    
+
     /**
      * Gets a user based on a unique id
      * <p>Runs "{@code select * from users where userID = ? limit 1;}"</p>
@@ -622,13 +625,13 @@ public class SQLUtils {
     private static User getUser(int id) {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
-            
+
             String sql = "select * from users where userID = ? limit 1;";
-            
+
             PreparedStatement prepared = connection.prepareStatement(sql);
             prepared.setInt(1, id);
             ResultSet result = prepared.executeQuery();
-            
+
             if (result.next())
                 return new User(
                         result.getString("username"),
