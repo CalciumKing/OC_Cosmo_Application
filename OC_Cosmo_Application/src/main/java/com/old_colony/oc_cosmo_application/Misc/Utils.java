@@ -16,9 +16,10 @@ public class Utils {
     // region Alert Methods
     /**
      * Creates a regular alert with the contents of the parameters
-     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
-     * @param title window title text
-     * @param headerText main error header text
+     *
+     * @param type        alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title       window title text
+     * @param headerText  main error header text
      * @param contentText error description or future instructions
      */
     public static void normalAlert(Alert.AlertType type, String title,
@@ -26,15 +27,16 @@ public class Utils {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
     }
-
+    
     /**
      * Creates a confirmation alert with the contents of the parameters
-     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
-     * @param title window title text
-     * @param headerText main error header text
+     *
+     * @param type        alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title       window title text
+     * @param headerText  main error header text
      * @param contentText error description or future instructions
-     * @param aText the confirm button text, can be used to confirm the user's choice of the alert
-     * @param bText the cancel button text, can be used to confirm the users choice of the alert
+     * @param aText       the confirm button text, can be used to confirm the user's choice of the alert
+     * @param bText       the cancel button text, can be used to confirm the users choice of the alert
      * @return returns {@code Optional<ButtonType>} to be used with {@code isPresent()} and {@code getText()} to confirm the user's choice of the alert
      */
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
@@ -46,13 +48,14 @@ public class Utils {
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
-
+    
     /**
      * Does the actual work of creating a regular alert.
      * <p>Used by {@code normalAlert()} and {@code confirmAlert()}</p>
-     * @param type alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
-     * @param title window title text
-     * @param headerText main error header text
+     *
+     * @param type        alert type of type {@code Alert.AlertType} (Ex: information, confirmation, error, none, warning, etc.)
+     * @param title       window title text
+     * @param headerText  main error header text
      * @param contentText error description or future instructions
      * @return returns {@code Alert} to be used elsewhere
      */
@@ -66,10 +69,11 @@ public class Utils {
         return alert;
     }
     // endregion Alert Methods
-
+    
     /**
      * Gets the current stage based on the available windows.
      * <p>Used only if no stage data is given and the stage is needed.</p>
+     *
      * @return the currently open application's stage
      */
     private static Stage getCurrentStage() {
@@ -99,6 +103,7 @@ public class Utils {
      *         <td>ERROR</td>
      *     </tr>
      * </table>
+     *
      * @param status SQL int status
      * @return Java status as enum type {@code Status}
      * @see Status
@@ -131,6 +136,7 @@ public class Utils {
      *         <td>ERROR</td>
      *     </tr>
      * </table>
+     *
      * @param status java enum status
      * @return SQL int status
      * @see Status
@@ -145,6 +151,7 @@ public class Utils {
     
     /**
      * Determines if the user is an admin based on a boolean
+     *
      * @param isAdmin boolean used to determine if the user is an admin or a student
      * @return admin or student status, (either {@code Status.ADMIN} or {@code Status.STUDENT})
      * @see Status

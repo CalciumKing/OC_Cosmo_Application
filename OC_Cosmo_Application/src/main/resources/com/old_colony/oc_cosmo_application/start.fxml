@@ -18,7 +18,7 @@
       <URL value="@CSS/lightMode.css" />
    </stylesheets>
    <AnchorPane layoutX="370.0" prefHeight="430.0" prefWidth="395.0" styleClass="startPanelBackground">
-      <Label alignment="CENTER" layoutX="28.0" layoutY="223.0" prefHeight="29.0" prefWidth="338.0" style="-fx-background-color: whitesmoke; -fx-border-color: black; -fx-border-radius: 10; -fx-background-radius: 10;" text="Cosmetology Appointment Scheduler" textAlignment="CENTER">
+      <Label alignment="CENTER" layoutX="28.0" layoutY="223.0" prefHeight="29.0" prefWidth="338.0" style="-fx-background-color: whitesmoke; -fx-border-color: black; -fx-border-radius: 10; -fx-background-radius: 10;" text="Cosmetology Appointment Application" textAlignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>
@@ -42,7 +42,7 @@
          </Label>
          <Label layoutX="17.0" layoutY="14.0" text="LOG IN ">
             <font>
-               <Font name="Wingdings 2" size="24.0" />
+               <Font name="cmb10" size="32.0" />
             </font>
          </Label>
          <PasswordField fx:id="password_field" layoutX="29.0" layoutY="141.0" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
@@ -91,7 +91,7 @@
                <Font size="14.0" />
             </font>
          </Label>
-         <Label layoutX="8.0" layoutY="14.0" text="FORGOT PASSWORD">
+         <Label layoutX="8.0" layoutY="14.0" text="FORGOT PASSWORD" wrapText="true">
             <font>
                <Font name="cmb10" size="24.0" />
             </font>
@@ -108,7 +108,7 @@
             </font>
          </Label>
          <PasswordField fx:id="forgotPassword_field" layoutX="29.0" layoutY="257.0" onAction="#setNewPassword" prefHeight="27.0" prefWidth="211.0" styleClass="textBoxes" />
-         <Button layoutX="38.0" layoutY="296.0" mnemonicParsing="false" onAction="#setNewPassword" prefHeight="26.0" prefWidth="178.0" styleClass="loginButtons" text="Submit">
+         <Button layoutX="38.0" layoutY="296.0" mnemonicParsing="false" onAction="#setNewPassword" prefHeight="26.0" prefWidth="178.0" styleClass="loginButtons" text="Login">
             <font>
                <Font size="18.0" />
             </font>

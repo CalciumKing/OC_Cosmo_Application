@@ -4,10 +4,13 @@
 .whiteBackground {
     -fx-background-color: #121212;
 }
-
-.mode > * {
-    -fx-background-color: #121212;
+#securityQuestion_lbl{
+    -fx-text-fill: black;
 }
+#forgotQuestion_lbl{
+    -fx-text-fill: black;
+}
+
 
 #home_pane > .label{
     -fx-text-fill: white;
@@ -22,20 +25,17 @@
     -fx-text-fill: white;
 }
 
+
+.mode > * {
+    -fx-background-color: #121212;
+}
 .mode > .label {
     -fx-text-fill: white;
 }
-
-
-#securityQuestion_lbl{
-    -fx-text-fill: black;
-}
-
-#forgotQuestion_lbl{
-    -fx-text-fill: black;
-}
-
 .mode > .vbox {
+    -fx-background-color: #3b3b3b;
+}
+.mode > .infoBox{
     -fx-background-color: #3b3b3b;
 }
 .mode > .infoBox > .modeText > .label {
@@ -44,11 +44,6 @@
 .mode > .infoBox > .label {
     -fx-text-fill: white;
 }
-
-.mode > .infoBox{
-    -fx-background-color: #3b3b3b;
-}
-
 .mode > .tab-pane {
     -fx-background-color: #808080;
 }

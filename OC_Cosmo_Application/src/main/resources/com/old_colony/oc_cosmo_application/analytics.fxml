@@ -67,7 +67,7 @@
       </Button>
    </Pane>
    <HBox layoutY="28.0" prefHeight="403.0" prefWidth="765.0" styleClass="mode">
-      <VBox fx:id="sideMenu" alignment="CENTER" prefHeight="430.0" prefWidth="164.0" style="-fx-spacing: 40px;">
+      <VBox fx:id="sideMenu" alignment="CENTER" prefHeight="430.0" prefWidth="164.0" style="-fx-spacing: 30px;">
          <styleClass>
             <String fx:value="vbox" />
             <String fx:value="startBackground" />
@@ -129,6 +129,17 @@
                <Cursor fx:constant="HAND" />
             </cursor>
          </Button>
+         <Button fx:id="pdf_btn" layoutX="53.0" layoutY="315.0" mnemonicParsing="false" onAction="#showPage" styleClass="navButton" text="PDF">
+            <graphic>
+               <FontAwesomeIcon glyphName="FILE_PDF_ALT" />
+            </graphic>
+            <font>
+               <Font size="14.0" />
+            </font>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
          <Button layoutX="10.0" layoutY="501.0" mnemonicParsing="false" onAction="#exit" styleClass="navButton" text="Return">
             <graphic>
                <FontAwesomeIcon glyphName="ARROW_LEFT" />
@@ -142,7 +153,7 @@
          </Button>
       </VBox>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
-         <AnchorPane fx:id="home_pane" prefHeight="403.0" prefWidth="604.0">
+         <AnchorPane fx:id="home_pane" prefHeight="403.0" prefWidth="604.0" visible="false">
             <Label layoutX="14.0" layoutY="14.0" text="Application Analytics">
                <font>
                   <Font name="System Bold" size="35.0" />
@@ -191,7 +202,7 @@
                      </font>
                   </Label>
                </VBox>
-               <VBox layoutX="244.0" layoutY="12.0" prefHeight="293.0" prefWidth="230.0" style="-fx-alignment: left; -fx-spacing: 30;" styleClass="modeText">
+               <VBox layoutX="244.0" layoutY="14.0" prefHeight="293.0" prefWidth="230.0" style="-fx-spacing: 30;" styleClass="modeText">
                   <Label fx:id="totalAppointments_lbl" text="###">
                      <font>
                         <Font name="System Bold" size="15.0" />
@@ -299,37 +310,34 @@
                      </TableView>
                   </AnchorPane>
                </Tab>
-               <Tab text="PDF Generator">
-                  <content>
-                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="mode">
-                        <children>
-                           <AnchorPane layoutX="23.0" layoutY="41.0" prefHeight="275.0" prefWidth="550.0" styleClass="infoBox">
-                              <children>
-                                 <Button fx:id="all" layoutX="41.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
-                                 <Button fx:id="weekly" layoutX="223.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
-                                 <Button fx:id="daily" layoutX="413.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
-                                 <Label layoutX="7.0" layoutY="82.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for all appointments" textAlignment="CENTER" wrapText="true">
-                                    <font>
-                                       <Font size="18.0" />
-                                    </font>
-                                 </Label>
-                                 <Label layoutX="189.0" layoutY="81.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for weekly appointments" textAlignment="CENTER" wrapText="true">
-                                    <font>
-                                       <Font size="18.0" />
-                                    </font>
-                                 </Label>
-                                 <Label layoutX="379.0" layoutY="82.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for daily appointments" textAlignment="CENTER" wrapText="true">
-                                    <font>
-                                       <Font size="18.0" />
-                                    </font>
-                                 </Label>
-                              </children>
-                           </AnchorPane>
-                        </children>
-                     </AnchorPane>
-                  </content>
-               </Tab>
             </TabPane>
+         </AnchorPane>
+         <AnchorPane fx:id="pdf_pane" minHeight="0.0" minWidth="0.0" prefHeight="403.0" prefWidth="604.0" styleClass="mode">
+            <AnchorPane layoutX="23.0" layoutY="64.0" prefHeight="275.0" prefWidth="550.0" styleClass="infoBox">
+               <Button fx:id="all" layoutX="41.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
+               <Button fx:id="weekly" layoutX="223.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
+               <Button fx:id="daily" layoutX="413.0" layoutY="145.0" mnemonicParsing="false" onAction="#getPushedPDFButton" prefHeight="39.0" prefWidth="105.0" styleClass="PDFButtons" text="Generate PDF" />
+               <Label layoutX="7.0" layoutY="82.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for all appointments" textAlignment="CENTER" wrapText="true">
+                  <font>
+                     <Font size="18.0" />
+                  </font>
+               </Label>
+               <Label layoutX="189.0" layoutY="81.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for weekly appointments" textAlignment="CENTER" wrapText="true">
+                  <font>
+                     <Font size="18.0" />
+                  </font>
+               </Label>
+               <Label layoutX="379.0" layoutY="82.0" prefHeight="55.0" prefWidth="174.0" text="Generate PDF for daily appointments" textAlignment="CENTER" wrapText="true">
+                  <font>
+                     <Font size="18.0" />
+                  </font>
+               </Label>
+               <Button layoutX="225.0" layoutY="214.0" mnemonicParsing="false" onAction="#folderSelect" styleClass="PDFButtons" text="Folder Select">
+                  <graphic>
+                     <FontAwesomeIcon glyphName="FOLDER_ALT" />
+                  </graphic>
+               </Button>
+            </AnchorPane>
          </AnchorPane>
       </AnchorPane>
    </HBox>

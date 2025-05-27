@@ -141,13 +141,17 @@
                   </columns>
                </TableView>
             </Pane>
-            <Button contentDisplay="RIGHT" layoutX="532.0" layoutY="463.0" mnemonicParsing="false" onAction="#toAnalyticsPage" styleClass="textBoxes" text="Analytics Page">
+            <Button contentDisplay="RIGHT" layoutX="532.0" layoutY="463.0" mnemonicParsing="false" onAction="#toAnalyticsPage" text="Analytics Page">
                <graphic>
                   <FontAwesomeIcon glyphName="ARROW_RIGHT" selectionStart="1" />
                </graphic>
                <font>
                   <Font size="15.0" />
                </font>
+               <styleClass>
+                  <String fx:value="textBoxes" />
+                  <String fx:value="modeButton" />
+               </styleClass>
             </Button>
          </AnchorPane>
          <AnchorPane fx:id="schedule_pane" prefHeight="505.0" prefWidth="754.0" styleClass="mode" visible="false">
@@ -806,7 +810,7 @@
                               <Tooltip text="Choose a color to assign the appointment on the calendar" />
                            </tooltip>
                         </ColorPicker>
-                        <TextArea fx:id="note_area" layoutX="191.0" layoutY="132.0" prefHeight="137.0" prefWidth="261.0" promptText="Custom Note (Optional)" styleClass="textBoxes">
+                        <TextArea fx:id="note_area" layoutX="191.0" layoutY="132.0" prefHeight="137.0" prefWidth="261.0" promptText="Custom Note (Optional)">
                            <tooltip>
                               <Tooltip text="Add any special instructions or requests for this appointment." />
                            </tooltip>
@@ -960,7 +964,7 @@
                               </ColorPicker>
                            </AnchorPane>
                            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                              <TextArea fx:id="updateNote_area" prefHeight="63.0" prefWidth="223.0" promptText="Custom Note (Optional)" styleClass="textBoxes">
+                              <TextArea fx:id="updateNote_area" prefHeight="51.0" prefWidth="216.0" promptText="Custom Note (Optional)">
                                  <tooltip>
                                     <Tooltip text="Add any special instructions or requests for this appointment." />
                                  </tooltip>
