@@ -1,6 +1,5 @@
 package com.old_colony.oc_cosmo_application.Misc;
 
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -40,8 +39,6 @@ public class PDFGenerator {
      */
     public static void createPDF(String type, String path) {
         try {
-            ImageData data = ImageDataFactory.create("src/main/resources/images/OCLogo.png");
-
             HashMap<String, Consumer<Document>> handlers = new HashMap<>();
             handlers.put("daily", PDFGenerator::dailyAppointments);
             handlers.put("weekly", PDFGenerator::weeklyAppointments);
@@ -55,7 +52,7 @@ public class PDFGenerator {
             if (!handlers.containsKey(type))
                 throw new IllegalArgumentException("Unknown PDF Type: " + type);
 
-            Document doc = new Document(new PdfDocument(new PdfWriter(path + fileNames.get(type))));
+            Document doc = new Document(new PdfDocument(new PdfWriter(path + "/" + fileNames.get(type))));
 
             handlers.get(type).accept(doc);
         } catch (Exception e) {
