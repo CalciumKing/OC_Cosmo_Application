@@ -1115,124 +1115,123 @@
          </tooltip>
       </Button>
    </AnchorPane>
-   <AnchorPane fx:id="legend_pane" layoutY="2.0" prefHeight="517.0" prefWidth="918.0"
-               style="-fx-background-color: black; -fx-opacity: .75;" visible="false">
+   <AnchorPane fx:id="legend_pane" layoutY="2.0" prefHeight="483.0" prefWidth="918.0" style="-fx-background-color: black; -fx-opacity: .75;" visible="false">
       <Label layoutX="377.0" layoutY="61.0" text="Shortcuts Legend" textFill="WHITE">
          <font>
-            <Font name="System Bold" size="20.0"/>
+            <Font name="System Bold" size="20.0" />
          </font>
       </Label>
-      <VBox alignment="CENTER_RIGHT" prefHeight="517.0" prefWidth="428.0" style="-fx-padding: 15;">
+      <VBox alignment="CENTER_RIGHT" prefHeight="512.0" prefWidth="428.0" style="-fx-padding: 15;">
          <Label text="1" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="360.0" layoutY="210.0" text="2" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="442.0" layoutY="179.0" text="3" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="442.0" layoutY="374.0" text="4" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="360.0" layoutY="225.0" text="F" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="361.0" layoutY="240.0" text="D" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="357.0" layoutY="255.0" text="M" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="352.0" layoutY="270.0" text="Ctrl + Q" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="297.0" layoutY="285.0" text="Escape" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="308.0" layoutY="300.0" text="H" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="438.0" layoutY="389.0" text="S" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
       </VBox>
-      <VBox alignment="CENTER_LEFT" layoutX="436.0" prefHeight="517.0" prefWidth="482.0" style="-fx-padding: 15;">
+      <VBox alignment="CENTER_LEFT" layoutX="436.0" prefHeight="512.0" prefWidth="482.0" style="-fx-padding: 15;">
          <Label text="Swap To Home Page" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="149.0" text="Swap To Schedule Page" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="374.0" text="Swap To Account Page" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="389.0" text="Swap To Admin Page" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="225.0" text="Toggle Fullscreen" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="240.0" text="Toggle Dark Mode" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="255.0" text="Minimize Window" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="270.0" text="Quit Application" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="285.0" text="Exit Fullscreen" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="300.0" text="Toggle Shortcuts Legend (Help)" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
          <Label layoutX="25.0" layoutY="389.0" text="Toggle Side Menu" textFill="WHITE">
             <font>
-               <Font name="System Bold" size="20.0"/>
+               <Font name="System Bold" size="20.0" />
             </font>
          </Label>
       </VBox>

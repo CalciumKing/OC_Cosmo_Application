@@ -41,7 +41,6 @@ import java.util.*;
  * Controller for analytics.fxml (appointment and user data view/management page)
  */
 
-@SuppressWarnings("SpellCheckingInspection")
 public class AnalyticsController extends AbstractController {
     // region FXML Variables
     @FXML
@@ -148,12 +147,12 @@ public class AnalyticsController extends AbstractController {
                 case S -> toggleMenu();
                 case F -> toggleMaximize();
                 case D -> toggleDarkMode();
+                case H -> toggleLegend();
                 case M -> windowMinimize();
                 case Q -> {
                     if (event.isControlDown())
                         windowClose();
                 }
-                case H -> toggleLegend();
                 case ESCAPE -> {
                     if (isMaximized)
                         toggleMaximize();
@@ -296,11 +295,10 @@ public class AnalyticsController extends AbstractController {
         }
 
         // all appointments tab
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
         date_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
-            LocalTime time = LocalTime.of(a.hour(), a.minute());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-            return new SimpleStringProperty(a.date() + " @ " + formatter.format(time));
+            return new SimpleStringProperty(a.date() + " @ " + formatter.format(LocalTime.of(a.hour(), a.minute())));
         });
         cost_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().cost()));
         custName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));

@@ -16,6 +16,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -28,6 +30,7 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class PDFGenerator {
+    // region Main Methods
     /**
      * Creates a PDF and manages which method adds data to it based on the type parameter
      *
@@ -57,7 +60,7 @@ public class PDFGenerator {
             Document doc = new Document(new PdfDocument(new PdfWriter(path + "/" + fileNames.get(type))));
 
             handlers.get(type).accept(doc);
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
@@ -67,8 +70,6 @@ public class PDFGenerator {
             );
         }
     }
-
-    // region Main Methods
 
     /**
      * Adds appointments that are happening in the current week to the pdf
@@ -150,7 +151,7 @@ public class PDFGenerator {
                                     .setBorder(Border.NO_BORDER)
                                     .setTextAlignment(TextAlignment.RIGHT)
                     );
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
         }

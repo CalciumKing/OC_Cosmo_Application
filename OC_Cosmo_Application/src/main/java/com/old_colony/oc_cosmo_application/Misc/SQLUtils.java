@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
 public class SQLUtils {
     // region Start
-
     /**
      * Checks if the login information entered is valid
      *
@@ -118,7 +117,7 @@ public class SQLUtils {
     // region Dashboard
     /**
      * Gets all users from database
-     * <p>Runs "{@code select * from users;}"</p>
+     * <p>Runs: "{@code select * from users;}"</p>
      *
      * @return a list of users as {@code ObservableList<User>}
      * @see User
@@ -127,10 +126,8 @@ public class SQLUtils {
         try (Connection connection = connectDB()) {
             if (connection == null) return null;
 
-            String sql = "select * from users;";
-
             ObservableList<User> data = FXCollections.observableArrayList();
-            PreparedStatement prepared = connection.prepareStatement(sql);
+            PreparedStatement prepared = connection.prepareStatement("select * from users;");
             ResultSet result = prepared.executeQuery();
 
             while (result.next())
@@ -144,7 +141,7 @@ public class SQLUtils {
                 ));
 
             return data;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getAllUsers",
@@ -182,7 +179,7 @@ public class SQLUtils {
             prepared.setString(10, a.note());
 
             prepared.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in createAppointment",
@@ -197,11 +194,11 @@ public class SQLUtils {
      * Updates a specific appointment from the database with the parameterized appointment information
      * <p>Information is of type {@code Appointment} to avoid many parameters</p>
      *
-     * @param newAppointment new appointment information, what the old appointment will be set to
-     * @param oldAppointment old appointment information, used to find the appointment in the database
+     * @param newA new appointment information, what the old appointment will be set to
+     * @param oldA old appointment information, used to find the appointment in the database
      * @see Appointment
      */
-    public static void updateAppointment(Appointment newAppointment, Appointment oldAppointment) {
+    public static void updateAppointment(Appointment newA, Appointment oldA) {
         try (Connection connection = connectDB()) {
             if (connection == null) return;
 
@@ -215,29 +212,35 @@ public class SQLUtils {
             PreparedStatement prepared = connection.prepareStatement(sql);
 
             // new appointment details
-            prepared.setInt(1, newAppointment.hour());
-            prepared.setInt(2, newAppointment.minute());
-            prepared.setInt(3, newAppointment.duration());
-            prepared.setInt(4, newAppointment.student().userID());
-            prepared.setString(5, newAppointment.customer());
-            prepared.setString(6, newAppointment.service());
-            prepared.setDouble(7, newAppointment.cost());
-            prepared.setDate(8, newAppointment.date());
-            prepared.setString(9, newAppointment.color());
-            prepared.setString(10, newAppointment.note());
+            prepared.setInt(1, newA.hour());
+            prepared.setInt(2, newA.minute());
+            prepared.setInt(3, newA.duration());
+            prepared.setInt(4, newA.student().userID());
+            prepared.setString(5, newA.customer());
+            prepared.setString(6, newA.service());
+            prepared.setDouble(7, newA.cost());
+            prepared.setDate(8, newA.date());
+            prepared.setString(9, newA.color());
+            prepared.setString(10, newA.note());
 
             // old appointment details
-            prepared.setInt(11, oldAppointment.hour());
-            prepared.setInt(12, oldAppointment.minute());
-            prepared.setInt(13, oldAppointment.duration());
-            prepared.setInt(14, oldAppointment.student().userID());
-            prepared.setString(15, oldAppointment.customer());
-            prepared.setString(16, oldAppointment.service());
-            prepared.setDouble(17, oldAppointment.cost());
-            prepared.setDate(18, oldAppointment.date());
+            prepared.setInt(11, oldA.hour());
+            prepared.setInt(12, oldA.minute());
+            prepared.setInt(13, oldA.duration());
+            prepared.setInt(14, oldA.student().userID());
+            prepared.setString(15, oldA.customer());
+            prepared.setString(16, oldA.service());
+            prepared.setDouble(17, oldA.cost());
+            prepared.setDate(18, oldA.date());
 
-            prepared.executeUpdate();
-        } catch (Exception e) {
+            if(prepared.executeUpdate() == 0)
+                Utils.normalAlert(
+					Alert.AlertType.ERROR,
+					"Bug in updateAppointment",
+					"No Rows Affected With Update",
+					"0 Rows were updated with that filter, try a different appointment."
+                );
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in updateAppointment",
@@ -268,8 +271,7 @@ public class SQLUtils {
             prepared.setString(2, service);
 
             prepared.executeUpdate();
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in createAppointment",
@@ -282,7 +284,7 @@ public class SQLUtils {
 
     /**
      * Checks for all appointments that are between the two parameter dates
-     * <p>Runs "{@code SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;}"</p>
+     * <p>Runs: "{@code SELECT * FROM appointments WHERE 'date' BETWEEN ? AND ?;}"</p>
      *
      * @param startOfWeek start date
      * @param endOfWeek   end date
@@ -318,7 +320,7 @@ public class SQLUtils {
                 );
 
             return appointmentObservableList;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in selectAppointmentsByDate",
@@ -326,14 +328,14 @@ public class SQLUtils {
                     "There was an error selecting the appointments, please try again."
             );
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     /**
      * Gets all appointments from cosmo database
-     * <p>Runs "{@code select * from appointments;}" if id is -1</p>
-     * <p>Runs "{@code select * from appointments where userID = ?;}" if id is not -1</p>
+     * <p>Runs: "{@code select * from appointments;}" if id is -1</p>
+     * <p>Runs: "{@code select * from appointments where userID = ?;}" if id is not -1</p>
      *
      * @param id student id
      * @return all appointments as {@code ObservableList<Appointment>}
@@ -372,7 +374,7 @@ public class SQLUtils {
                 ));
 
             return data;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getAllAppointments",
@@ -405,8 +407,7 @@ public class SQLUtils {
             prepared.setInt(5, createStatus(user.status()));
 
             prepared.executeUpdate();
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in createUser",
@@ -419,7 +420,7 @@ public class SQLUtils {
 
     /**
      * Deletes user with unique specified username
-     * <p>Runs "{@code DELETE FROM users WHERE username = ?;}"</p>
+     * <p>Runs: "{@code DELETE FROM users WHERE username = ?;}"</p>
      *
      * @param username unique username used to find student
      */
@@ -433,8 +434,7 @@ public class SQLUtils {
             prepared.setString(1, username);
 
             prepared.executeUpdate();
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in deleteUser",
@@ -467,8 +467,7 @@ public class SQLUtils {
             prepared.setString(5, user.username());
 
             prepared.executeUpdate();
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in updateUser",
@@ -481,7 +480,7 @@ public class SQLUtils {
 
     /**
      * Gets a used based on unique username
-     * <p>Runs "{@code select * from users where username = ? limit 1;}"</p>
+     * <p>Runs: "{@code select * from users where username = ? limit 1;}"</p>
      *
      * @param username unique username
      * @return a user as type {@code User}
@@ -506,7 +505,7 @@ public class SQLUtils {
                         result.getInt("userID"),
                         createStatus(result.getInt("status"))
                 );
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getUser",
@@ -514,7 +513,6 @@ public class SQLUtils {
                     "There was an error getting a user from the database, please try again."
             );
             e.printStackTrace();
-
         }
         return null;
     }
@@ -553,7 +551,7 @@ public class SQLUtils {
                 ));
 
             return data;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getTodayAppointments",
@@ -594,28 +592,17 @@ public class SQLUtils {
      * @return a color in hex format as a String
      */
     private static String getColor(String name) {
-        try {
-            Color color = Color.web(name.toUpperCase());
-            int r = (int) (color.getRed() * 255),
-                    g = (int) (color.getGreen() * 255),
-                    b = (int) (color.getBlue() * 255),
-                    a = (int) (color.getOpacity() * 255);
-            return String.format("#%02X%02X%02X%02X", r, g, b, a); // hex formatting
-        } catch (Exception e) {
-            Utils.normalAlert(
-                    Alert.AlertType.ERROR,
-                    "Error in getColor",
-                    "Error Converting Color To Hex",
-                    "There was an error converting: " + name + " to hex code, please try again."
-            );
-            e.printStackTrace();
-            return "#808080"; // grey fallback color
-        }
+        Color color = Color.web(name.toUpperCase());
+        int r = (int) (color.getRed() * 255),
+                g = (int) (color.getGreen() * 255),
+                b = (int) (color.getBlue() * 255),
+                a = (int) (color.getOpacity() * 255);
+        return String.format("#%02X%02X%02X%02X", r, g, b, a); // hex formatting
     }
 
     /**
      * Gets a user based on a unique id
-     * <p>Runs "{@code select * from users where userID = ? limit 1;}"</p>
+     * <p>Runs: "{@code select * from users where userID = ? limit 1;}"</p>
      *
      * @param id unique user id
      * @return a user as type {@code User}
@@ -640,7 +627,7 @@ public class SQLUtils {
                         result.getInt("userID"),
                         createStatus(result.getInt("status"))
                 );
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error in getUser",

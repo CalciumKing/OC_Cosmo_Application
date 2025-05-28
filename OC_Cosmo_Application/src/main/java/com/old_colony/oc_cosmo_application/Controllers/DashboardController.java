@@ -171,12 +171,12 @@ public class DashboardController extends AbstractController {
                 case S -> toggleMenu();
                 case F -> toggleMaximize();
                 case D -> toggleDarkMode();
+                case H -> toggleLegend();
                 case M -> windowMinimize();
                 case Q -> {
                     if (event.isControlDown())
                         windowClose();
                 }
-                case H -> toggleLegend();
                 case ESCAPE -> {
                     if (isMaximized)
                         toggleMaximize();
@@ -712,13 +712,12 @@ public class DashboardController extends AbstractController {
      */
     private void initTables() {
         ObservableList<Appointment> allAppointments = SQLUtils.getAllAppointments(-1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
 
         // home page
         homeTime_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
-            LocalTime time = LocalTime.of(a.hour(), a.minute());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-            return new SimpleStringProperty(formatter.format(time));
+            return new SimpleStringProperty(formatter.format(LocalTime.of(a.hour(), a.minute())));
         });
         homeName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
         homeService_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
@@ -728,9 +727,7 @@ public class DashboardController extends AbstractController {
         // schedule page
         date_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
-            LocalTime time = LocalTime.of(a.hour(), a.minute());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-            return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(time));
+            return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(LocalTime.of(a.hour(), a.minute())));
         });
         cost_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().cost()));
         custName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
@@ -755,9 +752,7 @@ public class DashboardController extends AbstractController {
             // update appointment table
             adminUpdateDate_col.setCellValueFactory(cellData -> {
                 Appointment a = cellData.getValue();
-                LocalTime time = LocalTime.of(a.hour(), a.minute());
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm");
-                return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(time));
+                return new SimpleObjectProperty<>(a.date() + " @ " + formatter.format(LocalTime.of(a.hour(), a.minute())));
             });
             adminUpdateCust_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
             adminUpdateService_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));

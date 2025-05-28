@@ -13,7 +13,6 @@ import java.util.Optional;
  */
 public class Utils {
     // region Alert Methods
-
     /**
      * Creates a regular alert with the contents of the parameters
      *

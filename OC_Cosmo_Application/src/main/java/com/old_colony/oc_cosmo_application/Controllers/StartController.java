@@ -57,22 +57,15 @@ public class StartController extends AbstractController {
     public void handleShortcuts() {
         main_pane.getScene().setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case DIGIT1 -> {
-                    login_pane.setVisible(true);
-                    forgotPassword_pane.setVisible(false);
-                }
-                case DIGIT2 -> {
-                    login_pane.setVisible(false);
-                    forgotPassword_pane.setVisible(true);
-                }
+                case DIGIT1, DIGIT2 -> swapPane();
                 case F -> toggleMaximize();
                 case D -> toggleDarkMode();
+                case H -> toggleLegend();
                 case M -> windowMinimize();
                 case Q -> {
                     if (event.isControlDown())
                         windowClose();
                 }
-                case H -> toggleLegend();
                 case ESCAPE -> {
                     if (isMaximized)
                         toggleMaximize();

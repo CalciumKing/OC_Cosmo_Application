@@ -22,6 +22,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -38,7 +39,7 @@ abstract class AbstractController {
     @FXML
     protected AnchorPane main_pane, legend_pane;
     @FXML
-    protected FontAwesomeIcon maximizeIcon, darkModeIcon;
+    private FontAwesomeIcon maximizeIcon, darkModeIcon;
     protected boolean isMaximized;
     private boolean maximizedFromClick, preventDrag, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
@@ -95,28 +96,26 @@ abstract class AbstractController {
 
             stage.show();
 
+            AbstractController controller = fxmlLoader.getController();
             switch (sceneName) {
                 case "dashboard":
                     stage.setTitle("Cosmetology Application | " + user.username());
-                    DashboardController dashboardController = fxmlLoader.getController();
-                    dashboardController.init(user, isDarkMode, isMaximized);
+                    controller.init(user, isDarkMode, isMaximized);
                     break;
                 case "start":
                     stage.setTitle("Cosmetology Application | Login");
-                    StartController startController = fxmlLoader.getController();
-                    startController.init(null, isDarkMode, isMaximized);
+                    controller.init(null, isDarkMode, isMaximized);
                     break;
                 case "analytics":
                     stage.setTitle("Cosmetology Analytics Application | " + user.username());
-                    AnalyticsController analyticsController = fxmlLoader.getController();
-                    analyticsController.init(user, isDarkMode, isMaximized);
+                    controller.init(user, isDarkMode, isMaximized);
                     break;
                 default:
                     throw new IllegalArgumentException("Unexpected value: " + sceneName);
             }
 
             main_pane.getScene().getWindow().hide();
-        } catch (Exception e) {
+        } catch (IOException e) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Scene Error",
@@ -124,6 +123,7 @@ abstract class AbstractController {
                     "There was an error changing scenes, please try again"
             );
             e.printStackTrace();
+            windowClose();
         }
     }
 
@@ -134,10 +134,10 @@ abstract class AbstractController {
     @FXML
     protected final void toggleDarkMode() {
         main_pane.getStylesheets().removeLast();
-        String theme = (isDarkMode ? "lightMode" : "darkMode") + ".css",
+        String theme = isDarkMode ? "lightMode" : "darkMode",
                 icon = isDarkMode ? "MOON_ALT" : "SUN_ALT";
 
-        URL url = getClass().getResource("/com/old_colony/oc_cosmo_application/CSS/" + theme);
+        URL url = getClass().getResource("/com/old_colony/oc_cosmo_application/CSS/" + theme + ".css");
         if (url != null)
             main_pane.getStylesheets().addLast(url.toExternalForm());
         darkModeIcon.setGlyphName(icon);
@@ -234,19 +234,11 @@ abstract class AbstractController {
             return;
         }
 
-        Scene scene = main_pane.getScene();
-        Window window = scene.getWindow();
-
+        Window window = main_pane.getScene().getWindow();
         ObservableList<Screen> allScreens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
 
-        Screen screen;
+        Screen screen = allScreens.isEmpty() ? Screen.getPrimary() : allScreens.get(0);
         Stage stage = (Stage) window;
-
-        if (allScreens.isEmpty())
-            screen = Screen.getPrimary();
-        else
-            screen = allScreens.get(0);
-
         Rectangle2D bounds = screen.getVisualBounds();
 
         if (Math.abs(window.getY() - bounds.getMinY()) <= 25) // maximize window when placed at top of screen
@@ -299,9 +291,8 @@ abstract class AbstractController {
         stage.setMaximized(!isMaximized);
         maximizeIcon.setGlyphName(isMaximized ? "SQUARE" : "MINUS_SQUARE");
 
-        double ratio = width / height,
-                newWidth = scene.getWidth(), newHeight = scene.getHeight(),
-                scaleFactor = (newWidth / newHeight > ratio) ? newHeight / height : newWidth / width;
+        double newWidth = scene.getWidth(), newHeight = scene.getHeight(),
+                scaleFactor = (newWidth / newHeight > width / height) ? newHeight / height : newWidth / width;
         boolean condition = scaleFactor >= 1;
 
         if (condition) {
