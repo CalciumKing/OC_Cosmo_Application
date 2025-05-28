@@ -12,6 +12,7 @@ package com.old_colony.oc_cosmo_application.Data;
  * @param securityAnswer   answer to security question
  * @param userID           unique identifier for the user in the database
  * @param status           account status (ex: STUDENT, ADMIN, ERROR)
+ * @see Status
  */
 
 public record User(

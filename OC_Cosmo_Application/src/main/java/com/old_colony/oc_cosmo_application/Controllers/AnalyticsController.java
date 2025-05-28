@@ -23,18 +23,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -46,6 +41,7 @@ import java.util.*;
  * Controller for analytics.fxml (appointment and user data view/management page)
  */
 
+@SuppressWarnings("SpellCheckingInspection")
 public class AnalyticsController extends AbstractController {
     // region FXML Variables
     @FXML
@@ -55,7 +51,8 @@ public class AnalyticsController extends AbstractController {
     @FXML
     private Label totalAppointments_lbl, mostActive_lbl,
             mostProfitable_lbl, totalRev_lbl,
-            avgDuration_lbl, mostBookedDay_lbl;
+            avgDuration_lbl, mostBookedDay_lbl,
+            saveFolder_lbl;
 
     @FXML
     private LineChart<String, Integer> appointments_lineChart;
@@ -110,12 +107,14 @@ public class AnalyticsController extends AbstractController {
     private String savePath;
     // endregion
 
+    // region Override Methods
     /**
      * {@inheritDoc}
      * <br>
-     * No user is ever passed in when exiting to start.fxml,
-     * so we don't need to manage any user information or
-     * initialize anything other than dark mode and maximized
+     * Sets information around the application like dark mode and maximized
+     * <p>Nothing in this controller uses user data, but user data is stored for returning to {@link DashboardController}</p>
+     *
+     * @see DashboardController
      */
     @Override
     protected void init(User user, boolean isDarkMode, boolean isMaximized) {
@@ -129,7 +128,40 @@ public class AnalyticsController extends AbstractController {
         initCharts();
         initSummary();
         initTables();
+        handleShortcuts();
     }
+
+    /**
+     * {@inheritDoc}
+     * <br>
+     * Keys 1-5 switch user to corresponding page, S toggles the side menu.
+     */
+    @Override
+    protected void handleShortcuts() {
+        main_pane.getScene().setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1 -> home_btn.fire();
+                case DIGIT2 -> summary_btn.fire();
+                case DIGIT3 -> charts_btn.fire();
+                case DIGIT4 -> tables_btn.fire();
+                case DIGIT5 -> pdf_btn.fire();
+                case S -> toggleMenu();
+                case F -> toggleMaximize();
+                case D -> toggleDarkMode();
+                case M -> windowMinimize();
+                case Q -> {
+                    if (event.isControlDown())
+                        windowClose();
+                }
+                case H -> toggleLegend();
+                case ESCAPE -> {
+                    if (isMaximized)
+                        toggleMaximize();
+                }
+            }
+        });
+    }
+    // endregion
 
     // region FXML Methods
     @FXML
@@ -147,7 +179,7 @@ public class AnalyticsController extends AbstractController {
      */
     @FXML
     private void showPage(ActionEvent event) {
-        AnchorPane[] panes = new AnchorPane[]{
+        AnchorPane[] panes = new AnchorPane[] {
                 home_pane, summary_pane,
                 charts_pane, tables_pane,
                 pdf_pane
@@ -155,7 +187,7 @@ public class AnalyticsController extends AbstractController {
         for (AnchorPane pane : panes)
             pane.setVisible(false);
 
-        Button[] buttons = new Button[]{
+        Button[] buttons = new Button[] {
                 home_btn, summary_btn,
                 charts_btn, tables_btn,
                 pdf_btn
@@ -225,12 +257,12 @@ public class AnalyticsController extends AbstractController {
 
         if (selectedDirectory != null) {
             savePath = selectedDirectory.getAbsolutePath();
+            saveFolder_lbl.setText(savePath);
         }
     }
     // endregion
 
     // region Helper Methods
-
     /**
      * Animates sideMenu animation
      *
@@ -244,7 +276,7 @@ public class AnalyticsController extends AbstractController {
     }
 
     private void initSummary() {
-        totalAppointments_lbl.setText(String.valueOf(allAppointments.size()));
+        totalAppointments_lbl.setText("" + allAppointments.size());
         mostActive_lbl.setText(getMostActive(getActiveStudents()));
         mostProfitable_lbl.setText(getMostProfitable());
         totalRev_lbl.setText(getTotalProfits());
@@ -253,6 +285,16 @@ public class AnalyticsController extends AbstractController {
     }
 
     private void initTables() {
+        HashMap<Integer, ArrayList<Appointment>> appointmentsByUser = new HashMap<>();
+        for (Appointment a : allAppointments) {
+            if (a.student() != null) {
+                int id = a.student().userID();
+                if (!appointmentsByUser.containsKey(id))
+                    appointmentsByUser.put(id, new ArrayList<>());
+                appointmentsByUser.get(id).add(a);
+            }
+        }
+
         // all appointments tab
         date_col.setCellValueFactory(cellData -> {
             Appointment a = cellData.getValue();
@@ -263,7 +305,7 @@ public class AnalyticsController extends AbstractController {
         cost_col.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().cost()));
         custName_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().customer()));
         service_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().service()));
-        student_col.setCellValueFactory(cellData -> { // get rid of later
+        student_col.setCellValueFactory(cellData -> {
             User user = cellData.getValue().student();
             String username = (user != null) ? user.username() : "Unknown";
             return new SimpleStringProperty(username);
@@ -276,16 +318,13 @@ public class AnalyticsController extends AbstractController {
         name_col.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().username()));
         appointment_col.setCellValueFactory(cellData -> {
             User user = cellData.getValue();
-            ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(user.userID());
-            return new SimpleObjectProperty<>((appointments == null) ? -1 : appointments.size());
+            return new SimpleObjectProperty<>(appointmentsByUser.get(user.userID()).size());
         });
         earnings_col.setCellValueFactory(cellData -> {
             User user = cellData.getValue();
-            ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(user.userID());
-            if (appointments == null) return new SimpleObjectProperty<>(-1.0);
 
             double total = 0;
-            for (Appointment a : appointments)
+            for (Appointment a : appointmentsByUser.get(user.userID()))
                 if (a.date().before(new Date()))
                     total += a.cost();
 
@@ -293,8 +332,7 @@ public class AnalyticsController extends AbstractController {
         });
         studentAvgDuration_col.setCellValueFactory(cellData -> {
             User user = cellData.getValue();
-            ObservableList<Appointment> appointments = SQLUtils.getAllAppointments(user.userID());
-            if (appointments == null) return new SimpleObjectProperty<>(-1.0);
+            ArrayList<Appointment> appointments = appointmentsByUser.get(user.userID());
 
             double avg = 0;
             for (Appointment a : appointments)
@@ -314,14 +352,13 @@ public class AnalyticsController extends AbstractController {
             String service = a.service();
             if (appointments.containsKey(service)) {
                 double[] cur = appointments.get(service);
-                appointments.put(a.service(), new double[]{
+                appointments.put(a.service(), new double[] {
                         cur[0] + 1,
                         cur[1] + a.cost(),
                         cur[2]
                 });
-            } else {
-                appointments.put(service, new double[]{1, a.cost(), a.duration()});
-            }
+            } else
+                appointments.put(service, new double[] {1, a.cost(), a.duration()});
         }
         HashSet<String> seen = new HashSet<>();
         ObservableList<Appointment> uniqueAppointments = allAppointments.filtered(appointment -> {
@@ -343,38 +380,28 @@ public class AnalyticsController extends AbstractController {
     }
 
     private void initCharts() {
-        weeklyAppointmentsLineGraph();
-        revenueByServiceBarChart();
-        pieChart();
-    }
-
-    private void pieChart() {
-        HashMap<String, Integer> services = new HashMap<>();
+        HashMap<String, Double> services = new HashMap<>();
         for (Appointment a : allAppointments) {
             String name = a.service();
-            if (services.containsKey(name))
-                services.merge(name, 1, Integer::sum);
-            else
-                services.put(name, 1);
+            if (!services.containsKey(name))
+                services.put(name, 0.0);
+            services.put(name, services.get(name) + a.cost());
         }
 
+        weeklyAppointmentsLineGraph();
+        revenueByServiceBarChart(services);
+        pieChart(services);
+    }
+
+    private void pieChart(HashMap<String, Double> services) {
         ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
-        for (Map.Entry<String, Integer> entry : services.entrySet())
+        for (Map.Entry<String, Double> entry : services.entrySet())
             data.add(new PieChart.Data(entry.getKey(), entry.getValue()));
 
         services_pieChart.setData(data);
     }
 
-    private void revenueByServiceBarChart() {
-        HashMap<String, Double> services = new HashMap<>();
-        for (Appointment a : allAppointments) {
-            String name = a.service();
-            if (services.containsKey(name))
-                services.merge(name, a.cost(), Double::sum);
-            else
-                services.put(name, a.cost());
-        }
-
+    private void revenueByServiceBarChart(HashMap<String, Double> services) {
         XYChart.Series<String, Double> series = new XYChart.Series<>();
         series.setName("Services");
         for (Map.Entry<String, Double> entry : services.entrySet())
@@ -387,9 +414,11 @@ public class AnalyticsController extends AbstractController {
         LinkedHashMap<DayOfWeek, Integer> appointmentsPerDay = new LinkedHashMap<>();
         LocalDate today = LocalDate.now();
 
-        for (DayOfWeek day : DayOfWeek.values()) // adding only weekdays to the LinkedHashMap
-            if (day.getValue() >= DayOfWeek.MONDAY.getValue() && day.getValue() <= DayOfWeek.FRIDAY.getValue())
-                appointmentsPerDay.put(day, 0);
+        appointmentsPerDay.put(DayOfWeek.MONDAY, 0);
+        appointmentsPerDay.put(DayOfWeek.TUESDAY, 0);
+        appointmentsPerDay.put(DayOfWeek.WEDNESDAY, 0);
+        appointmentsPerDay.put(DayOfWeek.THURSDAY, 0);
+        appointmentsPerDay.put(DayOfWeek.FRIDAY, 0);
 
         for (Appointment a : allAppointments) { // getting only this week's appointments
             LocalDate date = a.date().toLocalDate(),
@@ -398,7 +427,7 @@ public class AnalyticsController extends AbstractController {
 
             if (!date.isBefore(monday) && !date.isAfter(friday)) {
                 DayOfWeek day = date.getDayOfWeek();
-                appointmentsPerDay.merge(day, 1, Integer::sum);
+                appointmentsPerDay.put(day, appointmentsPerDay.get(day) + 1);
             }
         }
 
@@ -413,13 +442,11 @@ public class AnalyticsController extends AbstractController {
 
     private String getMostBookedDay() {
         HashMap<DayOfWeek, Integer> days = new HashMap<>();
-
         for (Appointment a : allAppointments) {
             DayOfWeek day = a.date().toLocalDate().getDayOfWeek();
-            if (days.containsKey(day))
-                days.merge(day, 1, Integer::sum);
-            else
-                days.put(day, 1);
+            if(!days.containsKey(day))
+                days.put(day, 0);
+            days.put(day, days.get(day) + 1);
         }
 
         DayOfWeek day = DayOfWeek.SATURDAY;
@@ -452,15 +479,11 @@ public class AnalyticsController extends AbstractController {
 
     private String getMostProfitable() {
         HashMap<String, Double> students = new HashMap<>();
-
         for (Appointment a : allAppointments) {
-            if (a.student() == null) continue;
-
             String username = a.student().username();
-            if (students.containsKey(username))
-                students.merge(username, a.cost(), Double::sum);
-            else
-                students.put(username, a.cost());
+            if(!students.containsKey(username))
+                students.put(username, 0.0);
+            students.put(username, students.get(username) + a.cost());
         }
 
         String student = "";
@@ -490,13 +513,10 @@ public class AnalyticsController extends AbstractController {
     private HashMap<String, Integer> getActiveStudents() {
         HashMap<String, Integer> students = new HashMap<>();
         for (Appointment a : allAppointments) {
-            if (a.student() == null) continue;
-
             String username = a.student().username();
-            if (students.containsKey(username))
-                students.merge(username, 1, Integer::sum);
-            else
-                students.put(username, 1);
+            if (!students.containsKey(username))
+                students.put(username, 0);
+            students.put(username, students.get(username) + 1);
         }
         return students;
     }

@@ -52,6 +52,8 @@ public class PDFGenerator {
             if (!handlers.containsKey(type))
                 throw new IllegalArgumentException("Unknown PDF Type: " + type);
 
+            if (path == null) path = "src/main/resources/PDFs";
+
             Document doc = new Document(new PdfDocument(new PdfWriter(path + "/" + fileNames.get(type))));
 
             handlers.get(type).accept(doc);
@@ -179,11 +181,11 @@ public class PDFGenerator {
      */
     private static void createFileData(ObservableList<Appointment> appointments, Document doc, String title) {
         Table table = new Table(6).setWidth(UnitValue.createPercentValue(100));
-        for (String s : new String[]{"Student", "Service", "Cost", "Date", "Duration", "Customer"})
+        for (String s : new String[] {"Student", "Service", "Cost", "Date", "Duration", "Customer"})
             table.addCell(createTableCell(s));
 
         for (Appointment a : appointments) {
-            for (String s : new String[]{
+            for (String s : new String[] {
                     a.student().username(),
                     a.service(),
                     String.valueOf(a.cost()),

@@ -125,11 +125,11 @@ public class DashboardController extends AbstractController {
     private final LinkedHashMap<String, int[]> servicesAndCost = new LinkedHashMap<>(); // maintains inserted order
     // endregion
 
+    // region Override Methods
     /**
      * {@inheritDoc}
      * <br>
      * Sets information around the application that uses user data like username, dark mode, and maximized
-     * <p>Initializes everything that requires user data (everything that wasn't initialized already in above method)</p>
      * <p>Makes admin panel visible if currentUser has the status of admin</p>
      */
     @Override
@@ -138,6 +138,7 @@ public class DashboardController extends AbstractController {
         initHashMap();
         initForm();
         initTabDays();
+        handleShortcuts();
 
         welcome_lbl.setText("Welcome, " + user.username());
         windowTitle_lbl.setText("Cosmetology Application | " + user.username());
@@ -153,6 +154,37 @@ public class DashboardController extends AbstractController {
         initAccountInfo();
         admin_btn.setVisible(currentUser.status().isAdmin());
     }
+
+    /**
+     * {@inheritDoc}
+     * <br>
+     * Keys 1-4 switch user to corresponding page, S toggles the side menu.
+     */
+    @Override
+    protected void handleShortcuts() {
+        main_pane.getScene().setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1 -> home_btn.fire();
+                case DIGIT2 -> schedule_btn.fire();
+                case DIGIT3 -> account_btn.fire();
+                case DIGIT4 -> admin_btn.fire();
+                case S -> toggleMenu();
+                case F -> toggleMaximize();
+                case D -> toggleDarkMode();
+                case M -> windowMinimize();
+                case Q -> {
+                    if (event.isControlDown())
+                        windowClose();
+                }
+                case H -> toggleLegend();
+                case ESCAPE -> {
+                    if (isMaximized)
+                        toggleMaximize();
+                }
+            }
+        });
+    }
+    // endregion
 
     // region FXML Methods
     @FXML
@@ -207,14 +239,14 @@ public class DashboardController extends AbstractController {
      */
     @FXML
     private void showPage(ActionEvent event) {
-        AnchorPane[] panes = new AnchorPane[]{
+        AnchorPane[] panes = new AnchorPane[] {
                 home_pane, schedule_pane,
                 account_pane, admin_pane
         };
         for (AnchorPane pane : panes)
             pane.setVisible(false);
 
-        Button[] buttons = new Button[]{
+        Button[] buttons = new Button[] {
                 home_btn, schedule_btn,
                 account_btn, admin_btn
         };
@@ -333,7 +365,7 @@ public class DashboardController extends AbstractController {
                 secQuestion,
                 secAnswer,
                 -1, // not used
-                Utils.createStatus(admin_radio.isSelected())
+                createStatus(admin_radio.isSelected())
         );
 
         SQLUtils.createUser(user);
@@ -388,7 +420,7 @@ public class DashboardController extends AbstractController {
                         secQuestion,
                         secAnswer,
                         -1, // not used
-                        Utils.createStatus(admin_radio.isSelected())
+                        createStatus(admin_radio.isSelected())
                 );
                 SQLUtils.updateUser(newUser);
                 reloadUserTable();
@@ -568,7 +600,6 @@ public class DashboardController extends AbstractController {
     // endregion
 
     // region Helper Methods
-
     /**
      * Initializes all services in a LinkedHashMap
      * <p>LinkedHashMap is used instead of a HashMap because it keeps its order</p>
@@ -619,7 +650,7 @@ public class DashboardController extends AbstractController {
         };
 
         for (Object[] entry : entries)
-            servicesAndCost.put((String) entry[0], new int[]{(int) entry[1], (int) entry[2]});
+            servicesAndCost.put((String) entry[0], new int[] {(int) entry[1], (int) entry[2]});
     }
 
     private void initForm() {
@@ -973,6 +1004,19 @@ public class DashboardController extends AbstractController {
             }
         }
         return false;
+    }
+
+    /**
+     * Determines if the user is an admin based on a boolean.
+     * <p>May need to expand in the future if more statuses are used.</p>
+     *
+     * @param isAdmin boolean used to determine if the user is an admin or a student
+     * @return admin or student status, (either {@code Status.ADMIN} or {@code Status.STUDENT})
+     * @see Status
+     * @see Status#isAdmin() isAdmin()
+     */
+    public static Status createStatus(boolean isAdmin) {
+        return isAdmin ? Status.ADMIN : Status.STUDENT;
     }
     // endregion
 }

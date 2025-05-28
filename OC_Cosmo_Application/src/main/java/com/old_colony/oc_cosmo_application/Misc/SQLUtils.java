@@ -1,6 +1,7 @@
 package com.old_colony.oc_cosmo_application.Misc;
 
 import com.old_colony.oc_cosmo_application.Data.Appointment;
+import com.old_colony.oc_cosmo_application.Data.Status;
 import com.old_colony.oc_cosmo_application.Data.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -115,7 +116,6 @@ public class SQLUtils {
     // endregion
 
     // region Dashboard
-
     /**
      * Gets all users from database
      * <p>Runs "{@code select * from users;}"</p>
@@ -140,7 +140,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        Utils.createStatus(result.getInt("status"))
+                        createStatus(result.getInt("status"))
                 ));
 
             return data;
@@ -402,7 +402,7 @@ public class SQLUtils {
             prepared.setString(2, user.password());
             prepared.setString(3, user.securityQuestion());
             prepared.setString(4, user.securityAnswer());
-            prepared.setInt(5, Utils.createStatus(user.status()));
+            prepared.setInt(5, createStatus(user.status()));
 
             prepared.executeUpdate();
 
@@ -463,7 +463,7 @@ public class SQLUtils {
             prepared.setString(1, user.password());
             prepared.setString(2, user.securityQuestion());
             prepared.setString(3, user.securityAnswer());
-            prepared.setInt(4, Utils.createStatus(user.status()));
+            prepared.setInt(4, createStatus(user.status()));
             prepared.setString(5, user.username());
 
             prepared.executeUpdate();
@@ -481,7 +481,7 @@ public class SQLUtils {
 
     /**
      * Gets a used based on unique username
-     * <p>Runs {@code select * from users where username = ? limit 1;}</p>
+     * <p>Runs "{@code select * from users where username = ? limit 1;}"</p>
      *
      * @param username unique username
      * @return a user as type {@code User}
@@ -504,7 +504,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        Utils.createStatus(result.getInt("status"))
+                        createStatus(result.getInt("status"))
                 );
         } catch (Exception e) {
             Utils.normalAlert(
@@ -567,7 +567,6 @@ public class SQLUtils {
     // endregion
 
     // region Helper Methods
-
     /**
      * Makes a connection to the cosmo database
      *
@@ -639,7 +638,7 @@ public class SQLUtils {
                         result.getString("securityQuestion"),
                         result.getString("securityAnswer"),
                         result.getInt("userID"),
-                        Utils.createStatus(result.getInt("status"))
+                        createStatus(result.getInt("status"))
                 );
         } catch (Exception e) {
             Utils.normalAlert(
@@ -651,6 +650,72 @@ public class SQLUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Determines the user's status based on the SQL integer status
+     * <table>
+     *     <tr>
+     *         <th>SQL Status Code</th>
+     *         <th>Java Enum Status</th>
+     *     </tr>
+     *     <tr>
+     *         <td>0</td>
+     *         <td>STUDENT</td>
+     *     </tr>
+     *     <tr>
+     *         <td>1</td>
+     *         <td>ADMIN</td>
+     *     </tr>
+     *     <tr>
+     *         <td>Other</td>
+     *         <td>ERROR</td>
+     *     </tr>
+     * </table>
+     *
+     * @param status SQL int status
+     * @return Java status as enum type {@code Status}
+     * @see Status
+     */
+    public static Status createStatus(int status) {
+        return switch (status) {
+            case 0 -> Status.STUDENT;
+            case 1 -> Status.ADMIN;
+            default -> Status.ERROR;
+        };
+    }
+
+    /**
+     * Determines the SQL status code based on the java enum status
+     * <table>
+     *     <tr>
+     *         <th>SQL Status Code</th>
+     *         <th>Java Enum Status</th>
+     *     </tr>
+     *     <tr>
+     *         <td>0</td>
+     *         <td>STUDENT</td>
+     *     </tr>
+     *     <tr>
+     *         <td>1</td>
+     *         <td>ADMIN</td>
+     *     </tr>
+     *     <tr>
+     *         <td>-1</td>
+     *         <td>ERROR</td>
+     *     </tr>
+     * </table>
+     *
+     * @param status java enum status
+     * @return SQL int status
+     * @see Status
+     */
+    public static int createStatus(Status status) {
+        return switch (status) {
+            case ERROR -> -1;
+            case STUDENT -> 0;
+            case ADMIN -> 1;
+        };
     }
     // endregion
 }

@@ -31,23 +31,58 @@ public class StartController extends AbstractController {
     private Label securityQuestion_lbl, forgotQuestion_lbl;
     // endregion
 
+    // region Override Methods
     /**
      * {@inheritDoc}
      * <br>
      * No user is ever passed in when exiting to start.fxml,
      * so we don't need to manage any user information or
-     * initialize anything other than dark mode and maximized
+     * initialize anything other than dark mode, maximized, and shortcuts
      */
     @Override
-    protected void init(User user, boolean isDarkMode, boolean isMaximized) {
+    public void init(User user, boolean isDarkMode, boolean isMaximized) {
         // default is light mode and not maximized
         // toggles to the previous applications settings if needed
         if (isDarkMode) toggleDarkMode();
         if (isMaximized) toggleMaximize();
+        handleShortcuts();
     }
 
-    // region FXML Methods
+    /**
+     * {@inheritDoc}
+     * <br>
+     * 1 and 2 swap between login and forgot password pages
+     */
+    @Override
+    public void handleShortcuts() {
+        main_pane.getScene().setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DIGIT1 -> {
+                    login_pane.setVisible(true);
+                    forgotPassword_pane.setVisible(false);
+                }
+                case DIGIT2 -> {
+                    login_pane.setVisible(false);
+                    forgotPassword_pane.setVisible(true);
+                }
+                case F -> toggleMaximize();
+                case D -> toggleDarkMode();
+                case M -> windowMinimize();
+                case Q -> {
+                    if (event.isControlDown())
+                        windowClose();
+                }
+                case H -> toggleLegend();
+                case ESCAPE -> {
+                    if (isMaximized)
+                        toggleMaximize();
+                }
+            }
+        });
+    }
+    // endregion
 
+    // region FXML Methods
     /**
      * Updates security label based on corresponding page being typed on.
      * <p>If the normal login username field is being typed, fill in the security question on that page,

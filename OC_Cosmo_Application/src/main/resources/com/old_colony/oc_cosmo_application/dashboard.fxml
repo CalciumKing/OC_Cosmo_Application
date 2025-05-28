@@ -1,39 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ColorPicker?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.Tooltip?>
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-
-<AnchorPane fx:id="main_pane" prefHeight="517.0" prefWidth="896.0" styleClass="whiteBackground" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.URL?>
+<AnchorPane fx:id="main_pane" prefHeight="517.0" prefWidth="896.0" styleClass="whiteBackground" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.old_colony.oc_cosmo_application.Controllers.DashboardController">
    <stylesheets>
       <URL value="@CSS/styles.css" />
       <URL value="@CSS/lightMode.css" />
@@ -1135,5 +1114,127 @@
             <Tooltip text="Toggle Dark Mode" textAlignment="CENTER" />
          </tooltip>
       </Button>
+   </AnchorPane>
+   <AnchorPane fx:id="legend_pane" layoutY="2.0" prefHeight="517.0" prefWidth="918.0"
+               style="-fx-background-color: black; -fx-opacity: .75;" visible="false">
+      <Label layoutX="377.0" layoutY="61.0" text="Shortcuts Legend" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="20.0"/>
+         </font>
+      </Label>
+      <VBox alignment="CENTER_RIGHT" prefHeight="517.0" prefWidth="428.0" style="-fx-padding: 15;">
+         <Label text="1" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="360.0" layoutY="210.0" text="2" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="442.0" layoutY="179.0" text="3" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="442.0" layoutY="374.0" text="4" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="360.0" layoutY="225.0" text="F" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="361.0" layoutY="240.0" text="D" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="357.0" layoutY="255.0" text="M" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="352.0" layoutY="270.0" text="Ctrl + Q" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="297.0" layoutY="285.0" text="Escape" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="308.0" layoutY="300.0" text="H" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="438.0" layoutY="389.0" text="S" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+      </VBox>
+      <VBox alignment="CENTER_LEFT" layoutX="436.0" prefHeight="517.0" prefWidth="482.0" style="-fx-padding: 15;">
+         <Label text="Swap To Home Page" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="149.0" text="Swap To Schedule Page" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="374.0" text="Swap To Account Page" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="389.0" text="Swap To Admin Page" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="225.0" text="Toggle Fullscreen" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="240.0" text="Toggle Dark Mode" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="255.0" text="Minimize Window" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="270.0" text="Quit Application" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="285.0" text="Exit Fullscreen" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="300.0" text="Toggle Shortcuts Legend (Help)" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+         <Label layoutX="25.0" layoutY="389.0" text="Toggle Side Menu" textFill="WHITE">
+            <font>
+               <Font name="System Bold" size="20.0"/>
+            </font>
+         </Label>
+      </VBox>
    </AnchorPane>
 </AnchorPane>

@@ -34,7 +34,7 @@ public enum Status {
 
     /**
      * Checks if the status is admin
-     * <p>Runs {@code return this == ADMIN;}</p>
+     * <p>Runs "{@code return this == ADMIN;}"</p>
      *
      * @return true if status is admin, false otherwise
      */

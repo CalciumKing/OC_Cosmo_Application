@@ -6,14 +6,12 @@ import com.old_colony.oc_cosmo_application.Misc.Utils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -36,25 +34,39 @@ import java.net.URL;
  */
 
 abstract class AbstractController {
+    // region Variables
     @FXML
-    protected AnchorPane main_pane;
+    protected AnchorPane main_pane, legend_pane;
     @FXML
     protected FontAwesomeIcon maximizeIcon, darkModeIcon;
-    private boolean isMaximized, maximizedFromClick, preventDrag, isDarkMode;
+    protected boolean isMaximized;
+    private boolean maximizedFromClick, preventDrag, isDarkMode;
     private double xOffset, yOffset, defaultWidth, defaultHeight;
+    // endregion
 
+    // region Abstract Methods
     /**
      * Abstract method required for every controller class
-     * <p>Manages what happens to user data parameters and can initialize anything that needs user data here</p>
+     * <p>Manages what happens to user data parameters and can initialize anything that needs user data here.</p>
+     * <p>Run {@link #handleShortcuts()} here to enable shortcuts on page upon load.</p>
      *
      * @param user        pass in the logged-in user, null if exiting
      * @param isDarkMode  if the user was in dark mode before logging in
      * @param isMaximized if the user was maximized before logging in
      * @see User
+     * @see #handleShortcuts()
      */
     @SuppressWarnings("unused")
     protected abstract void init(User user, boolean isDarkMode, boolean isMaximized);
 
+    /**
+     * Handles keyboard shortcuts around the application
+     * <p>All pages have shortcuts: F, D, M, H, Ctrl+Q and ESCAPE.</p>
+     */
+    protected abstract void handleShortcuts();
+    // endregion
+
+    // region Misc Methods
     /**
      * Changes to desired scene based on file name, user parameter can be used to transfer user data excluding dark mode and maximized
      *
@@ -133,10 +145,24 @@ abstract class AbstractController {
         isDarkMode = !isDarkMode;
     }
 
+    /**
+     * Toggles the shortcuts legend.
+     * <p>Only called from {@link #handleShortcuts()} by pressing H</p>
+     *
+     * @see #handleShortcuts()
+     */
+    protected final void toggleLegend() {
+        legend_pane.setVisible(!legend_pane.isVisible());
+    }
+    // endregion
+
     // region Window Methods
+    /**
+     * Minimizes the application window
+     */
     @FXML
-    protected final void windowMinimize(ActionEvent event) {
-        ((Stage) ((Button) event.getSource()).getScene().getWindow()).setIconified(true);
+    protected final void windowMinimize() {
+        ((Stage) main_pane.getScene().getWindow()).setIconified(true);
     }
 
     /**

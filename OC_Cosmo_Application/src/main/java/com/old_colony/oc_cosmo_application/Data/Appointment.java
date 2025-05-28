@@ -17,6 +17,7 @@ import java.sql.Date;
  * @param minute   The starting minute of the appointment, usually 0, 15, 30, or 45.
  * @param duration The total length of the appointment in minutes
  * @param note     Optional additional notes about the appointment, such as special requests or service details.
+ * @see User
  */
 
 public record Appointment(

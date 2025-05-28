@@ -1,5 +1,6 @@
 package com.old_colony.oc_cosmo_application;
 
+import com.old_colony.oc_cosmo_application.Controllers.StartController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -9,9 +10,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
-import java.net.URL;
-
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * <h1>Old Colony Cosmetology Application Project</h1>
@@ -61,6 +61,8 @@ public class MainApplication extends Application {
         stage.setScene(new Scene(fxmlLoader.load()));
         stage.setAlwaysOnTop(true);
         stage.show();
+
+        ((StartController) fxmlLoader.getController()).handleShortcuts();
     }
 
     public static void main(String[] args) {
