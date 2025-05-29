@@ -14,7 +14,7 @@ import java.time.LocalDate;
 /**
  * This class is for any utilities that use SQL
  */
-@SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
+@SuppressWarnings({ "CallToPrintStackTrace", "SpellCheckingInspection" })
 public class SQLUtils {
     // region Start
     /**
@@ -233,12 +233,12 @@ public class SQLUtils {
             prepared.setDouble(17, oldA.cost());
             prepared.setDate(18, oldA.date());
 
-            if(prepared.executeUpdate() == 0)
+            if (prepared.executeUpdate() == 0)
                 Utils.normalAlert(
-					Alert.AlertType.ERROR,
-					"Bug in updateAppointment",
-					"No Rows Affected With Update",
-					"0 Rows were updated with that filter, try a different appointment."
+                        Alert.AlertType.ERROR,
+                        "Bug in updateAppointment",
+                        "No Rows Affected With Update",
+                        "0 Rows were updated with that filter, try a different appointment."
                 );
         } catch (SQLException e) {
             Utils.normalAlert(

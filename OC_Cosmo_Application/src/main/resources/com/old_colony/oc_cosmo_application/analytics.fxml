@@ -323,7 +323,9 @@
                      <FontAwesomeIcon glyphName="FOLDER_ALT" />
                   </graphic>
                </Button>
-               <Label fx:id="saveFolder_lbl" alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="237.0" maxHeight="39.0" maxWidth="548.0" prefHeight="39.0" prefWidth="548.0" text="C:\Users\ingerslevlk\Documents\Repos\OC_Cosmo_Application\OC_Cosmo_Application\src\main\resources\PDFs" textAlignment="CENTER" underline="true" wrapText="true">
+               <Label fx:id="saveFolder_lbl" alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="237.0"
+                      maxHeight="39.0" maxWidth="548.0" prefHeight="39.0" prefWidth="548.0"
+                      text="src/main/resources/PDFs" textAlignment="CENTER" underline="true" wrapText="true">
                   <font>
                      <Font name="System Bold" size="12.0" />
                   </font>

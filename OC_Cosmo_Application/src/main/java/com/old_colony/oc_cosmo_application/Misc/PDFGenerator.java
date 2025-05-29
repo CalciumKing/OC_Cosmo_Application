@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  * This file handles the generation of all pdfs
  * <p>The contents of the pdfs varies based on the input of {@link #createPDF(String, String) createPDF()}</p>
  */
-@SuppressWarnings({"CallToPrintStackTrace", "SpellCheckingInspection"})
+@SuppressWarnings({ "CallToPrintStackTrace", "SpellCheckingInspection" })
 public class PDFGenerator {
     // region Main Methods
     /**
@@ -182,7 +182,7 @@ public class PDFGenerator {
      */
     private static void createFileData(ObservableList<Appointment> appointments, Document doc, String title) {
         Table table = new Table(6).setWidth(UnitValue.createPercentValue(100));
-        for (String s : new String[] {"Student", "Service", "Cost", "Date", "Duration", "Customer"})
+        for (String s : new String[] { "Student", "Service", "Cost", "Date", "Duration", "Customer" })
             table.addCell(createTableCell(s));
 
         for (Appointment a : appointments) {

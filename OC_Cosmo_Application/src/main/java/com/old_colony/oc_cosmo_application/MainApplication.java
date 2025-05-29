@@ -31,7 +31,7 @@ import java.net.URL;
  *     <li>CSS</li>
  *     <li>Font-Awesome</li>
  *     <li>Markdown</li>
- *     <p>PDF</p>
+ *     <li>PDF</li>
  * </ul>
  *
  * @author Landen Ingerslev (CalciumKing)

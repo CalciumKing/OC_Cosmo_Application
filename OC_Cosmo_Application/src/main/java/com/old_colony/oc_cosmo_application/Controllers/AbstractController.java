@@ -75,7 +75,7 @@ abstract class AbstractController {
      * @param user      logged-in user as user object, null if exiting
      * @see User
      */
-    @SuppressWarnings({"CallToPrintStackTrace"})
+    @SuppressWarnings({ "CallToPrintStackTrace" })
     protected final void changeScene(String sceneName, User user) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName + ".fxml"));

@@ -606,51 +606,51 @@ public class DashboardController extends AbstractController {
      */
     private void initHashMap() {
         Object[][] entries = {
-                {"--- Cuts ---", -1, -1},
-                {"Haircut (No Blow Dry)", 5, 45},
-                {"Haircut (Blow Dry)", 8, 60},
+                { "--- Cuts ---", -1, -1 },
+                { "Haircut (No Blow Dry)", 5, 45 },
+                { "Haircut (Blow Dry)", 8, 60 },
 
-                {"--- Color ---", -1, -1},
-                {"Hair Color Retouch", 30, 90},
-                {"Full Color Application", 35, 120},
-                {"Cap Highlight", 25, 90},
-                {"'Sunshine' Highlight", 25, 90},
-                {"Partial Foil", 35, 120},
-                {"Full Head Foil", 50, 150},
-                {"Special Effects Highlight/Color", 45, 120},
+                { "--- Color ---", -1, -1 },
+                { "Hair Color Retouch", 30, 90 },
+                { "Full Color Application", 35, 120 },
+                { "Cap Highlight", 25, 90 },
+                { "'Sunshine' Highlight", 25, 90 },
+                { "Partial Foil", 35, 120 },
+                { "Full Head Foil", 50, 150 },
+                { "Special Effects Highlight/Color", 45, 120 },
 
-                {"--- Styling ---", -1, -1},
-                {"Formal Up Styles", 15, 45},
-                {"Braids or Twists", 10, 30},
-                {"Wash & Blow Dry", 8, 30},
+                { "--- Styling ---", -1, -1 },
+                { "Formal Up Styles", 15, 45 },
+                { "Braids or Twists", 10, 30 },
+                { "Wash & Blow Dry", 8, 30 },
 
-                {"--- Smoothing & Conditioning ---", -1, -1},
-                {"Conditioning Treatment & Blow Dry", 15, 45},
-                {"Keratin Complex Express Blow Out", 60, 120},
-                {"Keratin Complex Treatment", 90, 120},
-                {"Perms", 35, 90},
+                { "--- Smoothing & Conditioning ---", -1, -1 },
+                { "Conditioning Treatment & Blow Dry", 15, 45 },
+                { "Keratin Complex Express Blow Out", 60, 120 },
+                { "Keratin Complex Treatment", 90, 120 },
+                { "Perms", 35, 90 },
 
-                {"--- Nails ---", -1, -1},
-                {"Manicure", 10, 30},
-                {"Manicure With Paraffin Wax", 15, 45},
-                {"Hot Oil Manicure", 12, 45},
-                {"Paraffin Wax Drip", 5, 15},
-                {"Pedicure", 15, 30},
-                {"Gel Nail Polish & Manicure", 15, 45},
-                {"Gel Polish Removal", 8, 30},
+                { "--- Nails ---", -1, -1 },
+                { "Manicure", 10, 30 },
+                { "Manicure With Paraffin Wax", 15, 45 },
+                { "Hot Oil Manicure", 12, 45 },
+                { "Paraffin Wax Drip", 5, 15 },
+                { "Pedicure", 15, 30 },
+                { "Gel Nail Polish & Manicure", 15, 45 },
+                { "Gel Polish Removal", 8, 30 },
 
-                {"--- Makeup & Facials ---", -1, -1},
-                {"Makeup Application", 10, 30},
-                {"Facial Application & Mask", 10, 45},
+                { "--- Makeup & Facials ---", -1, -1 },
+                { "Makeup Application", 10, 30 },
+                { "Facial Application & Mask", 10, 45 },
 
-                {"--- Hair Shaping & Removal ---", -1, -1},
-                {"Facial Hair Tweezing", 3, 15},
-                {"Single Area Waxing", 5, 15},
-                {"Two Area Waxing", 8, 30}
+                { "--- Hair Shaping & Removal ---", -1, -1 },
+                { "Facial Hair Tweezing", 3, 15 },
+                { "Single Area Waxing", 5, 15 },
+                { "Two Area Waxing", 8, 30 }
         };
 
         for (Object[] entry : entries)
-            servicesAndCost.put((String) entry[0], new int[] {(int) entry[1], (int) entry[2]});
+            servicesAndCost.put((String) entry[0], new int[] { (int) entry[1], (int) entry[2] });
     }
 
     private void initForm() {

@@ -98,9 +98,9 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void setNewPassword() {
-        if (forgotPassword_field.getText().isEmpty() ||
-                forgotUsername_field.getText().isEmpty() ||
-                forgotAnswer_field.getText().isEmpty()) {
+        if (forgotPassword_field.getText().trim().isEmpty() ||
+                forgotUsername_field.getText().trim().isEmpty() ||
+                forgotAnswer_field.getText().trim().isEmpty()) {
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Failure",
@@ -191,12 +191,14 @@ public class StartController extends AbstractController {
         Label fromQuestion = toForgot ? securityQuestion_lbl : forgotQuestion_lbl,
                 toQuestion = toForgot ? forgotQuestion_lbl : securityQuestion_lbl;
 
-        if (toUsername.getText().isEmpty())
-            toUsername.setText(fromUsername.getText());
-        if (toQuestion.getText().isEmpty())
-            toQuestion.setText(fromQuestion.getText());
-        if (toAnswer.getText().isEmpty())
-            toAnswer.setText(fromAnswer.getText());
+        if (toUsername.getText().trim().isEmpty())
+            toUsername.setText(fromUsername.getText().trim());
+
+        if (toQuestion.getText() != null && toQuestion.getText().trim().isEmpty())
+            toQuestion.setText(fromQuestion.getText().trim());
+
+        if (toAnswer.getText().trim().isEmpty())
+            toAnswer.setText(fromAnswer.getText().trim());
     }
     // endregion
 }

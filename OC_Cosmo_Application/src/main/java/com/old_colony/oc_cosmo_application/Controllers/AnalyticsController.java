@@ -356,7 +356,7 @@ public class AnalyticsController extends AbstractController {
                         cur[2]
                 });
             } else
-                appointments.put(service, new double[] {1, a.cost(), a.duration()});
+                appointments.put(service, new double[] { 1, a.cost(), a.duration() });
         }
         HashSet<String> seen = new HashSet<>();
         ObservableList<Appointment> uniqueAppointments = allAppointments.filtered(appointment -> {
@@ -442,7 +442,7 @@ public class AnalyticsController extends AbstractController {
         HashMap<DayOfWeek, Integer> days = new HashMap<>();
         for (Appointment a : allAppointments) {
             DayOfWeek day = a.date().toLocalDate().getDayOfWeek();
-            if(!days.containsKey(day))
+            if (!days.containsKey(day))
                 days.put(day, 0);
             days.put(day, days.get(day) + 1);
         }
@@ -479,7 +479,7 @@ public class AnalyticsController extends AbstractController {
         HashMap<String, Double> students = new HashMap<>();
         for (Appointment a : allAppointments) {
             String username = a.student().username();
-            if(!students.containsKey(username))
+            if (!students.containsKey(username))
                 students.put(username, 0.0);
             students.put(username, students.get(username) + a.cost());
         }

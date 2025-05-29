@@ -4,24 +4,9 @@
 .whiteBackground {
     -fx-background-color: #121212;
 }
-#securityQuestion_lbl{
-    -fx-text-fill: black;
-}
-#forgotQuestion_lbl{
-    -fx-text-fill: black;
-}
 
 
 #home_pane > .label{
-    -fx-text-fill: white;
-}
-#summary_pane > .label{
-    -fx-text-fill: white;
-}
-#charts_pane > .label{
-    -fx-text-fill: white;
-}
-#tables_pane > .label{
     -fx-text-fill: white;
 }
 
